@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import LoadingScreen from "../../components/LoadingScreen";
 import HeroCanvas from "../../components/HeroCanvas";
@@ -182,7 +182,7 @@ function SectionDivider() {
 
 // Corner tick decoration
 function CornerTicks({ color = 'rgba(231,197,138,0.35)' }) {
-  const tick = { position: 'absolute', width: '8px', height: '8px', };
+  const tick: React.CSSProperties = { position: 'absolute', width: '8px', height: '8px' };
   return (
     <>
       <span style={{ ...tick, top: 0, left: 0, borderTop: `1px solid ${color}`, borderLeft: `1px solid ${color}` }} />

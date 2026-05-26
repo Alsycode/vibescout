@@ -140,7 +140,7 @@ const footerLinks = [
   {
     title: 'Product',
     links: [
-      { label: 'Analyze a Property', href: '/analyze' },
+      { label: 'Analyze a Property', href: '#' },
       { label: 'How It Works',       href: '#' },
       { label: 'Pricing',            href: '#' },
     ],

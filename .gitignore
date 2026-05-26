@@ -8,3 +8,5 @@ build/
 npm-debug.log*
 .DS_Store
 Thumbs.db
+frontend/.next/
+frontend/node_modules/

@@ -45,11 +45,18 @@ export async function upsertCluster(lat, lng) {
 
 // Finds the nearest existing cluster within CLUSTER_RADIUS_M; creates new one if none found
 export async function assignCluster(lat, lng) {
-  const allClusters = await Cluster.find({});
+  // SF-05: Bounding box pre-filter instead of full table scan
+  // ±0.05° ≈ ±5.5km — safely covers CLUSTER_RADIUS_M (1500m) with margin
+  const BBOX_DEG = 0.05;
+  const nearbyClusters = await Cluster.find({
+    centroidLat: { $gte: lat - BBOX_DEG, $lte: lat + BBOX_DEG },
+    centroidLng: { $gte: lng - BBOX_DEG, $lte: lng + BBOX_DEG },
+  });
+
   let nearest = null;
   let minDist = Infinity;
 
-  for (const c of allClusters) {
+  for (const c of nearbyClusters) {
     const d = haversineM(lat, lng, c.centroidLat, c.centroidLng);
     if (d < minDist) {
       minDist = d;

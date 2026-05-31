@@ -190,13 +190,10 @@ export async function fetchAQI(lat, lng, clusterId, cityName) {
   let resolvedCity = cityName;
   let resolvedState = null;
 
+  // SF-06: Only call Nominatim eagerly if we need a city name for CPCB
   if (!resolvedCity) {
     const geo = await reverseGeocodeState(lat, lng);
     resolvedCity = geo?.city ?? null;
-    resolvedState = geo?.state ?? null;
-  } else {
-    // Also get state for seasonal fallback
-    const geo = await reverseGeocodeState(lat, lng);
     resolvedState = geo?.state ?? null;
   }
 
@@ -204,6 +201,12 @@ export async function fetchAQI(lat, lng, clusterId, cityName) {
   if (cpcb) return cpcb;
 
   // Level 4: State-wise seasonal average — always returns a value
+  // SF-06: Nominatim called lazily — only when CPCB fails and state is still unknown
+  if (resolvedState === null) {
+    const geo = await reverseGeocodeState(lat, lng);
+    resolvedState = geo?.state ?? null;
+  }
+
   const value = getSeasonalAQI(resolvedState);
   return { value, category: aqiCategory(value), source: 'seasonal' };
 }

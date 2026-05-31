@@ -70,6 +70,7 @@ const ClusterSchema = new mongoose.Schema({
 });
 
 ClusterSchema.index({ clusterId: 1 }, { unique: true });
+ClusterSchema.index({ centroidLat: 1, centroidLng: 1 });
 
 const Cluster = mongoose.model('Cluster', ClusterSchema);
 

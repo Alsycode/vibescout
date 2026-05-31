@@ -41,6 +41,13 @@ async function fetchPlaceType(lat, lng, type) {
     const res = await fetchWithTimeout(url, {}, 5000);
     if (!res.ok) return [];
     const data = await res.json();
+    // INT-04: Log specific API error statuses that silently masquerade as no results
+    if (data.status === 'REQUEST_DENIED') {
+      console.error(`[Places] API key rejected for type=${type}:`, data.error_message ?? 'unknown reason');
+    }
+    if (data.status === 'OVER_QUERY_LIMIT') {
+      console.error(`[Places] Quota exceeded for type=${type}:`, data.error_message ?? 'unknown reason');
+    }
     if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') return [];
     return (data.results ?? []).slice(0, 5).map((place) => {
       const placeLat = place.geometry?.location?.lat ?? lat;
@@ -81,14 +88,20 @@ async function fetchFromClusterCache(clusterId) {
     const cluster = await Cluster.findOne({ clusterId });
     if (!cluster?.cachedAmenities?.updatedAt) return null;
     const ca = cluster.cachedAmenities;
+    // FAIL-03: Remap distance → distanceM for consistency with live results
+    // Cluster schema stores 'distance'; verdictEngine reads 'distanceM'
+    const remap = (items) => (items ?? []).map(i => {
+      const obj = typeof i.toObject === 'function' ? i.toObject() : i;
+      return { ...obj, distanceM: obj.distanceM ?? obj.distance };
+    });
     return {
-      schools: ca.schools ?? [],
-      hospitals: ca.hospitals ?? [],
-      gyms: ca.gyms ?? [],
-      restaurants: ca.restaurants ?? [],
-      parks: ca.parks ?? [],
-      worship: ca.worship ?? [],
-      cafes: ca.cafes ?? [],
+      schools: remap(ca.schools),
+      hospitals: remap(ca.hospitals),
+      gyms: remap(ca.gyms),
+      restaurants: remap(ca.restaurants),
+      parks: remap(ca.parks),
+      worship: remap(ca.worship),
+      cafes: remap(ca.cafes),
       source: 'cache',
     };
   } catch {

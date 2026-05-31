@@ -38,12 +38,17 @@ const ShadowPropertySchema = new mongoose.Schema({
     },
     solar: {
       peakSunHours: Number,
+      morningScore: Number,
+      wfhLightScore: Number,
+      acSavingsEstimate: Number,
+      solarPanelViability: String,
       viability: String,
       source: { type: String, enum: ['live', 'cache', 'computed'] },
     },
     weather: {
       temp: Number,
       humidity: Number,
+      description: String,
       source: { type: String, enum: ['live', 'cache', 'seasonal'] },
     },
     amenities: {
@@ -52,6 +57,8 @@ const ShadowPropertySchema = new mongoose.Schema({
       parks: [{ name: String, distanceM: Number }],
       gyms: [{ name: String, distanceM: Number }],
       cafes: [{ name: String, distanceM: Number }],
+      restaurants: [{ name: String, distanceM: Number }],
+      worship: [{ name: String, distanceM: Number }],
       source: { type: String, enum: ['live', 'cache', 'seed'] },
     },
     // ShadowProperty stores localNews inline
@@ -77,8 +84,7 @@ const ShadowPropertySchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['fetching', 'completed'],
-    // NOTE: 'failed' status does not exist — pipeline always completes via waterfall
+    enum: ['fetching', 'completed', 'failed'],
     default: 'fetching',
   },
   expiresAt: { type: Date, required: true },

@@ -55,7 +55,7 @@ export async function getOrFetchClusterSignal(clusterId, lat, lng, signalType, c
     const cached = await redisGet(`cluster:${clusterId}:${signalType}`);
     if (cached) {
       const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return { ...parsed, source: 'live' };
+      return { ...parsed, source: 'cache' };
     }
   } catch {
     // Redis miss — continue
@@ -116,6 +116,8 @@ export async function fetchAmenitiesWithFallback(lat, lng, clusterId, cityName) 
 export function getFallbackSignal(signalType, lat, lng, cityName) {
   switch (signalType) {
     case 'AQI': {
+      // NOTE (SF-07): Unreachable in normal pipeline flow — fetchAQI() never returns null
+      // (it has its own Level 4 seasonal fallback). Kept for defensive safety only.
       const value = typeof getSeasonalAQI === 'function' ? getSeasonalAQI(null) : 80;
       const category = value <= 50 ? 'Good'
         : value <= 100 ? 'Satisfactory'
@@ -155,32 +157,35 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
     fetchNewsWithFallback(clusterId, cityName),
   ]);
 
-  // Single Redis key per session — EX 7200 (2 hours)
-  if (sessionId) {
-    await redisSet(
-      `session:${sessionId}:intelligence`,
-      JSON.stringify({ aqi, noise, solar, weather, amenities, localNews }),
-      7200,
+  // SF-02: Removed dead Redis write — session:{sessionId}:intelligence was never read
+  // Intelligence is persisted to MongoDB (ShadowProperty) and read from there by report generation
+
+  // RACE-01: Wrap finalization in try/catch — set status:'failed' if writes fail
+  try {
+    await ShadowProperty.findByIdAndUpdate(shadowPropertyId, {
+      intelligence: { aqi, noise, solar, weather, amenities, localNews },
+      dataSource: {
+        aqi:       aqi.source,
+        noise:     noise.source,
+        solar:     solar.source,
+        weather:   weather.source,
+        amenities: amenities.source,
+        localNews: localNews.source,
+      },
+      status: 'completed',
+    });
+
+    // Update cluster lastSearchedAt
+    await Cluster.findOneAndUpdate(
+      { clusterId },
+      { lastSearchedAt: new Date() },
     );
+  } catch (err) {
+    console.error(`[Pipeline] Finalization failed for ${shadowPropertyId}:`, err.message);
+    try {
+      await ShadowProperty.findByIdAndUpdate(shadowPropertyId, { status: 'failed' });
+    } catch (innerErr) {
+      console.error(`[Pipeline] Could not set failed status:`, innerErr.message);
+    }
   }
-
-  // Persist to MongoDB — ShadowProperty intelligence + dataSource + status
-  await ShadowProperty.findByIdAndUpdate(shadowPropertyId, {
-    intelligence: { aqi, noise, solar, weather, amenities, localNews },
-    dataSource: {
-      aqi:       aqi.source,
-      noise:     noise.source,
-      solar:     solar.source,
-      weather:   weather.source,
-      amenities: amenities.source,
-      localNews: localNews.source,
-    },
-    status: 'completed',
-  });
-
-  // Update cluster lastSearchedAt
-  await Cluster.findOneAndUpdate(
-    { clusterId },
-    { lastSearchedAt: new Date() },
-  );
 }

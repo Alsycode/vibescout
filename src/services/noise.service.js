@@ -30,6 +30,8 @@ function noiseCategory(db) {
 async function fetchFromHowLoud(lat, lng) {
   if (!process.env.HOWLOUD_API_KEY) return null;
   try {
+    // NOTE (INT-02): Plain HTTP — verify HTTPS support with diagnostics/probe-fetches.mjs
+    // before changing to https://. If HTTPS unsupported, request fails fast and falls to Level 2.
     const url =
       `http://elb1.howloud.com/score` +
       `?key=${process.env.HOWLOUD_API_KEY}&latitude=${lat}&longitude=${lng}`;
@@ -140,6 +142,8 @@ async function estimateNoiseWithGroq(clusterId, floorLevel) {
 
 // Full 3-level noise waterfall — never returns null
 // floorLevel: from userProvidedSpecs.floor — used for GROQ context
+// NOTE (SF-08): floorLevel is always 'Unknown' in the pipeline because the pipeline
+// runs before the user submits property details in Step 4. Architectural constraint — by design.
 export async function fetchNoise(lat, lng, clusterId, floorLevel = 'Unknown') {
   // Level 1: HowLoud at exact coordinates
   const live = await fetchFromHowLoud(lat, lng);

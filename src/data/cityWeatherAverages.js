@@ -68,6 +68,38 @@ export const CITY_WEATHER_AVERAGES = {
     sep: { temp: 30, humidity: 72 }, oct: { temp: 30, humidity: 58 },
     nov: { temp: 25, humidity: 48 }, dec: { temp: 20, humidity: 52 },
   },
+  rajasthan: {
+    jan: { temp: 15, humidity: 45 }, feb: { temp: 18, humidity: 40 },
+    mar: { temp: 24, humidity: 32 }, apr: { temp: 30, humidity: 25 },
+    may: { temp: 35, humidity: 22 }, jun: { temp: 34, humidity: 45 },
+    jul: { temp: 30, humidity: 72 }, aug: { temp: 29, humidity: 75 },
+    sep: { temp: 29, humidity: 60 }, oct: { temp: 27, humidity: 40 },
+    nov: { temp: 21, humidity: 38 }, dec: { temp: 16, humidity: 45 },
+  },
+  westbengal: {
+    jan: { temp: 16, humidity: 65 }, feb: { temp: 20, humidity: 58 },
+    mar: { temp: 26, humidity: 50 }, apr: { temp: 30, humidity: 55 },
+    may: { temp: 32, humidity: 65 }, jun: { temp: 31, humidity: 80 },
+    jul: { temp: 30, humidity: 85 }, aug: { temp: 30, humidity: 86 },
+    sep: { temp: 30, humidity: 82 }, oct: { temp: 27, humidity: 72 },
+    nov: { temp: 22, humidity: 62 }, dec: { temp: 17, humidity: 65 },
+  },
+  telangana: {
+    jan: { temp: 20, humidity: 52 }, feb: { temp: 23, humidity: 45 },
+    mar: { temp: 27, humidity: 40 }, apr: { temp: 32, humidity: 38 },
+    may: { temp: 35, humidity: 42 }, jun: { temp: 30, humidity: 72 },
+    jul: { temp: 27, humidity: 78 }, aug: { temp: 27, humidity: 80 },
+    sep: { temp: 27, humidity: 75 }, oct: { temp: 25, humidity: 68 },
+    nov: { temp: 22, humidity: 58 }, dec: { temp: 19, humidity: 55 },
+  },
+  andhrapradesh: {
+    jan: { temp: 22, humidity: 62 }, feb: { temp: 25, humidity: 58 },
+    mar: { temp: 28, humidity: 55 }, apr: { temp: 32, humidity: 60 },
+    may: { temp: 35, humidity: 62 }, jun: { temp: 31, humidity: 72 },
+    jul: { temp: 29, humidity: 78 }, aug: { temp: 29, humidity: 80 },
+    sep: { temp: 28, humidity: 78 }, oct: { temp: 26, humidity: 72 },
+    nov: { temp: 23, humidity: 68 }, dec: { temp: 21, humidity: 62 },
+  },
   national_default: {
     jan: { temp: 18, humidity: 58 }, feb: { temp: 21, humidity: 52 },
     mar: { temp: 26, humidity: 48 }, apr: { temp: 31, humidity: 44 },
@@ -91,6 +123,12 @@ export const WEATHER_STATE_NAME_MAP = {
   'uttarpradesh': 'uttarpradesh',
   'haryana': 'haryana',
   'gujarat': 'gujarat',
+  'rajasthan': 'rajasthan',
+  'west bengal': 'westbengal',
+  'westbengal': 'westbengal',
+  'telangana': 'telangana',
+  'andhra pradesh': 'andhrapradesh',
+  'andhrapradesh': 'andhrapradesh',
 };
 
 export function getSeasonalWeather(stateName) {

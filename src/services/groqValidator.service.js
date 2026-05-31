@@ -38,6 +38,19 @@ export function validateGroqOutput(groqResponse, inputVerdictObject, listingType
     if (!allowedKeys.includes(key)) delete parsed[key];
   }
 
+  // SF-03: Validate all required label keys are present and non-empty
+  // Partial GROQ responses must trigger template fallback, not produce undefined labels
+  const requiredStringKeys = [
+    'noiseLabel', 'aqiLabel', 'solarLabel', 'amenityLabel',
+    'budgetLabel', 'commuteLabel', 'verdict', 'newsLabel',
+    ...(listingType === 'sale' ? ['financialNote'] : ['rentalNote']),
+  ];
+  for (const key of requiredStringKeys) {
+    if (!parsed[key] || typeof parsed[key] !== 'string' || parsed[key].trim() === '') {
+      return null; // partial GROQ output — triggers template fallback
+    }
+  }
+
   if (Array.isArray(parsed.matchKeywords)) {
     parsed.matchKeywords = parsed.matchKeywords
       .filter(k => ALLOWED_KEYWORDS.includes(k))

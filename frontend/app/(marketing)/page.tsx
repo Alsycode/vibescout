@@ -434,8 +434,8 @@ export default function LandingPage() {
                 Run an intelligence audit before you commit. It takes less than 5 minutes.
               </p>
 
-              {/* <CtaButton href="/analyze"> */}
-              <CtaButton href="#">
+              <CtaButton href="/#"> 
+          
                 Audit a Property Now
               </CtaButton>
 

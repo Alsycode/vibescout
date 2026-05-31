@@ -151,7 +151,8 @@ const ch = window.innerHeight;
       const progress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
       scrollProgress.set(progress);
 
-      const idx = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1)), TOTAL_FRAMES - 1);
+      const frameMultiplier = isMobile() ? 1.6 : 1;
+      const idx = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1) * frameMultiplier), TOTAL_FRAMES - 1);
       currentFrame.current = idx;
 
       if (idx !== lastDrawnFrame.current) {

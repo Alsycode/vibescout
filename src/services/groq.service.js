@@ -1,7 +1,7 @@
 // FILE: src/services/groq.service.js
 // PURPOSE: Layer 2 — constrained GROQ formatter. Receives verdict object, returns raw GROQ response for validateGroqOutput to parse.
 
-import fetch from 'node-fetch';
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 const GROQ_SYSTEM_PROMPT = `You are a property report formatter. You receive a verdict object containing computed verdict keys and numeric values only. Your ONLY job is to write one short sentence (max 20 words) for each label key using ONLY the values provided.
 
@@ -21,7 +21,7 @@ For newsLabel, write one sentence (max 20 words) summarizing the provided newsHe
 
 export async function callGroq(factSheet, listingType) {
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const response = await fetchWithTimeout('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export async function callGroq(factSheet, listingType) {
           { role: 'user',   content: JSON.stringify(factSheet) },
         ],
       }),
-    });
+    }, 10000);
 
     const data = await response.json();
 

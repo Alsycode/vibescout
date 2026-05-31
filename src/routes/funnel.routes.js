@@ -38,6 +38,11 @@ router.post('/save', requireAuth, async (req, res, next) => {
       const user = await User.findById(req.user.userId);
       const preferences = user.preferences;
 
+      // FAIL-02: Guard against incomplete preferences before verdict computation
+      if (!preferences?.step1 || !preferences?.step3 || !preferences?.step4 || !preferences?.step5 || !preferences?.step7) {
+        return res.status(400).json({ error: 'Funnel steps incomplete. Please complete all steps before submitting.' });
+      }
+
       const verdictObject = computeAllVerdicts(sp, preferences);
       const { compositeScore, tier, breakdown } = computeLeadScore(preferences, sp, verdictObject);
 

@@ -74,6 +74,17 @@ function computeFinancialScores(userProvidedSpecs, preferences) {
   };
 }
 
+// FAIL-02: Guard against incomplete funnel preferences before verdict computation
+function validatePreferencesComplete(preferences) {
+  const missing = [];
+  if (!preferences?.step1?.wfhStatus) missing.push('step1 (commute)');
+  if (!preferences?.step3?.noiseSensitivity || !preferences?.step3?.aqiSensitivity) missing.push('step3 (sensitivities)');
+  if (!preferences?.step4?.facingDirection) missing.push('step4 (property details)');
+  if (!Array.isArray(preferences?.step5?.amenityPriorities)) missing.push('step5 (amenity priorities)');
+  if (!preferences?.step7?.monthlyHouseholdIncome) missing.push('step7 (income)');
+  return missing;
+}
+
 // GET /report/generate
 router.get('/generate', requireAuth, async (req, res, next) => {
   try {
@@ -96,7 +107,22 @@ router.get('/generate', requireAuth, async (req, res, next) => {
     }
 
     if (sp.status === 'fetching') {
+      // RACE-01: TTL-based recovery — treat as failed if stuck for over 5 minutes
+      const ageMs = Date.now() - new Date(sp.createdAt).getTime();
+      if (ageMs > 5 * 60 * 1000) {
+        return res.status(500).json({ status: 'failed', message: 'Intelligence fetch timed out. Please try again.' });
+      }
       return res.json({ status: 'pending', retryAfter: 3 });
+    }
+
+    // RACE-01: Explicit failed status from pipeline
+    if (sp.status === 'failed') {
+      return res.status(500).json({ status: 'failed', message: 'Intelligence fetch failed. Please try again.' });
+    }
+
+    // SF-04 + RACE-02: Ensure property context is submitted before generating report
+    if (!sp.userProvidedSpecs?.listingType || !sp.userProvidedSpecs?.budgetBracket) {
+      return res.status(400).json({ status: 'incomplete', message: 'Property context (listing type and budget) not yet submitted.' });
     }
 
     const user = await User.findById(req.user.userId);
@@ -109,6 +135,12 @@ router.get('/generate', requireAuth, async (req, res, next) => {
     }
 
     const preferences = user.preferences;
+
+    // FAIL-02: Validate all required preference steps before verdict computation
+    const missingSteps = validatePreferencesComplete(preferences);
+    if (missingSteps.length > 0) {
+      return res.status(400).json({ status: 'incomplete', message: `Funnel steps incomplete: ${missingSteps.join(', ')}` });
+    }
 
     const verdictObject = computeAllVerdicts(sp, preferences);
     const financialScores = computeFinancialScores(sp.userProvidedSpecs, preferences);
@@ -186,24 +218,36 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       },
     };
 
+    // RACE-03: Atomic push with duplicate guard — only push if sessionId not already in reportHistory
     const shareToken = crypto.randomBytes(16).toString('hex');
 
-    await User.findByIdAndUpdate(req.user.userId, {
-      $push: {
-        reportHistory: {
-          sessionId,
-          listingType: sp.userProvidedSpecs.listingType,
-          propertyName: sp.name,
-          reportSnapshot: report,
-          shareToken,
-          generatedAt: new Date(),
+    const updateResult = await User.updateOne(
+      { _id: req.user.userId, 'reportHistory.sessionId': { $ne: sessionId } },
+      {
+        $push: {
+          reportHistory: {
+            sessionId,
+            listingType: sp.userProvidedSpecs.listingType,
+            propertyName: sp.name,
+            reportSnapshot: report,
+            shareToken,
+            generatedAt: new Date(),
+          },
         },
       },
-    });
+    );
+
+    // If duplicate suppressed (modifiedCount === 0), fetch existing entry's shareToken
+    let finalShareToken = shareToken;
+    if (updateResult.modifiedCount === 0) {
+      const existingUser = await User.findById(req.user.userId);
+      const existingEntry = existingUser?.reportHistory?.find(r => r.sessionId === sessionId);
+      finalShareToken = existingEntry?.shareToken ?? shareToken;
+    }
 
     await redisSet(`report:${sessionId}`, JSON.stringify(report), 604800);
 
-    res.json({ report, shareToken, paid });
+    res.json({ report, shareToken: finalShareToken, paid });
   } catch (err) {
     next(err);
   }

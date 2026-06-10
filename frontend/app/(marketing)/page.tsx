@@ -6,6 +6,10 @@ import LoadingScreen from "../../components/LoadingScreen";
 import HeroCanvas from "../../components/HeroCanvas";
 import Link from 'next/link';
 import TestimonialsSection from "@/components/TestimonialsSection";
+import LocationIntelligence from "@/components/vibescout/location-intelligence";
+import ReportPreview from "@/components/vibescout/report-preview";
+import IntelligenceEngine from "@/components/vibescout/intelligence-engine";
+import SignalsRefined from "@/components/vibescout/signals-refined";
 const SIGNALS = [
   {
     title: 'Air & Noise',
@@ -378,10 +382,35 @@ export default function LandingPage() {
 
      <SectionDivider />
 
-{/* ═══════════════════════════════════════════════════════
-    TESTIMONIALS
-═══════════════════════════════════════════════════════ */}
+        {/* ═══════════════════════════════════════════════════════
+            LOCATION INTELLIGENCE
+        ═══════════════════════════════════════════════════════ */}
+        <div style={{ padding: '80px 0 0' }}>
+          <LocationIntelligence />
+        </div>
 
+        {/* ═══════════════════════════════════════════════════════
+            REPORT PREVIEW
+        ═══════════════════════════════════════════════════════ */}
+        <div style={{ paddingBottom: '80px' }}>
+          <ReportPreview />
+        </div>
+
+        <SectionDivider />
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 5 — INTELLIGENCE ENGINE
+        ═══════════════════════════════════════════════════════ */}
+        <div style={{ paddingBottom: '40px' }}>
+          <IntelligenceEngine />
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════
+            SECTION 6 — SIGNALS (REFINED)
+        ═══════════════════════════════════════════════════════ */}
+        <div style={{ paddingBottom: '80px' }}>
+          <SignalsRefined />
+        </div>
 
 <SectionDivider />
  

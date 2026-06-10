@@ -83,36 +83,74 @@ async function reverseGeocodeState(lat, lng) {
   }
 }
 
-// Level 1: OpenAQ live data
+// Level 1: OpenAQ v3 live data
+// Strategy: (a) find nearby monitoring stations via /v3/locations?coordinates,
+//           (b) fetch /v3/locations/{id}/latest for up to 3 stations in parallel,
+//           (c) match pm25/pm10 sensor IDs from the location payload.
 async function fetchFromOpenAQ(lat, lng) {
+  if (!process.env.OPENAQ_API_KEY) return null;
   try {
-    const url = `https://api.openaq.org/v2/latest?coordinates=${lat},${lng}&radius=5000&limit=10`;
-    const res = await fetchWithTimeout(
-      url,
+    // Step A — find nearest stations (includes sensor list with parameter names)
+    const locUrl =
+      `https://api.openaq.org/v3/locations` +
+      `?coordinates=${lat},${lng}&radius=10000&limit=5`;
+    const locRes = await fetchWithTimeout(
+      locUrl,
       { headers: { 'X-API-Key': process.env.OPENAQ_API_KEY } },
-      5000
+      8000,
     );
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data.results?.length) return null;
+    if (!locRes.ok) return null;
+    const locData = await locRes.json();
+    if (!locData.results?.length) return null;
 
-    // Collect all PM2.5 and PM10 readings
-    let pm25Values = [];
-    let pm10Values = [];
-    for (const result of data.results) {
-      for (const m of result.measurements ?? []) {
-        if (m.parameter === 'pm25' && m.value > 0) pm25Values.push(m.value);
-        if (m.parameter === 'pm10' && m.value > 0) pm10Values.push(m.value);
-      }
-    }
+    // Step B — fetch latest readings for the nearest 3 stations in parallel
+    const pm25Values = [];
+    const pm10Values = [];
 
+    await Promise.all(
+      locData.results.slice(0, 3).map(async (loc) => {
+        // Build sensor-ID sets for pm25 and pm10 from the location payload
+        const pm25Ids = new Set(
+          (loc.sensors ?? [])
+            .filter((s) => s.parameter?.name === 'pm25')
+            .map((s) => s.id),
+        );
+        const pm10Ids = new Set(
+          (loc.sensors ?? [])
+            .filter((s) => s.parameter?.name === 'pm10')
+            .map((s) => s.id),
+        );
+        if (!pm25Ids.size && !pm10Ids.size) return;
+
+        try {
+          const latestRes = await fetchWithTimeout(
+            `https://api.openaq.org/v3/locations/${loc.id}/latest`,
+            { headers: { 'X-API-Key': process.env.OPENAQ_API_KEY } },
+            5000,
+          );
+          if (!latestRes.ok) return;
+          const latestData = await latestRes.json();
+
+          for (const reading of latestData.results ?? []) {
+            if (reading.value > 0) {
+              if (pm25Ids.has(reading.sensorsId)) pm25Values.push(reading.value);
+              else if (pm10Ids.has(reading.sensorsId)) pm10Values.push(reading.value);
+            }
+          }
+        } catch {
+          // per-station failure — skip, continue with others
+        }
+      }),
+    );
+
+    // Step C — convert best available pollutant to Indian NAQI AQI
     let aqiValue = null;
     if (pm25Values.length) {
-      const avgPm25 = pm25Values.reduce((a, b) => a + b, 0) / pm25Values.length;
-      aqiValue = pm25ToAQI(avgPm25);
+      const avg = pm25Values.reduce((a, b) => a + b, 0) / pm25Values.length;
+      aqiValue = pm25ToAQI(avg);
     } else if (pm10Values.length) {
-      const avgPm10 = pm10Values.reduce((a, b) => a + b, 0) / pm10Values.length;
-      aqiValue = pm10ToAQI(avgPm10);
+      const avg = pm10Values.reduce((a, b) => a + b, 0) / pm10Values.length;
+      aqiValue = pm10ToAQI(avg);
     }
 
     if (aqiValue === null) return null;

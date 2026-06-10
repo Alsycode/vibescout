@@ -25,23 +25,32 @@ function noiseCategory(db) {
   return 'Extremely Loud';
 }
 
-// Level 1: HowLoud at exact property coordinates
-// Score range 50–100 → dB = 110 - score
+// Level 1: HowLoud v2 at exact property coordinates
+// API: https://api.howloud.com/v2/score
+// Auth: x-api-key header | Params: lat, lng
+// Score 0–100 where 100 = Calm (~30 dB) and 0 = Extremely Loud (~110 dB)
+// Returns null if ZERO_RESULTS (no coverage) so pipeline falls to Level 2/3.
 async function fetchFromHowLoud(lat, lng) {
   if (!process.env.HOWLOUD_API_KEY) return null;
   try {
-    // NOTE (INT-02): Plain HTTP — verify HTTPS support with diagnostics/probe-fetches.mjs
-    // before changing to https://. If HTTPS unsupported, request fails fast and falls to Level 2.
-    const url =
-      `http://elb1.howloud.com/score` +
-      `?key=${process.env.HOWLOUD_API_KEY}&latitude=${lat}&longitude=${lng}`;
-    const res = await fetchWithTimeout(url, {}, 5000);
+    const url = `https://api.howloud.com/v2/score?lat=${lat}&lng=${lng}`;
+    const res = await fetchWithTimeout(
+      url,
+      { headers: { 'x-api-key': process.env.HOWLOUD_API_KEY } },
+      5000,
+    );
     if (!res.ok) return null;
     const data = await res.json();
-    // HowLoud returns { result: [{ score: number }] } or similar
+
+    // ZERO_RESULTS = no sensor coverage for this location — fall to next level
+    if (data?.status === 'ZERO_RESULTS') return null;
+
     const score = data?.result?.[0]?.score ?? data?.score ?? null;
-    if (score === null || score < 50 || score > 100) return null;
-    const estimatedDb = 110 - score;
+    // score must be a valid number in 0–100 range
+    if (score === null || typeof score !== 'number' || score < 0 || score > 100) return null;
+
+    // Convert HowLoud score → estimated dB: score 100 ≈ 10 dB, score 0 ≈ 110 dB
+    const estimatedDb = Math.round(110 - score);
     return {
       estimatedDb,
       category: noiseCategory(estimatedDb),
@@ -115,7 +124,7 @@ async function estimateNoiseWithGroq(clusterId, floorLevel) {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
         },
         body: JSON.stringify({
-          model: 'llama3-8b-8192',
+          model: 'llama-3.1-8b-instant',
           max_tokens: 50,
           temperature: 0.1,
           messages: [

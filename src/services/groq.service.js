@@ -28,7 +28,7 @@ export async function callGroq(factSheet, listingType) {
         'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
       },
       body: JSON.stringify({
-        model: 'llama3-8b-8192',
+        model: 'llama-3.1-8b-instant',
         max_tokens: 500,
         temperature: 0.1,
         messages: [

@@ -32,9 +32,22 @@ const ShadowPropertySchema = new mongoose.Schema({
       source: { type: String, enum: ['live', 'cache', 'city_average', 'seasonal'] },
     },
     noise: {
-      estimatedDb: Number,
-      category: String,
-      source: { type: String, enum: ['live', 'cache', 'estimated'] },
+      // Core fields — kept for verdictEngine backward-compat
+      estimatedDb:    Number,
+      category:       String,
+      // New fields from Noise Risk Engine v1
+      noiseRiskScore: Number,
+      confidence:     { type: String, enum: ['high', 'medium', 'low'] },
+      factors: [{
+        feature:           String,
+        distanceMeters:    Number,
+        scoreContribution: Number,
+      }],
+      explanation: [String],
+      source: {
+        type: String,
+        enum: ['live', 'cache', 'estimated', 'osm_live', 'osm_cache', 'ai_estimation'],
+      },
     },
     solar: {
       peakSunHours: Number,

@@ -29,15 +29,22 @@ const ClusterSchema = new mongoose.Schema({
     updatedAt: Date,
   },
   cachedNoise: {
-    score: Number,
-    estimatedDb: Number,
-    category: String,
-    profile: {
-      morning: String,
-      afternoon: String,
-      night: String,
+    // Core fields — kept for verdictEngine backward-compat
+    estimatedDb:    Number,
+    category:       String,
+    // New fields from Noise Risk Engine v1
+    noiseRiskScore: Number,
+    confidence:     { type: String, enum: ['high', 'medium', 'low'] },
+    factors: [{
+      feature:           String,
+      distanceMeters:    Number,
+      scoreContribution: Number,
+    }],
+    explanation: [String],
+    source: {
+      type: String,
+      enum: ['osm_live', 'osm_cache', 'ai_estimation', 'estimated'],
     },
-    source: { type: String, enum: ['howloud', 'estimated'] },
     updatedAt: Date,
   },
   cachedAmenities: {

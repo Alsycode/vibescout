@@ -91,11 +91,20 @@ export async function getOrFetchClusterSignal(clusterId, lat, lng, signalType, c
 
 export async function fetchNoiseWithFallback(lat, lng, clusterId, cityName) {
   try {
-    const result = await fetchNoise(lat, lng, clusterId);
+    const result = await fetchNoise(lat, lng, clusterId, cityName);
     return result;
   } catch (err) {
     console.error('[Pipeline] Noise waterfall error:', err.message);
-    return { estimatedDb: 55, category: 'Moderate', source: 'estimated' };
+    // Absolute fallback — matches new Noise Risk Engine v1 output shape
+    return {
+      noiseRiskScore: 40,
+      estimatedDb:    58,
+      category:       'Moderate',
+      confidence:     'low',
+      factors:        [],
+      explanation:    ['Unable to fetch noise data — default moderate estimate applied'],
+      source:         'estimated',
+    };
   }
 }
 

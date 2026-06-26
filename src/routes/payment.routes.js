@@ -91,4 +91,26 @@ router.post('/verify', requireAuth, async (req, res, next) => {
   }
 });
 
+// POST /payment/dev-unlock — TEST ONLY. Skips Razorpay and unlocks the report
+// directly. Hard-disabled in production. Lets you test the unlocked report
+// without completing a real/test gateway payment.
+router.post('/dev-unlock', requireAuth, async (req, res, next) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ error: 'Not available in production' });
+  }
+  try {
+    const { sessionId } = req.body;
+    if (!sessionId) {
+      return res.status(400).json({ error: 'sessionId is required' });
+    }
+    await User.findByIdAndUpdate(req.user.userId, {
+      $addToSet: { unlockedReports: sessionId },
+    });
+    log('dev-unlock', 'Report unlocked WITHOUT payment (dev only)', { sessionId, userId: req.user.userId });
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

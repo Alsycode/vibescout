@@ -1,502 +1,291 @@
 'use client';
 
-import Image from 'next/image';
-import PieChart from './pie-chart';
+// Section 5: WHAT YOU RECEIVE — Verdict Showcase
+// 680px IntelligenceCard centered, verdictStamp animation on entry
+
+import { useRef, useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import IntelligenceCard from '@/components/IntelligenceCard';
 
 export default function ReportPreview() {
-  const REPORT_W = 400;
-  const REPORT_ABOVE = 400;   // more card sits above the panel
-  const REPORT_H = 560;
-  const REPORT_INSIDE = REPORT_H - REPORT_ABOVE; // 160px overlap
+  const sectionRef = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
 
-  /* ── Env metrics (icon + label + value + bar) ── */
-  const envMetrics = [
-    {
-      svg: (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" aria-hidden="true">
-          <path d="M9.59 4.59A2 2 0 1111 8H2m10.59 11.41A2 2 0 1014 16H2m15.73-8.27A2.5 2.5 0 1119.5 12H2" />
-        </svg>
-      ),
-      label: 'Air Quality',
-      value: '42 AQI',
-      fill: 0.42,
-    },
-    {
-      svg: (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" aria-hidden="true">
-          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-          <path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07" />
-        </svg>
-      ),
-      label: 'Noise Levels',
-      value: '35dB',
-      fill: 0.35,
-    },
-    {
-      svg: (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="1.5" aria-hidden="true">
-          <circle cx="12" cy="12" r="5" />
-          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-        </svg>
-      ),
-      label: 'Sunlight Yield',
-      value: '87%',
-      fill: 0.87,
-    },
-  ];
-
-  const lifestyleMetrics = [
-    { label: 'Commute',    value: '15m',       fill: 0.25 },
-    { label: 'Community',  value: 'High',       fill: 0.80 },
-    { label: 'Amenities',  value: 'Excellent',  fill: 0.92 },
-  ];
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) { setVisible(true); obs.disconnect(); }
+      },
+      { threshold: 0.10 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   return (
-    <>
+    <section
+      ref={sectionRef}
+      id="sample"
+      className="section-pad-std"
+      style={{
+        background:      '#080812',
+        backgroundImage: 'var(--grid-bg-image)',
+        backgroundSize:  '64px 64px',
+        position:        'relative',
+        overflow:        'hidden',
+      }}
+    >
+      {/* Inline keyframe for verdictStamp */}
       <style>{`
-        /* ── focus ring ── */
-        .rp-cta:focus-visible { outline: 2px solid #D4AF37; outline-offset: 3px; }
-
-        /* ── tablet card edge bleeds ── */
-        .tablet-card-wrap { position: relative; }
-
-        /* top bleed */
-        .tablet-card-wrap::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 50%; transform: translateX(-50%);
-          width: 50%; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(212,175,55,0.9) 50%, transparent);
-          box-shadow: 0 0 15px 3px rgba(212,175,55,0.5);
-          pointer-events: none; z-index: 20;
+        @keyframes verdictStamp {
+          0%   { opacity: 0; transform: scale(1.08); filter: blur(2px); }
+          60%  { opacity: 1; transform: scale(0.97); filter: blur(0); }
+          80%  { transform: scale(1.01); }
+          100% { transform: scale(1); }
         }
-        /* bottom bleed */
-        .tablet-card-wrap::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 50%; transform: translateX(-50%);
-          width: 50%; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(212,175,55,0.9) 50%, transparent);
-          box-shadow: 0 0 15px 3px rgba(212,175,55,0.5);
-          pointer-events: none; z-index: 20;
-        }
-        /* left bleed */
-        .tablet-bleed-left {
-          position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-          width: 1px; height: 50%;
-          background: linear-gradient(180deg, transparent, rgba(212,175,55,0.9) 50%, transparent);
-          box-shadow: 0 0 15px 3px rgba(212,175,55,0.5);
-          pointer-events: none; z-index: 20;
-        }
-        /* right bleed */
-        .tablet-bleed-right {
-          position: absolute; right: 0; top: 50%; transform: translateY(-50%);
-          width: 1px; height: 50%;
-          background: linear-gradient(180deg, transparent, rgba(212,175,55,0.9) 50%, transparent);
-          box-shadow: 0 0 15px 3px rgba(212,175,55,0.5);
-          pointer-events: none; z-index: 20;
-        }
-
-        /* ── bottom panel wrapper top bleed ── */
-        .bottom-panel-wrap { position: relative; }
-        .bottom-panel-wrap::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 50%; transform: translateX(-50%);
-          width: 40%; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(212,175,55,0.8) 50%, transparent);
-          box-shadow: 0 0 12px 2px rgba(212,175,55,0.4);
-          pointer-events: none; z-index: 2;
-        }
-
-        /* ── each analytics card top bleed ── */
-        .analytics-card { position: relative; }
-        .analytics-card::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 50%; transform: translateX(-50%);
-          width: 55%; height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(212,175,55,0.75) 50%, transparent);
-          box-shadow: 0 0 10px 2px rgba(212,175,55,0.35);
-          pointer-events: none; z-index: 2;
-        }
-
-        /* ── reduced motion ── */
-        @media (prefers-reduced-motion: reduce) {
-          .rp-cta { transition: none !important; }
+        .verdict-stamp-enter {
+          animation: verdictStamp 500ms cubic-bezier(0.34,1.56,0.64,1) both;
         }
       `}</style>
 
-      {/* ── SECTION WRAPPER with bg ── */}
-      <section style={{
-        padding: '120px 48px 0',
-        maxWidth: '1000px',
-        margin: '0 auto',
-        background: 'radial-gradient(ellipse at 50% 30%, #1a1400 0%, #000000 70%)',
-        borderRadius: '32px',
-      }}>
+      {/* Ambient green glow behind card */}
+      <div
+        aria-hidden
+        style={{
+          position:      'absolute',
+          inset:         0,
+          pointerEvents: 'none',
+          background:
+            'radial-gradient(ellipse 700px 500px at 50% 55%, rgba(52,211,153,0.04) 0%, transparent 70%)',
+        }}
+      />
 
-        {/* ── Section header ── */}
-        <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          {/* eyebrow — point 2 */}
-          <p style={{
-            fontSize: '11px',
-            fontWeight: 400,
-            letterSpacing: '0.15em',
-            textTransform: 'uppercase',
-            color: '#D4AF37',
-            fontFamily: "'Outfit', sans-serif",
-            marginBottom: '10px',
-          }}>
-            CONTINUE SECTION
-          </p>
-          <h2 style={{
-            fontSize: '30px',
-            fontWeight: 600,
-            letterSpacing: '0.18em',
-            textTransform: 'uppercase',
-            color: '#F5F2EA',
-            fontFamily: "'Outfit', sans-serif",
-            margin: 0,
-            lineHeight: 1,
-          }}>
-            REPORT PREVIEW
-          </h2>
-        </div>
-
-        {/* ── Composition wrapper ── */}
-        <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-          {/* ── Radiant background image aura behind tablet ── */}
-          <div aria-hidden="true" style={{
-            position: 'absolute',
-            top: '-180px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '820px',
-            height: '780px',
-            pointerEvents: 'none',
-            zIndex: 0,
-            /* radial mask: opaque in center, dissolves to transparent at edges */
-            maskImage: 'radial-gradient(ellipse 55% 55% at 50% 46%, #000 0%, #000 28%, transparent 72%)',
-            WebkitMaskImage: 'radial-gradient(ellipse 55% 55% at 50% 46%, #000 0%, #000 28%, transparent 72%)',
-          }}>
-            <Image
-              src="/radiant-backgroun.png"
-              alt=""
-              fill
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin:   '0 auto',
+          position: 'relative',
+        }}
+      >
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          style={{ textAlign: 'center', marginBottom: '64px' }}
+        >
+          {/* Eyebrow with flanking lines */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '22px' }}>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={visible ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
               style={{
-                objectFit: 'cover',
-                objectPosition: 'center center',
-                opacity: 0.38,
-                mixBlendMode: 'screen',
+                height:          '1px',
+                width:           '48px',
+                flexShrink:      0,
+                transformOrigin: 'right center',
+                background:      'linear-gradient(270deg, rgba(34,211,238,0.55) 0%, transparent 100%)',
               }}
-              sizes="820px"
+            />
+            <span style={{
+              fontFamily:    "'Inter', sans-serif",
+              fontSize:      '10px',
+              fontWeight:    600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.14em',
+              color:         'rgba(34,211,238,0.75)',
+              whiteSpace:    'nowrap',
+            }}>
+              WHAT YOU RECEIVE
+            </span>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={visible ? { scaleX: 1 } : { scaleX: 0 }}
+              transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+              style={{
+                height:          '1px',
+                width:           '48px',
+                flexShrink:      0,
+                transformOrigin: 'left center',
+                background:      'linear-gradient(90deg, rgba(34,211,238,0.55) 0%, transparent 100%)',
+              }}
             />
           </div>
 
-          {/* ══════════════════════════════════
-              TABLET CARD — points 3, 5
-          ══════════════════════════════════ */}
-          <div
-            className="tablet-card-wrap"
-            style={{
-              position: 'relative',
-              zIndex: 10,
-              width: `${REPORT_W}px`,
-              marginBottom: `-${REPORT_INSIDE}px`,
-              borderRadius: '14px',
-              overflow: 'visible',
-            }}
-          >
-            {/* Left / right edge bleeds — point 5 */}
-            <div className="tablet-bleed-left" />
-            <div className="tablet-bleed-right" />
-
-            {/* The card itself — flat, no tilt */}
-            <div style={{
-              background: 'linear-gradient(170deg, #141414 0%, #090909 100%)',
-              border: '1px solid rgba(212,175,55,0.5)',
-              borderRadius: '14px',
-              overflow: 'hidden',
-              boxShadow: '0 0 30px rgba(212,175,55,0.2)',
+          {/* Instrument Serif italic heading */}
+          <h2 style={{ margin: '0 0 20px' }}>
+            <span style={{
+              display:       'block',
+              fontFamily:    "'Instrument Serif', serif",
+              fontStyle:     'normal',
+              fontSize:      'clamp(30px, 3.4vw, 50px)',
+              fontWeight:    400,
+              letterSpacing: '-0.01em',
+              lineHeight:    1.16,
+              color:         'rgba(255,255,255,0.92)',
             }}>
+              A complete intelligence report.
+            </span>
+            <span style={{
+              display:       'block',
+              fontFamily:    "'Instrument Serif', serif",
+              fontStyle:     'normal',
+              fontSize:      'clamp(30px, 3.4vw, 50px)',
+              fontWeight:    400,
+              letterSpacing: '-0.01em',
+              lineHeight:    1.16,
+              color:         '#22D3EE',
+              textShadow:    '0 0 40px rgba(34,211,238,0.22)',
+            }}>
+              In under 5 minutes.
+            </span>
+          </h2>
 
-              {/* Brand bar */}
-              <div style={{
-                padding: '11px 18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                borderBottom: '1px solid rgba(255,255,255,0.05)',
-                background: 'rgba(255,255,255,0.02)',
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <div style={{
-                    width: '18px', height: '18px', borderRadius: '4px',
-                    background: 'rgba(212,175,55,0.14)',
-                    border: '1px solid rgba(212,175,55,0.40)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <svg width="8" height="8" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                      <circle cx="5" cy="5" r="3.5" fill="#D4AF37" />
-                    </svg>
-                  </div>
-                  <span style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', color: '#D4AF37', fontFamily: "'Outfit', sans-serif" }}>
-                    VIBESCOUT
-                  </span>
-                </div>
-                <span style={{ fontSize: '8px', color: 'rgba(245,242,234,0.25)', fontFamily: "'Outfit', sans-serif", letterSpacing: '0.05em' }}>
-                  Dublin Property Report — v1
-                </span>
-              </div>
+          {/* Body */}
+          <p style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize:   '15px',
+            fontWeight: 400,
+            lineHeight: 1.78,
+            color:      'rgba(255,255,255,0.42)',
+            maxWidth:   '540px',
+            margin:     '0 auto',
+          }}>
+            Every VibeScout report includes all six signals, a consolidated
+            verdict, raw data sources, and a generation timestamp. No
+            subscriptions. ₹199 per report, generated live.
+          </p>
+        </motion.div>
 
-              {/* Hero image */}
-              <div style={{ position: 'relative', height: '230px' }}>
-                <Image
-                  src="/luxury-villa.png"
-                  alt="Luxury villa property"
-                  fill
-                  style={{ objectFit: 'cover', objectPosition: 'center top' }}
-                  sizes="400px"
-                />
-                <div aria-hidden="true" style={{ position: 'absolute', inset: 0, boxShadow: 'inset 0 0 50px rgba(0,0,0,0.55)', pointerEvents: 'none' }} />
-                <div aria-hidden="true" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '58%', background: 'linear-gradient(transparent, rgba(9,9,9,0.95))' }} />
-              </div>
-
-              {/* Title block */}
-              <div style={{ padding: '16px 18px 12px' }}>
-                <div style={{ fontSize: '7px', fontWeight: 400, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.55)', fontFamily: "'Outfit', sans-serif", marginBottom: '7px' }}>
-                  PROPERTY INTELLIGENCE REPORT
-                </div>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, lineHeight: 1.18, color: '#F5F2EA', fontFamily: "'Outfit', sans-serif", margin: 0 }}>
-                  PROPERTY INTELLIGENCE<br />REPORT: [Property Name]
-                </h3>
-              </div>
-
-              {/* Intelligence mini-cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', padding: '0 18px 16px' }}>
-                {[
-                  { label: 'WHAT CHANGED', text: 'New line construction begins 2025' },
-                  { label: 'WHY IT MATTERS', text: 'Enhanced connectivity, reduced commute' },
-                  { label: 'IMPACT', text: '11% projected property value increase' },
-                ].map((item, i) => (
-                  <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '7px', padding: '9px 8px' }}>
-                    <div style={{ fontSize: '6.5px', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(212,175,55,0.55)', fontFamily: "'Outfit', sans-serif", marginBottom: '5px' }}>
-                      {item.label}
-                    </div>
-                    <div style={{ fontSize: '8.5px', color: 'rgba(245,242,234,0.65)', fontFamily: "'Outfit', sans-serif", lineHeight: 1.45 }}>
-                      {item.text}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Footer */}
-              <div style={{ padding: '7px 18px', borderTop: '1px solid rgba(255,255,255,0.045)', display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '6.5px', color: 'rgba(245,242,234,0.18)', fontFamily: "'Outfit', sans-serif" }}>VIBESCOUT PRIVATE INDEX</span>
-                <span style={{ fontSize: '6.5px', color: 'rgba(245,242,234,0.18)', fontFamily: "'Outfit', sans-serif" }}>vibescout.com/report</span>
-              </div>
-            </div>
-          </div>
-
-          {/* ══════════════════════════════════
-              BOTTOM PANEL WRAPPER — point 6
-          ══════════════════════════════════ */}
+        {/* Card — centered, 680px, verdictStamp on entry */}
+        <div
+          style={{
+            display:        'flex',
+            justifyContent: 'center',
+            opacity:        visible ? 1 : 0,
+            transition:     'opacity 300ms ease 200ms',
+          }}
+        >
           <div
-            className="bottom-panel-wrap"
+            className={visible ? 'verdict-stamp-enter' : ''}
             style={{
-              width: '100%',
-              maxWidth: '860px',
-              /* frosted panel — heavily diffused, near-transparent */
-              background: 'rgba(22,16,4,0.18)',
-              backdropFilter: 'blur(40px) saturate(2.2) brightness(1.18)',
-              WebkitBackdropFilter: 'blur(40px) saturate(2.2) brightness(1.18)',
-              border: '1px solid rgba(212,175,55,0.30)',
-              borderRadius: '12px',
-              padding: '20px',
-              boxShadow: [
-                '0 0 40px rgba(212,175,55,0.12)',
-                'inset 0 0 80px rgba(212,175,55,0.06)',
-                'inset 0 1px 0 rgba(255,248,200,0.18)',
-                'inset 0 -1px 0 rgba(212,175,55,0.08)',
-              ].join(', '),
-              position: 'relative',
-              zIndex: 5,
-              paddingTop: `${REPORT_INSIDE + 28}px`,
+              animationDelay: '300ms',
             }}
           >
-            {/* Analytics row — point 7 */}
-            <div style={{ display: 'flex', gap: '14px', marginBottom: '28px' }}>
-
-              {/* ── Environmental Quality — points 7,8,9 ── */}
-              <div
-                className="analytics-card"
-                style={{
-                  flex: 1,
-                  /* frosted glass — low opacity so warm glow bleeds through */
-                  /* heavy frost — near-invisible fill, max blur */
-                  background: 'linear-gradient(155deg, rgba(255,248,200,0.10) 0%, rgba(24,18,4,0.14) 100%)',
-                  backdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  WebkitBackdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  border: '1px solid rgba(212,175,55,0.38)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '14px',
-                  boxShadow: [
-                    '0 0 22px rgba(212,175,55,0.14)',
-                    'inset 0 0 30px rgba(212,175,55,0.06)',
-                    'inset 0 1px 0 rgba(255,248,200,0.20)',
-                    'inset 0 -1px 0 rgba(212,175,55,0.06)',
-                  ].join(', '),
-                }}
-              >
-                {/* Card title — point 8 */}
-                <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#D4AF37', fontFamily: "'Outfit', sans-serif", lineHeight: 1.4, paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-                  ENVIRONMENTAL<br />QUALITY
-                </div>
-                {envMetrics.map((m, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      {/* Circular gold ring icon — point 9 */}
-                      <div style={{
-                        width: '28px', height: '28px', borderRadius: '50%',
-                        border: '1px solid rgba(212,175,55,0.5)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                        background: 'rgba(212,175,55,0.06)',
-                      }}>
-                        {m.svg}
-                      </div>
-                      <span style={{ flex: 1, fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontFamily: "'Outfit', sans-serif" }}>
-                        {m.label}
-                      </span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', fontFamily: "'Outfit', sans-serif" }}>
-                        {m.value}
-                      </span>
-                    </div>
-                    {/* Gold progress bar — point 9 */}
-                    <div style={{ height: '2px', background: 'rgba(212,175,55,0.12)', borderRadius: '2px', marginLeft: '38px' }}>
-                      <div style={{
-                        width: `${m.fill * 100}%`, height: '100%',
-                        background: 'linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))',
-                        borderRadius: '2px',
-                      }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* ── Lifestyle Fit — points 7,8,10 ── */}
-              <div
-                className="analytics-card"
-                style={{
-                  flex: 1,
-                  /* heavy frost — near-invisible fill, max blur */
-                  background: 'linear-gradient(155deg, rgba(255,248,200,0.10) 0%, rgba(24,18,4,0.14) 100%)',
-                  backdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  WebkitBackdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  border: '1px solid rgba(212,175,55,0.38)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '14px',
-                  boxShadow: [
-                    '0 0 22px rgba(212,175,55,0.14)',
-                    'inset 0 0 30px rgba(212,175,55,0.06)',
-                    'inset 0 1px 0 rgba(255,248,200,0.20)',
-                    'inset 0 -1px 0 rgba(212,175,55,0.06)',
-                  ].join(', '),
-                }}
-              >
-                <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#D4AF37', fontFamily: "'Outfit', sans-serif", lineHeight: 1.4, paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-                  LIFESTYLE<br />FIT
-                </div>
-                {lifestyleMetrics.map((m, i) => (
-                  <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontFamily: "'Outfit', sans-serif" }}>{m.label}</span>
-                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', fontFamily: "'Outfit', sans-serif" }}>{m.value}</span>
-                    </div>
-                    <div style={{ height: '2px', background: 'rgba(212,175,55,0.12)', borderRadius: '2px' }}>
-                      <div style={{
-                        width: `${m.fill * 100}%`, height: '100%',
-                        background: 'linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))',
-                        borderRadius: '2px',
-                      }} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* ── Financial Verdicts — points 7,8,11 ── */}
-              <div
-                className="analytics-card"
-                style={{
-                  flex: 1,
-                  background: 'linear-gradient(155deg, rgba(255,248,200,0.10) 0%, rgba(24,18,4,0.14) 100%)',
-                  backdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  WebkitBackdropFilter: 'blur(40px) saturate(2.4) brightness(1.22)',
-                  border: '1px solid rgba(212,175,55,0.38)',
-                  borderRadius: '12px',
-                  padding: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  boxShadow: [
-                    '0 0 22px rgba(212,175,55,0.14)',
-                    'inset 0 0 30px rgba(212,175,55,0.06)',
-                    'inset 0 1px 0 rgba(255,248,200,0.20)',
-                    'inset 0 -1px 0 rgba(212,175,55,0.06)',
-                  ].join(', '),
-                }}
-              >
-                <div style={{ fontSize: '11px', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#D4AF37', fontFamily: "'Outfit', sans-serif", lineHeight: 1.4, paddingBottom: '8px', borderBottom: '1px solid rgba(212,175,55,0.15)' }}>
-                  FINANCIAL<br />VERDICTS
-                </div>
-                <PieChart />
-              </div>
-            </div>
-
-            {/* ── CTA — point 12 ── */}
-            <div style={{ textAlign: 'center' }}>
-              <button
-                className="rp-cta"
-                aria-label="View full property intelligence report"
-                style={{
-                  background: 'transparent',
-                  color: '#D4AF37',
-                  height: '48px',
-                  paddingInline: '40px',
-                  borderRadius: '10px',
-                  border: '2px solid rgba(212,175,55,0.7)',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  fontFamily: "'Outfit', sans-serif",
-                  cursor: 'pointer',
-                  boxShadow: '0 0 15px rgba(212,175,55,0.3)',
-                  transition: 'box-shadow 0.2s ease, color 0.2s ease',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.boxShadow = '0 0 25px rgba(212,175,55,0.5)';
-                  e.currentTarget.style.color = '#F0CE82';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.boxShadow = '0 0 15px rgba(212,175,55,0.3)';
-                  e.currentTarget.style.color = '#D4AF37';
-                }}
-              >
-                VIEW FULL REPORT
-              </button>
-            </div>
+            <IntelligenceCard
+              width={680}
+              style={{
+                boxShadow: [
+                  '0 0 0 1px rgba(255,255,255,0.04)',
+                  '0 40px 120px rgba(0,0,0,0.70)',
+                  '0 0 160px rgba(52,211,153,0.07)',
+                  'inset 0 1px 0 rgba(255,255,255,0.07)',
+                ].join(', '),
+              }}
+            />
           </div>
         </div>
-      </section>
-    </>
+
+        {/* Feature cards — styled to match intelligence-section card language */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+          transition={{ duration: 0.6, delay: 0.65, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="report-feature-grid"
+          style={{ marginTop: '40px' }}
+        >
+          {[
+            { value: '₹199',         label: 'per report',             rgb: '232,160,48',  color: '#E8A030' },
+            { value: 'LIVE',         label: 'generated · not cached', rgb: '34,211,238',  color: '#22D3EE' },
+            { value: 'NO SUB',       label: 'no subscription needed', rgb: '52,211,153',  color: '#34D399' },
+            { value: 'PDF',          label: 'export included',        rgb: '34,211,238',  color: '#22D3EE' },
+          ].map((f, i) => (
+            <div
+              key={f.value}
+              style={{
+                background:   '#0C0C18',
+                borderRadius: '12px',
+                border:       '1px solid rgba(255,255,255,0.06)',
+                borderTop:    `1px solid rgba(${f.rgb},0.40)`,
+                padding:      '18px 20px',
+                boxShadow: [
+                  `0 0 0 1px rgba(${f.rgb},0.08)`,
+                  `0 0 40px rgba(${f.rgb},0.10)`,
+                  '0 16px 48px rgba(0,0,0,0.50)',
+                  'inset 0 1px 0 rgba(255,255,255,0.05)',
+                ].join(', '),
+                position:     'relative',
+                overflow:     'hidden',
+              }}
+            >
+              {/* Inner top glow */}
+              <div aria-hidden style={{
+                position:      'absolute',
+                top:           0, left: 0, right: 0,
+                height:        '80px',
+                pointerEvents: 'none',
+                background:    `radial-gradient(ellipse 80% 60px at 50% 0%, rgba(${f.rgb},0.12) 0%, transparent 100%)`,
+              }} />
+
+              {/* Status dot */}
+              <div style={{
+                width:        '6px',
+                height:       '6px',
+                borderRadius: '50%',
+                background:   f.color,
+                boxShadow:    `0 0 8px rgba(${f.rgb},0.80)`,
+                marginBottom: '14px',
+              }} />
+
+              {/* Value */}
+              <p style={{
+                fontFamily:    "'Geist Mono', monospace",
+                fontSize:      '22px',
+                fontWeight:    400,
+                color:         f.color,
+                letterSpacing: '-0.02em',
+                lineHeight:    1,
+                margin:        '0 0 6px',
+                textShadow:    `0 0 24px rgba(${f.rgb},0.35)`,
+              }}>
+                {f.value}
+              </p>
+
+              {/* Label */}
+              <p style={{
+                fontFamily:    "'Inter', sans-serif",
+                fontSize:      '11px',
+                fontWeight:    400,
+                color:         'rgba(255,255,255,0.35)',
+                letterSpacing: '0.01em',
+                lineHeight:    1.5,
+                margin:        0,
+              }}>
+                {f.label}
+              </p>
+            </div>
+          ))}
+        </motion.div>
+
+        <style>{`
+          .report-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          @media (max-width: 640px) {
+            .report-feature-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        `}</style>
+      </div>
+    </section>
   );
 }

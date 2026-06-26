@@ -1,7 +1,6 @@
 // FILE: components/ContextScreen.jsx
-// PURPOSE: Pre-funnel context screen — For Sale/For Rent toggle, budget bracket dropdown,
-//          BHK/property type, floor. All 4 required. On submit: normalise budgetBracket to
-//          single field, POST /analyze/:sessionId/context, advance to funnel Step 1.
+// PURPOSE: Step 1 context screen — two-column layout with building illustration on desktop.
+//          All business logic (POST /analyze/:sessionId/context) preserved unchanged.
 
 'use client';
 
@@ -27,12 +26,12 @@ const FLOOR_OPTIONS = [
 ];
 
 const labelStyle = {
-  fontSize: '11px',
-  fontWeight: 400,
-  letterSpacing: '0.04em',
-  color: 'var(--color-text-secondary)',
+  fontSize: '10px',
+  fontWeight: 600,
+  letterSpacing: '0.10em',
+  color: 'rgba(255,255,255,0.35)',
   textTransform: 'uppercase',
-  marginBottom: 'var(--space-xs)',
+  marginBottom: '8px',
   display: 'block',
 };
 
@@ -52,23 +51,22 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      {/* Trigger */}
       <button
         id={id}
         type="button"
         onClick={() => setOpen((o) => !o)}
         style={{
           width: '100%',
-          padding: '12px var(--space-md)',
+          padding: '12px 16px',
           paddingRight: '40px',
-          fontSize: '15px',
+          fontSize: '14px',
           textAlign: 'left',
-          background: 'var(--glass-bg, rgba(255,255,255,0.04))',
+          background: 'rgba(255,255,255,0.04)',
           border: open
             ? '1px solid rgba(255,255,255,0.22)'
             : '1px solid rgba(255,255,255,0.09)',
-          borderRadius: 'var(--radius-md)',
-          color: selected ? 'var(--color-text-primary)' : 'var(--color-text-muted, rgba(255,255,255,0.3))',
+          borderRadius: '10px',
+          color: selected ? 'rgba(255,255,255,0.88)' : 'rgba(255,255,255,0.28)',
           cursor: 'pointer',
           transition: 'border-color 0.15s ease',
           boxSizing: 'border-box',
@@ -76,12 +74,11 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
         }}
       >
         {selected ?? placeholder}
-        {/* Chevron */}
         <svg
           width="10" height="6" viewBox="0 0 10 6" fill="none"
           style={{
             position: 'absolute',
-            right: 16,
+            right: 14,
             top: '50%',
             transform: open ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)',
             transition: 'transform 0.15s ease',
@@ -92,7 +89,6 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
         </svg>
       </button>
 
-      {/* Dropdown panel */}
       {open && (
         <div
           style={{
@@ -102,7 +98,7 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
             right: 0,
             background: 'rgba(18,24,42,0.98)',
             border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius: '10px',
             boxShadow: '0 8px 32px rgba(0,0,0,0.55)',
             zIndex: 100,
             maxHeight: 220,
@@ -118,7 +114,7 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
               style={{
                 display: 'block',
                 width: '100%',
-                padding: '11px var(--space-md)',
+                padding: '11px 16px',
                 textAlign: 'left',
                 fontSize: '14px',
                 fontWeight: opt === value ? 500 : 300,
@@ -158,10 +154,8 @@ export default function ContextScreen({ sessionId, onComplete }) {
   async function handleSubmit(e) {
     e.preventDefault();
     if (!allFilled) return;
-
     setLoading(true);
     setError('');
-
     try {
       await api.post(`/analyze/${sessionId}/context`, {
         listingType,
@@ -178,157 +172,212 @@ export default function ContextScreen({ sessionId, onComplete }) {
   }
 
   return (
-    <div
-      className="glass-card animate-fade-up"
-      style={{
-        maxWidth: '448px',
-        width: '100%',
-        margin: '0 auto',
-        padding: 'var(--space-lg)',
-      }}
-    >
-      {/* Header */}
-      <p
-        style={{
-          fontSize: '11px',
-          fontWeight: 400,
-          letterSpacing: '0.08em',
-          textTransform: 'uppercase',
-          color: 'var(--color-text-gold)',
-          marginBottom: 'var(--space-sm)',
-        }}
-      >
-        Property Context
-      </p>
-      <h2
-        style={{
-          fontSize: '18px',
-          fontWeight: 500,
-          color: 'var(--color-text-primary)',
-          lineHeight: 1.2,
-          marginBottom: 'var(--space-lg)',
-        }}
-      >
-        Tell us about the property
-      </h2>
+    <div className="animate-fade-up" style={{ width: '100%' }}>
 
-      {/* Error */}
-      {error && (
-        <div
+        {/* Step badge */}
+        <span
           style={{
-            background: 'var(--color-danger-bg)',
-            border: '1px solid var(--color-danger-border)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-sm) var(--space-md)',
-            marginBottom: 'var(--space-md)',
-            color: 'var(--color-danger)',
-            fontSize: '13px',
-            fontWeight: 300,
+            display: 'inline-block',
+            fontSize: '10px',
+            fontWeight: 600,
+            letterSpacing: '0.10em',
+            textTransform: 'uppercase',
+            color: 'var(--color-accent)',
+            background: 'rgba(13,216,192,0.08)',
+            border: '1px solid rgba(13,216,192,0.22)',
+            borderRadius: '20px',
+            padding: '4px 14px',
+            marginBottom: '18px',
           }}
         >
-          {error}
-        </div>
-      )}
+          STEP 1 OF 9
+        </span>
 
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}
-      >
-        {/* For Sale / For Rent toggle */}
-        <div>
-          <span style={labelStyle}>Listing type</span>
-          <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-            <button
-              type="button"
-              onClick={() => { setListingType('sale'); setBudgetBracket(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 0',
-                fontSize: '13px',
-                fontWeight: 400,
-                borderRadius: 'var(--radius-md)',
-                border: `1px solid ${listingType === 'sale' ? 'var(--color-border-gold)' : 'rgba(255,255,255,0.07)'}`,
-                background: listingType === 'sale' ? 'var(--color-accent-15)' : 'rgba(255,255,255,0.028)',
-                color: listingType === 'sale' ? 'var(--color-accent-90)' : 'var(--color-text-secondary)',
-                cursor: 'pointer',
-                transition: 'all var(--duration-normal) var(--ease-smooth)',
-              }}
-            >
-              For Sale
-            </button>
-            <button
-              type="button"
-              onClick={() => { setListingType('rent'); setBudgetBracket(''); }}
-              style={{
-                flex: 1,
-                padding: '10px 0',
-                fontSize: '13px',
-                fontWeight: 400,
-                borderRadius: 'var(--radius-md)',
-                border: `1px solid ${listingType === 'rent' ? 'var(--color-border-gold)' : 'rgba(255,255,255,0.07)'}`,
-                background: listingType === 'rent' ? 'var(--color-accent-15)' : 'rgba(255,255,255,0.028)',
-                color: listingType === 'rent' ? 'var(--color-accent-90)' : 'var(--color-text-secondary)',
-                cursor: 'pointer',
-                transition: 'all var(--duration-normal) var(--ease-smooth)',
-              }}
-            >
-              For Rent
-            </button>
-          </div>
-        </div>
-
-        {/* Budget bracket */}
-        <div>
-          <label htmlFor="budget" style={labelStyle}>
-            {listingType === 'sale' ? 'Asking price' : 'Monthly rent'}
-          </label>
-          <CustomSelect
-            id="budget"
-            placeholder="Select bracket"
-            options={brackets}
-            value={budgetBracket}
-            onChange={setBudgetBracket}
-          />
-        </div>
-
-        {/* BHK / Property type */}
-        <div>
-          <label htmlFor="bhk" style={labelStyle}>
-            BHK / Property type
-          </label>
-          <CustomSelect
-            id="bhk"
-            placeholder="Select type"
-            options={BHK_OPTIONS}
-            value={bhk}
-            onChange={setBhk}
-          />
-        </div>
-
-        {/* Floor */}
-        <div>
-          <label htmlFor="floor" style={labelStyle}>
-            Which floor?
-          </label>
-          <CustomSelect
-            id="floor"
-            placeholder="Select floor"
-            options={FLOOR_OPTIONS}
-            value={floor}
-            onChange={setFloor}
-          />
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={!allFilled || loading}
-          className="btn-primary"
-          style={{ width: '100%', marginTop: 'var(--space-sm)' }}
+        {/* Heading */}
+        <h2
+          style={{
+            fontSize: '28px',
+            fontWeight: 600,
+            color: 'rgba(255,255,255,0.93)',
+            lineHeight: 1.2,
+            margin: '0 0 10px',
+          }}
         >
-          {loading ? 'Saving...' : 'Begin Analysis'}
-        </button>
-      </form>
+          Tell us about the property
+        </h2>
+        <p
+          style={{
+            fontSize: '14px',
+            fontWeight: 300,
+            color: 'rgba(255,255,255,0.40)',
+            margin: '0 0 20px',
+            lineHeight: 1.55,
+          }}
+        >
+          Help us understand the basics so we can personalize your audit.
+        </p>
+
+        {/* Teal accent line */}
+        <div
+          style={{
+            width: '56px',
+            height: '2px',
+            borderRadius: '2px',
+            background: 'linear-gradient(90deg, var(--color-accent), rgba(13,216,192,0.2))',
+            marginBottom: '28px',
+          }}
+        />
+
+        {/* Error */}
+        {error && (
+          <div
+            style={{
+              background: 'var(--color-danger-bg)',
+              border: '1px solid var(--color-danger-border)',
+              borderRadius: '10px',
+              padding: '12px 16px',
+              marginBottom: '20px',
+              color: 'var(--color-danger)',
+              fontSize: '13px',
+              fontWeight: 300,
+            }}
+          >
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+
+          {/* Listing type toggle */}
+          <div>
+            <span style={labelStyle}>Listing Type</span>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                type="button"
+                onClick={() => { setListingType('sale'); setBudgetBracket(''); }}
+                style={{
+                  flex: 1,
+                  padding: '11px 0',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  borderRadius: '10px',
+                  border: `1px solid ${listingType === 'sale' ? 'var(--color-accent)' : 'rgba(255,255,255,0.08)'}`,
+                  background: listingType === 'sale' ? 'rgba(13,216,192,0.10)' : 'rgba(255,255,255,0.03)',
+                  color: listingType === 'sale' ? 'var(--color-accent)' : 'rgba(255,255,255,0.35)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                {/* Tag icon */}
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9.5 2H14v4.5L8 13 3 8l6.5-6z"/>
+                  <circle cx="11.5" cy="4.5" r="0.8" fill="currentColor" stroke="none"/>
+                </svg>
+                For Sale
+              </button>
+              <button
+                type="button"
+                onClick={() => { setListingType('rent'); setBudgetBracket(''); }}
+                style={{
+                  flex: 1,
+                  padding: '11px 0',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  borderRadius: '10px',
+                  border: `1px solid ${listingType === 'rent' ? 'var(--color-accent)' : 'rgba(255,255,255,0.08)'}`,
+                  background: listingType === 'rent' ? 'rgba(13,216,192,0.10)' : 'rgba(255,255,255,0.03)',
+                  color: listingType === 'rent' ? 'var(--color-accent)' : 'rgba(255,255,255,0.35)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                }}
+              >
+                {/* Key icon */}
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="6" cy="6" r="3.5"/>
+                  <path d="M8.5 8.5L14 14M11 11l1.5-1.5"/>
+                </svg>
+                For Rent
+              </button>
+            </div>
+          </div>
+
+          {/* 2-column row: Asking price + Floor */}
+          <div className="context-fields-grid">
+            <div>
+              <label htmlFor="budget" style={labelStyle}>
+                {listingType === 'sale' ? 'Asking Price' : 'Monthly Rent'}
+              </label>
+              <CustomSelect
+                id="budget"
+                placeholder="Select bracket"
+                options={brackets}
+                value={budgetBracket}
+                onChange={setBudgetBracket}
+              />
+            </div>
+            <div>
+              <label htmlFor="floor" style={labelStyle}>Which Floor?</label>
+              <CustomSelect
+                id="floor"
+                placeholder="Select floor"
+                options={FLOOR_OPTIONS}
+                value={floor}
+                onChange={setFloor}
+              />
+            </div>
+          </div>
+
+          {/* BHK — full width */}
+          <div>
+            <label htmlFor="bhk" style={labelStyle}>BHK / Property Type</label>
+            <CustomSelect
+              id="bhk"
+              placeholder="Select type"
+              options={BHK_OPTIONS}
+              value={bhk}
+              onChange={setBhk}
+            />
+          </div>
+
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={!allFilled || loading}
+            className="btn-primary"
+            style={{ width: '100%', marginTop: '4px', fontWeight: 600, fontSize: '15px' }}
+          >
+            {loading ? 'Saving...' : 'Begin Analysis →'}
+          </button>
+
+          {/* Disclaimer */}
+          <p
+            style={{
+              fontSize: '12px',
+              fontWeight: 300,
+              color: 'rgba(255,255,255,0.25)',
+              textAlign: 'center',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, opacity: 0.6 }}>
+              <circle cx="8" cy="8" r="6.5"/>
+              <path d="M8 5v4M8 11v.5"/>
+            </svg>
+            Takes less than 2 minutes · No spam, just smart insights
+          </p>
+        </form>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import User from '../models/User.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { redisGet, redisSet } from '../lib/redis.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
+import { fetchCommuteRoute } from '../services/commute.service.js';
 import { callGroq } from '../services/groq.service.js';
 import { validateGroqOutput } from '../services/groqValidator.service.js';
 import { buildTemplateReport, NEWS_TEMPLATES } from '../services/reportTemplates.service.js';
@@ -44,6 +45,15 @@ const RENT_MIDPOINTS = {
   'Above 1L':  125000,
 };
 
+const DOWN_PAYMENT_MIDPOINTS = {
+  'Under 5L':    250000,
+  '5L–10L':      750000,
+  '10L–20L':    1500000,
+  '20L–50L':    3500000,
+  '50L–1Cr':    7500000,
+  'Above 1Cr': 12500000,
+};
+
 function computeFinancialScores(userProvidedSpecs, preferences) {
   const income = INCOME_MIDPOINTS[preferences.step7?.monthlyHouseholdIncome] ?? 75000;
   const listingType = userProvidedSpecs.listingType;
@@ -58,19 +68,34 @@ function computeFinancialScores(userProvidedSpecs, preferences) {
       rentStressFreeScore,
       monthlyIncome: income,
       estimatedRent: rent,
+      // field names expected by RentalFitCard
+      rentToIncomeRatio: monthlyRentPercent,
+      annualRentBurden: `₹${(rent * 12).toLocaleString('en-IN')} / yr`,
     };
   }
 
   const price = SALE_PRICE_MIDPOINTS[budgetBracket] ?? 8000000;
-  const emi = price * 0.80 * 0.009;
-  const emiPercent = Math.round((emi / income) * 100);
+  // Use the user's actual down payment bracket instead of assuming a flat 20%.
+  const rawDownPayment = DOWN_PAYMENT_MIDPOINTS[preferences.step7?.downPaymentBracket] ?? Math.round(price * 0.20);
+  const downPayment = Math.min(rawDownPayment, price);
+  const loan = Math.max(0, price - downPayment);
+  const emi = loan * 0.009; // ~20yr @ ~8.5%
+  const emiPercent = income > 0 ? Math.round((emi / income) * 100) : 0;
+  const downPaymentPercent = Math.round((downPayment / price) * 100);
   const stressFreeScore = Math.max(0, Math.min(100, Math.round(100 - (emiPercent / 80) * 100)));
   return {
+    // existing fields (kept for compatibility + GROQ fact sheet)
     emiPercent,
     stressFreeScore,
     monthlyIncome: income,
     estimatedEMI: Math.round(emi),
     propertyPrice: price,
+    // consumed by FinancialCard — names must match the component
+    affordabilityRatio: emiPercent,
+    emiEstimate: `₹${Math.round(emi).toLocaleString('en-IN')}`,
+    downPaymentPercent,
+    downPayment,
+    loanAmount: loan,
   };
 }
 
@@ -142,20 +167,37 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       return res.status(400).json({ status: 'incomplete', message: `Funnel steps incomplete: ${missingSteps.join(', ')}` });
     }
 
-    const verdictObject = computeAllVerdicts(sp, preferences);
+    // Fetch real commute route via Google Directions — replaces Haversine estimate
+    const wfhStatus  = preferences.step1?.wfhStatus;
+    const workplaceLat = preferences.step1?.workplaceLat;
+    const workplaceLng = preferences.step1?.workplaceLng;
+    let commuteRoute = null;
+    if (wfhStatus !== 'full-time' && workplaceLat && workplaceLng) {
+      commuteRoute = await fetchCommuteRoute(
+        sp.coordinates.lat, sp.coordinates.lng,
+        workplaceLat, workplaceLng,
+        preferences.step1?.commuteMode,
+      );
+    }
+
+    const verdictObject = computeAllVerdicts(sp, preferences, {
+      realCommuteMins: commuteRoute?.durationMinutes ?? null,
+    });
     const financialScores = computeFinancialScores(sp.userProvidedSpecs, preferences);
 
     const factSheet = {
       ...verdictObject,
       ...financialScores,
-      wfhStatus: preferences.step1?.wfhStatus,
-      facingDirection: preferences.step4?.facingDirection,
-      listingType: sp.userProvidedSpecs.listingType,
+      wfhStatus:           preferences.step1?.wfhStatus,
+      facingDirection:     preferences.step4?.facingDirection,
+      vastuPreference:     preferences.step4?.vastuPreference,
+      communityPreference: preferences.step6?.communityPreference,
+      listingType:         sp.userProvidedSpecs.listingType,
       newsHeadlines: sp.intelligence.localNews?.headlines?.map(h => h.title) ?? [],
-      newsCount: sp.intelligence.localNews?.headlines?.length ?? 0,
+      newsCount:     sp.intelligence.localNews?.headlines?.length ?? 0,
     };
 
-    const groqRaw = await callGroq(factSheet, sp.userProvidedSpecs.listingType);
+    const groqRaw = await callGroq(factSheet, sp.userProvidedSpecs.listingType, preferences.step7?.investmentIntent);
     const groqLabels = validateGroqOutput(groqRaw, factSheet, sp.userProvidedSpecs.listingType)
       ?? buildTemplateReport(verdictObject, sp.userProvidedSpecs.listingType);
 
@@ -163,6 +205,8 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       sessionId,
       propertyName: sp.name,
       listingType: sp.userProvidedSpecs.listingType,
+      bhk: sp.userProvidedSpecs.bhk ?? null,
+      floor: sp.userProvidedSpecs.floor ?? null,
       generatedAt: new Date(),
       headline: verdictObject.headline,
       matchKeywords: groqLabels.matchKeywords,
@@ -170,6 +214,11 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       signals: {
         noise: {
           ...sp.intelligence.noise,
+          estimatedDb: verdictObject.estimatedDb,        // floor-adjusted figure
+          rawEstimatedDb: verdictObject.rawNoiseDb,
+          category: verdictObject.floorNoiseReduction > 0
+            ? `Floor-adjusted · ${verdictObject.floorBand}`
+            : sp.intelligence.noise.category,
           verdict: verdictObject.noiseVerdict,
           label: groqLabels.noiseLabel,
         },
@@ -192,6 +241,11 @@ router.get('/generate', requireAuth, async (req, res, next) => {
           estimatedMins: verdictObject.estimatedCommuteMins,
           verdict: verdictObject.commuteVerdict,
           label: groqLabels.commuteLabel,
+          polylinePoints: commuteRoute?.polylinePoints ?? null,
+          propertyLat: sp.coordinates?.lat ?? null,
+          propertyLng: sp.coordinates?.lng ?? null,
+          workplaceLat: workplaceLat ?? null,
+          workplaceLng: workplaceLng ?? null,
         },
         budget: {
           bracket: sp.userProvidedSpecs.budgetBracket,
@@ -204,6 +258,19 @@ router.get('/generate', requireAuth, async (req, res, next) => {
             ?? (sp.intelligence.localNews?.headlines?.length
               ? NEWS_TEMPLATES.has_headlines(sp.intelligence.localNews.headlines.length)
               : NEWS_TEMPLATES.no_headlines()),
+        },
+        vastu: {
+          facingDirection: preferences.step4?.facingDirection ?? null,
+          vastuPreference: preferences.step4?.vastuPreference ?? null,
+          verdict:         verdictObject.vastuVerdict,
+          label:           groqLabels.vastuLabel,
+        },
+        community: {
+          derivedCharacter: verdictObject.derivedCharacter,
+          userPreference:   preferences.step6?.communityPreference ?? null,
+          verdict:          verdictObject.communityMatchVerdict,
+          label:            groqLabels.communityLabel,
+          counts:           verdictObject.communityAmenityCounts,
         },
       },
       financial: financialScores,

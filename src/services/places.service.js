@@ -58,6 +58,8 @@ async function fetchPlaceType(lat, lng, type) {
         distanceM,
         distance: distanceM,
         placeId: place.place_id ?? null,
+        lat: placeLat,
+        lng: placeLng,
       };
     });
   } catch {

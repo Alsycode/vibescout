@@ -45,7 +45,7 @@ const COLUMNS = [
     accessor: 'propertyName',
     render: (row) => (
       <span style={{ fontWeight: 400, color: 'var(--color-text-primary)' }}>
-        {row.shadowPropertyId?.name ?? 'Unknown property'}
+        {row.propertyName ?? row.shadowPropertyId?.name ?? 'Unknown property'}
       </span>
     ),
   },
@@ -118,7 +118,7 @@ function LeadsContent() {
     if (stage) params.stage = stage;
     api
       .get('/admin/leads', { params })
-      .then((res) => setData(res.data?.leads ?? res.data ?? []))
+      .then((res) => setData(res.data?.data ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [tier, listingType, stage]);

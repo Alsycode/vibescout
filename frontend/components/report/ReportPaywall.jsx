@@ -146,21 +146,34 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
     rzp.open();
   }, [sessionId, onUnlocked]);
 
+  // TEST ONLY — skips the gateway entirely. Button is hidden in production.
+  const handleDevUnlock = useCallback(async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await api.post('/payment/dev-unlock', { sessionId });
+      onUnlocked();
+    } catch {
+      setError('Dev unlock failed.');
+      setLoading(false);
+    }
+  }, [sessionId, onUnlocked]);
+
   return (
     <div
+      className="rv-paywall-wrap"
       style={{
         minHeight: '100vh',
         background: 'var(--color-bg)',
-        paddingBottom: 120,
       }}
     >
       {/* ── Preview: Summary Card ─────────────────────────────────── */}
       <div
+        className="rv-paywall-card"
         style={{
           maxWidth: 672,
           width: '100%',
           margin: '0 auto 24px',
-          padding: '36px 40px',
           background: 'rgba(8,16,34,0.75)',
           border: '1px solid rgba(34,211,238,0.16)',
           borderRadius: 16,
@@ -181,8 +194,8 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
         {/* Header row */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
           <div>
-            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(34,211,238,0.65)', marginBottom: 5 }}>
-              Vibe Intelligence
+            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.70)', marginBottom: 5 }}>
+              VIBESCOUT INTELLIGENCE
             </p>
             {propertyName && (
               <p style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)' }}>
@@ -198,7 +211,7 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
         </div>
 
         {/* Headline */}
-        <h1 style={{ fontSize: 26, fontWeight: 600, color: 'rgba(255,255,255,0.95)', lineHeight: 1.25, letterSpacing: '-0.02em', marginBottom: 20 }}>
+        <h1 className="rv-paywall-h1">
           {headline}
         </h1>
 
@@ -310,29 +323,27 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
             width: '100%',
             maxWidth: 420,
             padding: '16px 28px',
-            background: loading
-              ? 'rgba(34,211,238,0.15)'
-              : 'linear-gradient(135deg, rgba(34,211,238,0.22) 0%, rgba(34,211,238,0.12) 100%)',
-            border: '1px solid rgba(34,211,238,0.45)',
+            background: loading ? 'rgba(232,160,48,0.12)' : '#E8A030',
+            border: '1px solid transparent',
             borderRadius: 14,
-            color: loading ? 'rgba(34,211,238,0.4)' : 'rgba(34,211,238,0.95)',
+            color: loading ? 'rgba(232,160,48,0.5)' : '#080812',
             fontSize: 16,
             fontWeight: 600,
             letterSpacing: '-0.01em',
             cursor: loading ? 'not-allowed' : 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: loading ? 'none' : '0 0 32px rgba(34,211,238,0.15)',
+            boxShadow: loading ? 'none' : '0 8px 24px rgba(232,160,48,0.25)',
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34,211,238,0.3) 0%, rgba(34,211,238,0.18) 100%)';
-              e.currentTarget.style.boxShadow = '0 0 48px rgba(34,211,238,0.25)';
+              e.currentTarget.style.background = '#D4911F';
+              e.currentTarget.style.boxShadow  = '0 0 0 1px #E8A030, 0 8px 32px rgba(232,160,48,0.30)';
             }
           }}
           onMouseLeave={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(34,211,238,0.22) 0%, rgba(34,211,238,0.12) 100%)';
-              e.currentTarget.style.boxShadow = '0 0 32px rgba(34,211,238,0.15)';
+              e.currentTarget.style.background = '#E8A030';
+              e.currentTarget.style.boxShadow  = '0 8px 24px rgba(232,160,48,0.25)';
             }
           }}
         >
@@ -346,14 +357,15 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
                 style={{
                   marginLeft: 4,
                   padding: '2px 10px',
-                  background: 'rgba(34,211,238,0.15)',
-                  border: '1px solid rgba(34,211,238,0.3)',
+                  background: 'rgba(8,8,18,0.30)',
+                  border: '1px solid rgba(8,8,18,0.25)',
                   borderRadius: 9999,
                   fontSize: 13,
-                  fontWeight: 500,
+                  fontWeight: 600,
+                  color: '#080812',
                 }}
               >
-                ₹99
+                ₹199
               </span>
             </>
           )}
@@ -362,6 +374,25 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
         <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
           One-time payment · UPI, Cards &amp; Net Banking · Secured by Razorpay
         </p>
+
+        {process.env.NODE_ENV !== 'production' && (
+          <button
+            onClick={handleDevUnlock}
+            disabled={loading}
+            style={{
+              marginTop: 4,
+              padding: '8px 16px',
+              background: 'transparent',
+              border: '1px dashed rgba(255,255,255,0.25)',
+              borderRadius: 8,
+              color: 'rgba(255,255,255,0.45)',
+              fontSize: 12,
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
+          >
+            ⚙ Dev: skip payment &amp; unlock
+          </button>
+        )}
       </div>
     </div>
   );

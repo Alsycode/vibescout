@@ -4,7 +4,7 @@
 import { verifyToken } from '../services/token.service.js';
 
 export function requireAuth(req, res, next) {
-  const token = req.cookies?.vb_token;
+  const token = req.cookies?.vb_session ?? req.cookies?.vb_token;
   if (!token) {
     return res.status(401).json({ error: 'Authentication required' });
   }

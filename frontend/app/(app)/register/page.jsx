@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,10 +28,15 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!phone.trim()) {
+      setError('Phone number is required.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/register', { name, email, password });
+      const { data } = await api.post('/auth/register', { name, email, phone, password });
 
       if (data.token) {
         Cookies.set('vb_token', data.token, { expires: 7, sameSite: 'lax' });
@@ -172,6 +178,37 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
+              style={{
+                padding: '12px var(--space-md)',
+                fontSize: '15px',
+                width: '100%',
+                boxSizing: 'border-box',
+              }}
+            />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
+            <label
+              htmlFor="phone"
+              style={{
+                fontSize: '11px',
+                fontWeight: 400,
+                letterSpacing: '0.04em',
+                color: 'var(--color-text-secondary)',
+                textTransform: 'uppercase',
+              }}
+            >
+              Phone number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              required
+              autoComplete="tel"
+              className="glass-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+91 98765 43210"
               style={{
                 padding: '12px var(--space-md)',
                 fontSize: '15px',

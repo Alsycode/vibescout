@@ -234,6 +234,11 @@ export default function AdminDashboard() {
               label: 'Clusters',
               meta: totalClusters > 0 ? `${totalClusters} clusters` : null,
             },
+            {
+              href: '/admin/blog',
+              label: 'Blog',
+              meta: 'Manage posts',
+            },
           ].map(({ href, label, meta }) => (
             <Link
               key={href}

@@ -10,13 +10,13 @@ const ALLOWED_KEYWORDS = [
 const ALLOWED_OUTPUT_KEYS_SALE = [
   'noiseLabel', 'aqiLabel', 'solarLabel', 'amenityLabel',
   'budgetLabel', 'commuteLabel', 'financialNote', 'matchKeywords', 'verdict',
-  'newsLabel',
+  'newsLabel', 'vastuLabel', 'communityLabel',
 ];
 
 const ALLOWED_OUTPUT_KEYS_RENT = [
   'noiseLabel', 'aqiLabel', 'solarLabel', 'amenityLabel',
   'budgetLabel', 'commuteLabel', 'rentalNote', 'matchKeywords', 'verdict',
-  'newsLabel',
+  'newsLabel', 'vastuLabel', 'communityLabel',
 ];
 
 export function validateGroqOutput(groqResponse, inputVerdictObject, listingType) {
@@ -43,6 +43,7 @@ export function validateGroqOutput(groqResponse, inputVerdictObject, listingType
   const requiredStringKeys = [
     'noiseLabel', 'aqiLabel', 'solarLabel', 'amenityLabel',
     'budgetLabel', 'commuteLabel', 'verdict', 'newsLabel',
+    'vastuLabel', 'communityLabel',
     ...(listingType === 'sale' ? ['financialNote'] : ['rentalNote']),
   ];
   for (const key of requiredStringKeys) {

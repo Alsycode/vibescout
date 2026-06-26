@@ -9,8 +9,10 @@ const LeadSchema = new mongoose.Schema({
   userId: { type: ObjectId, ref: 'User', required: true },
   shadowPropertyId: { type: ObjectId, ref: 'ShadowProperty', required: true },
   sessionId: { type: String, required: true, unique: true },
+  phone: { type: String, default: null },
   clusterId: { type: String, required: true },
   listingType: { type: String, enum: ['sale', 'rent'], required: true },
+  propertyName: { type: String, default: null }, // copied from ShadowProperty.name at creation
   // Full snapshot copied from ShadowProperty at lead creation
   // ShadowProperty expires in 24h — Lead is permanent record
   preferences: Object, // full copy of user.preferences at lead creation

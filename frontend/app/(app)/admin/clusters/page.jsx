@@ -195,7 +195,7 @@ export default function ClustersPage() {
     const endpoint = staleOnly ? '/admin/clusters/stale' : '/admin/clusters';
     api
       .get(endpoint)
-      .then((res) => setClusters(res.data?.clusters ?? res.data ?? []))
+      .then((res) => setClusters(res.data?.data ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [staleOnly]);

@@ -40,42 +40,52 @@ const selectStyle = {
 };
 
 const cardWrapper = {
-  maxWidth: '448px',
   width: '100%',
-  margin: '0 auto',
-  padding: 'var(--space-lg)',
 };
 
 function Overline({ children }) {
   return (
-    <p
-      style={{
-        fontSize: '11px',
-        fontWeight: 400,
-        letterSpacing: '0.08em',
-        textTransform: 'uppercase',
-        color: 'var(--color-text-gold)',
-        marginBottom: 'var(--space-sm)',
-      }}
-    >
-      {children}
-    </p>
+    <div style={{ textAlign: 'center', marginBottom: 'var(--space-sm)' }}>
+      <span
+        style={{
+          display: 'inline-block',
+          fontSize: '11px',
+          fontWeight: 500,
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          color: 'var(--color-accent)',
+          background: 'var(--color-accent-15)',
+          border: '1px solid var(--color-border-gold)',
+          borderRadius: 'var(--radius-pill)',
+          padding: '4px 16px',
+        }}
+      >
+        {children}
+      </span>
+    </div>
   );
 }
 
-function StepTitle({ children }) {
+function StepTitle({ children, subtitle }) {
   return (
-    <h2
-      style={{
-        fontSize: '18px',
-        fontWeight: 500,
-        color: 'var(--color-text-primary)',
-        lineHeight: 1.2,
-        marginBottom: 'var(--space-lg)',
-      }}
-    >
-      {children}
-    </h2>
+    <div style={{ textAlign: 'center', marginBottom: 'var(--space-lg)' }}>
+      <h2
+        style={{
+          fontSize: '24px',
+          fontWeight: 500,
+          color: 'var(--color-text-primary)',
+          lineHeight: 1.2,
+          marginBottom: subtitle ? 'var(--space-xs)' : 0,
+        }}
+      >
+        {children}
+      </h2>
+      {subtitle && (
+        <p style={{ fontSize: '14px', fontWeight: 300, color: 'var(--color-text-secondary)' }}>
+          {subtitle}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -561,10 +571,10 @@ function Step6({ onSubmit, loading }) {
   const [communityPreference, setCommunityPreference] = useState('');
 
   const options = [
-    'Family-heavy area',
-    'Quiet residential',
-    'Active nightlife',
+    'Family-friendly',
+    'Young & Social',
     'Mixed',
+    'Quiet & Private',
     'No preference',
   ];
 
@@ -663,7 +673,7 @@ function Step7Sale({ onSubmit, loading }) {
       <div>
         <span style={labelStyle}>Investment intent</span>
         <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap' }}>
-          {['Yes', 'No', 'Primary residence'].map((o) => (
+          {['Personal Use', 'Investment', 'Both'].map((o) => (
             <ToggleButton
               key={o}
               active={investmentIntent === o}
@@ -698,21 +708,6 @@ function Step7Sale({ onSubmit, loading }) {
 
 function Step7Rent({ onSubmit, loading }) {
   const [monthlyHouseholdIncome, setMonthlyHouseholdIncome] = useState('');
-  const [leaseDuration, setLeaseDuration] = useState('');
-  const [petsOwned, setPetsOwned] = useState('');
-  const [furnishingPreference, setFurnishingPreference] = useState('');
-  const [moveInTimeline, setMoveInTimeline] = useState('');
-
-  const canSubmit = monthlyHouseholdIncome && leaseDuration && petsOwned !== '' && furnishingPreference && moveInTimeline;
-
-  const leaseOptions = ['11 months', '1 year', '2 years', 'Flexible'];
-  const furnishingOptions = ['Furnished', 'Semi-furnished', 'Unfurnished'];
-  const moveInOptions = [
-    { value: 'immediately', label: 'Immediately' },
-    { value: 'within_1_month', label: 'Within 1 month' },
-    { value: '1_3_months', label: '1–3 months' },
-    { value: '3_plus_months', label: '3+ months' },
-  ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -733,54 +728,11 @@ function Step7Rent({ onSubmit, loading }) {
         </select>
       </div>
 
-      <div>
-        <span style={labelStyle}>Preferred lease duration</span>
-        <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap' }}>
-          {leaseOptions.map((o) => (
-            <ToggleButton key={o} active={leaseDuration === o} onClick={() => setLeaseDuration(o)} label={o} />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <span style={labelStyle}>Pets owned?</span>
-        <div style={{ display: 'flex', gap: 'var(--space-sm)' }}>
-          <ToggleButton active={petsOwned === true} onClick={() => setPetsOwned(true)} label="Yes" />
-          <ToggleButton active={petsOwned === false} onClick={() => setPetsOwned(false)} label="No" />
-        </div>
-      </div>
-
-      <div>
-        <span style={labelStyle}>Furnishing preference</span>
-        <div style={{ display: 'flex', gap: 'var(--space-xs)' }}>
-          {furnishingOptions.map((o) => (
-            <ToggleButton key={o} active={furnishingPreference === o} onClick={() => setFurnishingPreference(o)} label={o} />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <span style={labelStyle}>Move-in timeline</span>
-        <div style={{ display: 'flex', gap: 'var(--space-xs)', flexWrap: 'wrap' }}>
-          {moveInOptions.map((o) => (
-            <ToggleButton key={o.value} active={moveInTimeline === o.value} onClick={() => setMoveInTimeline(o.value)} label={o.label} />
-          ))}
-        </div>
-      </div>
-
       <button
         type="button"
         className="btn-primary"
-        disabled={!canSubmit || loading}
-        onClick={() =>
-          onSubmit({
-            monthlyHouseholdIncome,
-            leaseDuration,
-            petsOwned,
-            furnishingPreference,
-            moveInTimeline,
-          })
-        }
+        disabled={!monthlyHouseholdIncome || loading}
+        onClick={() => onSubmit({ monthlyHouseholdIncome })}
         style={{ width: '100%', marginTop: 'var(--space-sm)' }}
       >
         {loading ? 'Saving...' : 'Next'}
@@ -858,16 +810,6 @@ function Step8({ onSubmit, loading, stepData, listingTypeContext }) {
             <ReviewRow label="Investment intent" value={s7.investmentIntent} />
           </>
         )}
-        {listingTypeContext === 'rent' && (
-          <>
-            <ReviewRow label="Lease duration" value={s7.leaseDuration} />
-            <ReviewRow label="Pets" value={s7.petsOwned} />
-            <ReviewRow label="Furnishing" value={s7.furnishingPreference} />
-            <ReviewRow label="Move-in" value={
-              { immediately: 'Immediately', within_1_month: 'Within 1 month', '1_3_months': '1–3 months', '3_plus_months': '3+ months' }[s7.moveInTimeline] ?? s7.moveInTimeline
-            } />
-          </>
-        )}
       </div>
 
       <button
@@ -886,14 +828,14 @@ function Step8({ onSubmit, loading, stepData, listingTypeContext }) {
 // ── Step titles ────────────────────────────────────────────────────────────────
 
 const STEP_META = {
-  1: { overline: 'Step 1 of 8', title: 'Location & Commute' },
-  2: { overline: 'Step 2 of 8', title: 'Lifestyle' },
-  3: { overline: 'Step 3 of 8', title: 'Environmental Sensitivity' },
-  4: { overline: 'Step 4 of 8', title: 'Home Usage' },
-  5: { overline: 'Step 5 of 8', title: 'Amenity Priorities' },
-  6: { overline: 'Step 6 of 8', title: 'Community' },
-  7: { overline: 'Step 7 of 8', title: 'Financial Profile' },
-  8: { overline: 'Step 8 of 8', title: 'Review & Confirm' },
+  1: { overline: 'Step 1 of 8', title: 'Location & Commute', subtitle: 'Tell us about your work and travel preferences' },
+  2: { overline: 'Step 2 of 8', title: 'Lifestyle', subtitle: 'What best describes your day-to-day?' },
+  3: { overline: 'Step 3 of 8', title: 'Environmental Sensitivity', subtitle: 'How sensitive are you to air quality and noise?' },
+  4: { overline: 'Step 4 of 8', title: 'Home Usage', subtitle: 'Vastu, orientation and how you use your home' },
+  5: { overline: 'Step 5 of 8', title: 'Amenity Priorities', subtitle: 'Pick the amenities that matter most to you' },
+  6: { overline: 'Step 6 of 8', title: 'Community', subtitle: 'What kind of neighbourhood do you prefer?' },
+  7: { overline: 'Step 7 of 8', title: 'Financial Profile', subtitle: 'Help us understand your budget and readiness' },
+  8: { overline: 'Step 8 of 8', title: 'Review & Confirm', subtitle: 'Make sure everything looks right before we generate your report' },
 };
 
 // ── Main export ────────────────────────────────────────────────────────────────
@@ -929,11 +871,11 @@ export default function FunnelStep({ step, stepData, listingTypeContext, onSubmi
   return (
     <div
       key={step}
-      className="glass-card animate-fade-up"
+      className="animate-fade-up"
       style={cardWrapper}
     >
       <Overline>{meta.overline}</Overline>
-      <StepTitle>{meta.title}</StepTitle>
+      <StepTitle subtitle={meta.subtitle}>{meta.title}</StepTitle>
       {renderStep()}
     </div>
   );

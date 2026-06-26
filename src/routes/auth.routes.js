@@ -20,10 +20,14 @@ const COOKIE_OPTIONS = {
 // POST /auth/register
 router.post('/register', async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, phone } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: 'Name, email, and password are required' });
+    }
+
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required' });
     }
 
     if (password.length < 6) {
@@ -39,6 +43,7 @@ router.post('/register', async (req, res, next) => {
     const user = await User.create({
       name,
       email: email.toLowerCase(),
+      phone,
       passwordHash,
       role: 'user',
     });
@@ -50,7 +55,7 @@ router.post('/register', async (req, res, next) => {
       role:   user.role,
     });
 
-    res.cookie('vb_token', token, COOKIE_OPTIONS);
+    res.cookie('vb_session', token, COOKIE_OPTIONS);
     return res.status(201).json({
       token,
       user: {
@@ -91,7 +96,7 @@ router.post('/login', async (req, res, next) => {
       role:   user.role,
     });
 
-    res.cookie('vb_token', token, COOKIE_OPTIONS);
+    res.cookie('vb_session', token, COOKIE_OPTIONS);
     return res.json({
       token,
       user: {
@@ -108,7 +113,7 @@ router.post('/login', async (req, res, next) => {
 
 // POST /auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('vb_token', { path: '/' });
+  res.clearCookie('vb_session', { path: '/' });
   return res.json({ ok: true });
 });
 
@@ -124,6 +129,7 @@ router.get('/me', requireAuth, async (req, res, next) => {
         id:    user._id,
         name:  user.name,
         email: user.email,
+        phone: user.phone,
         role:  user.role,
       },
     });

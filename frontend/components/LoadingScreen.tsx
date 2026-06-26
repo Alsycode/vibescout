@@ -31,7 +31,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         height: `${Math.random() * 2 + 0.5}px`,
         color:
           i % 3 === 0
-            ? "rgba(231,197,138,0.7)"
+            ? "rgba(232,160,48,0.7)"
             : i % 3 === 1
             ? "rgba(93,116,138,0.5)"
             : "rgba(255,255,255,0.25)",
@@ -48,42 +48,39 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 1.8, ease: [0.16, 1, 0.3, 1] } }}
     >
-      {/* Radial atmospheric glow */}
+      {/* Radial atmospheric glow — CSS animation replaces motion.div */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <motion.div
+        <div
           className="rounded-full"
           style={{
             width: 700,
             height: 420,
-            background:
-              "radial-gradient(ellipse, rgba(231,197,138,0.12) 0%, transparent 65%)",
+            background: "radial-gradient(ellipse, rgba(232,160,48,0.12) 0%, transparent 65%)",
             filter: "blur(40px)",
+            animation: "glowBlob 4s ease-in-out infinite",
           }}
-          animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.06, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
       </div>
 
-      {/* Subtle scan line */}
+      {/* Subtle scan line — CSS animation */}
       <div
         className="absolute inset-0 pointer-events-none overflow-hidden opacity-20"
         style={{ zIndex: 1 }}
       >
-        <motion.div
+        <div
           className="absolute left-0 right-0 h-[1px]"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(231,197,138,0.4) 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, rgba(232,160,48,0.4) 50%, transparent 100%)",
+            animation: "loadingScan 6s linear 1s infinite",
           }}
-          animate={{ y: ["-10vh", "110vh"] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: 1 }}
         />
       </div>
 
-      {/* Floating particles */}
+      {/* Floating particles — CSS animation, no Framer Motion scheduler overhead */}
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
         {particles.map((p) => (
-          <motion.div
+          <div
             key={p.id}
             className="absolute rounded-full"
             style={{
@@ -92,38 +89,33 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
               width: p.width,
               height: p.height,
               background: p.color,
-            }}
-            animate={{ opacity: [0, 0.8, 0.3, 0.8, 0] }}
-            transition={{
-              duration: p.duration,
-              repeat: Infinity,
-              delay: p.delay,
-              ease: "easeInOut",
+              animation: `particlePulse ${p.duration}s ease-in-out ${p.delay}s infinite`,
             }}
           />
         ))}
       </div>
 
-      {/* Brand identity */}
+      {/* Brand identity — keep motion.div for the entrance animation */}
       <motion.div
         className="relative z-10 text-center mb-16"
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
       >
-        <motion.div
+        <div
           className="text-[9px] tracking-[0.55em] uppercase mb-4"
-          style={{ color: "rgba(231,197,138,0.55)" }}
-          animate={{ opacity: [0.5, 0.9, 0.5] }}
-          transition={{ duration: 3, repeat: Infinity }}
+          style={{
+            color: "rgba(232,160,48,0.55)",
+            animation: "glowPulse 3s ease-in-out infinite",
+          }}
         >
-          Environmental Intelligence
-        </motion.div>
+          Property Intelligence
+        </div>
         <div
           className="text-[42px] font-light tracking-[0.25em] uppercase"
           style={{ color: "rgba(255,255,255,0.92)" }}
         >
-          Vibescout
+          VibeScout
         </div>
         <div
           className="text-[9px] tracking-[0.35em] uppercase mt-3"
@@ -143,16 +135,16 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         <div className="flex justify-between mb-2.5">
           <span
             className="text-[8px] tracking-[0.4em] uppercase"
-            style={{ color: "rgba(231,197,138,0.4)" }}
+            style={{ color: "rgba(232,160,48,0.4)" }}
           >
             Loading
           </span>
-          <motion.span
+          <span
             className="text-[8px] tracking-[0.3em] tabular-nums"
-            style={{ color: "rgba(231,197,138,0.55)" }}
+            style={{ color: "rgba(232,160,48,0.55)" }}
           >
             {progress}%
-          </motion.span>
+          </span>
         </div>
         <div
           className="h-[1px] rounded-full overflow-hidden"
@@ -162,9 +154,9 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
             className="h-full rounded-full"
             style={{
               background:
-                "linear-gradient(90deg, rgba(231,197,138,0.35) 0%, rgba(231,197,138,0.95) 60%, rgba(255,230,190,1) 100%)",
+                "linear-gradient(90deg, rgba(232,160,48,0.35) 0%, rgba(232,160,48,0.95) 60%, rgba(255,230,190,1) 100%)",
               boxShadow:
-                "0 0 8px rgba(231,197,138,0.7), 0 0 16px rgba(231,197,138,0.3)",
+                "0 0 8px rgba(232,160,48,0.7), 0 0 16px rgba(232,160,48,0.3)",
             }}
             initial={{ width: "0%" }}
             animate={{ width: `${progress}%` }}

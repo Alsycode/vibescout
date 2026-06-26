@@ -8,7 +8,10 @@ export default function PieChart() {
 
   const toXY = (pct: number) => {
     const angle = pct * 2 * Math.PI - Math.PI / 2;
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+    return {
+      x: parseFloat((cx + r * Math.cos(angle)).toFixed(4)),
+      y: parseFloat((cy + r * Math.sin(angle)).toFixed(4)),
+    };
   };
 
   const s0 = toXY(0);

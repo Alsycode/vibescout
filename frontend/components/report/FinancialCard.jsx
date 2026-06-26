@@ -240,7 +240,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
           <MetricBlock
             label="Est. EMI"
             value={emiEstimate}
-            sublabel="80% loan, 8.5% rate"
+            sublabel="~8.5% · 20yr loan"
           />
           <MetricBlock
             label="Down Payment"

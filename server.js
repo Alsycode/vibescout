@@ -19,6 +19,8 @@ import shadowPropertiesAdminRoutes from './src/routes/admin/shadowProperties.adm
 import leadsAdminRoutes from './src/routes/admin/leads.admin.routes.js';
 import brokersAdminRoutes from './src/routes/admin/brokers.admin.routes.js';
 import clustersAdminRoutes from './src/routes/admin/clusters.admin.routes.js';
+import blogAdminRoutes from './src/routes/admin/blog.admin.routes.js';
+import postsRoutes from './src/routes/posts.routes.js';
 
 import './src/jobs/cronJobs.js';
 
@@ -47,6 +49,8 @@ app.use('/admin/shadow-properties', shadowPropertiesAdminRoutes);
 app.use('/admin/leads', leadsAdminRoutes);
 app.use('/admin/brokers', brokersAdminRoutes);
 app.use('/admin/clusters', clustersAdminRoutes);
+app.use('/admin/blog', blogAdminRoutes);
+app.use('/posts', postsRoutes);
 
 app.use(errorHandler);
 

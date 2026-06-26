@@ -29,15 +29,21 @@ async function fetchReportByShareToken(sessionId, shareToken) {
   }
 }
 
-async function fetchReportByOwner(sessionId, token) {
+async function fetchReportByOwner(sessionId, sessionToken, legacyToken) {
   try {
+    // Send both cookie names so the backend middleware can find either one
+    const cookieHeader = [
+      sessionToken ? `vb_session=${sessionToken}` : '',
+      legacyToken  ? `vb_token=${legacyToken}`   : '',
+    ].filter(Boolean).join('; ');
+
     const res = await fetch(
       `${API_URL}/report/generate?sessionId=${sessionId}`,
       {
         cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: `vb_token=${token}`,
+          Cookie: cookieHeader,
         },
       }
     );
@@ -69,10 +75,12 @@ export default async function ReportPage({ params, searchParams }) {
   }
 
   const cookieStore = await cookies();
-  const token = cookieStore.get('vb_token')?.value;
+  const sessionToken = cookieStore.get('vb_session')?.value;
+  const legacyToken  = cookieStore.get('vb_token')?.value;
+  const token = sessionToken ?? legacyToken;
   if (!token) redirect('/login');
 
-  const data = await fetchReportByOwner(sessionId, token);
+  const data = await fetchReportByOwner(sessionId, sessionToken, legacyToken);
   if (!data) return notFound();
 
   if (data.status === 'pending') {

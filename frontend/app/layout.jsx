@@ -1,11 +1,12 @@
 // FILE: app/layout.jsx
-// PURPOSE: Root layout — Outfit font, noise overlay, global CSS import
+// PURPOSE: Root layout — noise overlay, global CSS import
 
 import './globals.css';
 
 export const metadata = {
-  title: 'Vibescout — Property Intelligence',
-  description: 'Audit any property you find. Real data, not listings.',
+  title: 'VibeScout — Property Intelligence',
+  description:
+    "What your broker won't tell you about any property — in 5 minutes. Six live signals: air quality, noise, solar potential, commute, financial fit, and local news. Sourced live. Computed deterministically.",
 };
 
 export default function RootLayout({ children }) {

@@ -103,7 +103,7 @@ export default function ShadowPropertiesPage() {
     if (listingType) params.listingType = listingType;
     api
       .get('/admin/shadow-properties', { params })
-      .then((res) => setData(res.data?.shadowProperties ?? res.data ?? []))
+      .then((res) => setData(res.data?.data ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [status, listingType]);

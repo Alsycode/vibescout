@@ -50,6 +50,8 @@ router.post('/save', requireAuth, async (req, res, next) => {
         userId: req.user.userId,
         shadowPropertyId: sp._id,
         sessionId,
+        phone: user.phone ?? null,
+        propertyName: sp.name ?? null,
         clusterId: sp.clusterId,
         listingType: sp.userProvidedSpecs.listingType,
         preferences,

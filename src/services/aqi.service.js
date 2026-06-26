@@ -83,7 +83,49 @@ async function reverseGeocodeState(lat, lng) {
   }
 }
 
-// Level 1: OpenAQ v3 live data
+// Level 1: WAQI — aggregates real CPCB ground-station data, coordinate-based, returns AQI directly
+async function fetchFromWAQI(lat, lng) {
+  if (!process.env.WAQI_API_KEY) return null;
+  try {
+    const url = `https://api.waqi.info/feed/geo:${lat};${lng}/?token=${process.env.WAQI_API_KEY}`;
+    const res = await fetchWithTimeout(url, {}, 6000);
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data.status !== 'ok') return null;
+    const aqi = data?.data?.aqi;
+    if (!aqi || aqi <= 0) return null;
+    return { value: aqi, category: aqiCategory(aqi), source: 'live' };
+  } catch {
+    return null;
+  }
+}
+
+// Level 2: OpenWeather Air Pollution API — CAMS satellite model, fallback only
+// Note: chronically underestimates PM2.5 in India; kept as last-resort live source
+async function fetchFromOpenWeather(lat, lng) {
+  if (!process.env.OPENWEATHER_API_KEY) return null;
+  try {
+    const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${process.env.OPENWEATHER_API_KEY}`;
+    const res = await fetchWithTimeout(url, {}, 6000);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const components = data?.list?.[0]?.components;
+    if (!components) return null;
+
+    let aqiValue = null;
+    if (components.pm2_5 > 0) {
+      aqiValue = pm25ToAQI(components.pm2_5);
+    } else if (components.pm10 > 0) {
+      aqiValue = pm10ToAQI(components.pm10);
+    }
+    if (aqiValue === null) return null;
+    return { value: aqiValue, category: aqiCategory(aqiValue), source: 'live' };
+  } catch {
+    return null;
+  }
+}
+
+// Level 2: OpenAQ v3 live data (station-based, may be stale)
 // Strategy: (a) find nearby monitoring stations via /v3/locations?coordinates,
 //           (b) fetch /v3/locations/{id}/latest for up to 3 stations in parallel,
 //           (c) match pm25/pm10 sensor IDs from the location payload.
@@ -212,19 +254,27 @@ async function fetchFromCPCB(cityName) {
   }
 }
 
-// Full 4-level AQI waterfall — never returns null
+// Full 5-level AQI waterfall — never returns null
 export async function fetchAQI(lat, lng, clusterId, cityName) {
-  // Level 1: OpenAQ live
+  // Level 1: WAQI — real CPCB ground-station data, most accurate for India
+  const waqiLive = await fetchFromWAQI(lat, lng);
+  if (waqiLive) return waqiLive;
+
+  // Level 2: OpenWeather Air Pollution — CAMS satellite model, fallback only
+  const owLive = await fetchFromOpenWeather(lat, lng);
+  if (owLive) return owLive;
+
+  // Level 3: OpenAQ v3 — station-based fallback (may be stale in India)
   const live = await fetchFromOpenAQ(lat, lng);
   if (live) return live;
 
-  // Level 2: Cluster MongoDB cache
+  // Level 4: Cluster MongoDB cache
   if (clusterId) {
     const cached = await fetchFromClusterCache(clusterId);
     if (cached) return cached;
   }
 
-  // Level 3: CPCB city average (use cityName or reverse geocode to find it)
+  // Level 5: CPCB city average (use cityName or reverse geocode to find it)
   let resolvedCity = cityName;
   let resolvedState = null;
 
@@ -238,7 +288,7 @@ export async function fetchAQI(lat, lng, clusterId, cityName) {
   const cpcb = await fetchFromCPCB(resolvedCity);
   if (cpcb) return cpcb;
 
-  // Level 4: State-wise seasonal average — always returns a value
+  // Level 6: State-wise seasonal average — always returns a value
   // SF-06: Nominatim called lazily — only when CPCB fails and state is still unknown
   if (resolvedState === null) {
     const geo = await reverseGeocodeState(lat, lng);

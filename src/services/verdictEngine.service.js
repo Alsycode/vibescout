@@ -19,6 +19,32 @@ const AMENITY_THRESHOLDS = {
   cafes:     { pass: 500,  caution: 2000 },
 };
 
+const VASTU_RED_FLAG_DIRECTIONS = new Set(['S']);
+const VASTU_CAUTION_DIRECTIONS  = new Set(['SW', 'SE', 'W', 'NW']);
+
+// Pairs where user preference and derived character are clear opposites → red_flag
+const COMMUNITY_RED_FLAG_PAIRS = new Set([
+  'Family-friendly|Young & Social',
+  'Young & Social|Family-friendly',
+  'Quiet & Private|Young & Social',
+  'Young & Social|Quiet & Private',
+]);
+
+// Higher floors attenuate street/traffic noise. Approximate dB reduction by floor band.
+const FLOOR_NOISE_REDUCTION = {
+  'Ground':    0,
+  '1–3':       1,
+  '4–7':       3,
+  '8–15':      5,
+  '16+':       6,
+  'Top Floor': 5,
+  'Unknown':   0,
+};
+
+export function floorNoiseReduction(floor) {
+  return FLOOR_NOISE_REDUCTION[floor] ?? 0;
+}
+
 const SALE_BRACKETS = [
   'Under 30L', '30L–60L', '60L–1Cr', '1Cr–1.5Cr',
   '1.5Cr–2Cr', '2Cr–3Cr', '3Cr–5Cr', 'Above 5Cr',
@@ -58,6 +84,55 @@ function mapToRentBracket(amount) {
   if (amount < 75000) return '50K–75K';
   if (amount < 100000) return '75K–1L';
   return 'Above 1L';
+}
+
+export function vastuVerdict(facingDirection, vastuPreference) {
+  if (!vastuPreference || vastuPreference === "Doesn't Matter" || vastuPreference === 'No') {
+    return 'pass';
+  }
+  if (VASTU_RED_FLAG_DIRECTIONS.has(facingDirection)) return 'red_flag';
+  if (VASTU_CAUTION_DIRECTIONS.has(facingDirection))  return 'caution';
+  return 'pass'; // N, NE, E, or unknown — favourable / benefit of the doubt
+}
+
+export function communityVerdict(amenities, communityPreference) {
+  const RADIUS = 1500;
+  const countNear = (arr) => (arr ?? []).filter(a => (a.distanceM ?? 9999) <= RADIUS).length;
+
+  const schoolsNear = countNear(amenities?.schools);
+  const parksNear   = countNear(amenities?.parks);
+  const cafesNear   = countNear(amenities?.cafes);
+  const gymsNear    = countNear(amenities?.gyms);
+
+  const familyScore = schoolsNear + parksNear;
+  const socialScore = cafesNear   + gymsNear;
+
+  let derivedCharacter;
+  if (familyScore <= 1 && socialScore <= 1) {
+    derivedCharacter = 'Quiet & Private';
+  } else if (familyScore >= socialScore + 2) {
+    derivedCharacter = 'Family-friendly';
+  } else if (socialScore >= familyScore + 2) {
+    derivedCharacter = 'Young & Social';
+  } else {
+    derivedCharacter = 'Mixed';
+  }
+
+  let communityMatchVerdict;
+  if (!communityPreference || communityPreference === 'Mixed' || derivedCharacter === 'Mixed') {
+    communityMatchVerdict = 'pass';
+  } else if (derivedCharacter === communityPreference) {
+    communityMatchVerdict = 'pass';
+  } else {
+    const pairKey = `${communityPreference}|${derivedCharacter}`;
+    communityMatchVerdict = COMMUNITY_RED_FLAG_PAIRS.has(pairKey) ? 'red_flag' : 'caution';
+  }
+
+  return {
+    derivedCharacter,
+    communityMatchVerdict,
+    communityAmenityCounts: { schoolsNear, parksNear, cafesNear, gymsNear },
+  };
 }
 
 export function noiseVerdict(estimatedDb, noiseSensitivity) {
@@ -138,12 +213,24 @@ export function generateHeadline(totalRedFlags, totalCautions) {
   return 'Good overall fit with minor notes';
 }
 
-export function computeAllVerdicts(shadowProperty, preferences) {
+function commuteVerdictFromMinutes(mins, maxMinutes, wfhStatus) {
+  if (wfhStatus === 'full-time') return 'pass';
+  if (mins == null) return 'caution';
+  if (mins <= maxMinutes)       return 'pass';
+  if (mins <= maxMinutes * 1.5) return 'caution';
+  return 'red_flag';
+}
+
+export function computeAllVerdicts(shadowProperty, preferences, overrides = {}) {
   const sp    = shadowProperty;
   const p     = preferences;
   const intel = sp.intelligence;
 
-  const _noiseVerdict = noiseVerdict(intel.noise.estimatedDb, p.step3.noiseSensitivity);
+  // Floor-aware noise: higher floors get a dB reduction before the verdict is computed.
+  const _rawNoiseDb          = intel.noise.estimatedDb;
+  const _floorNoiseReduction = floorNoiseReduction(sp.userProvidedSpecs?.floor);
+  const _effectiveNoiseDb    = Math.max(0, _rawNoiseDb - _floorNoiseReduction);
+  const _noiseVerdict = noiseVerdict(_effectiveNoiseDb, p.step3.noiseSensitivity);
   const _aqiVerdict   = aqiVerdict(intel.aqi.value, p.step3.aqiSensitivity);
   const _solarVerdict = solarVerdict(intel.solar.peakSunHours, p.step4.facingDirection);
 
@@ -158,13 +245,15 @@ export function computeAllVerdicts(shadowProperty, preferences) {
     p.step5.amenityPriorities,
   );
 
-  const _commuteVerdict = commuteVerdict(
-    sp.coordinates,
-    { lat: p.step1.workplaceLat, lng: p.step1.workplaceLng },
-    p.step1.commuteMode,
-    p.step1.maxCommuteMinutes,
-    p.step1.wfhStatus,
-  );
+  const _commuteVerdict = overrides.realCommuteMins != null
+    ? commuteVerdictFromMinutes(overrides.realCommuteMins, p.step1.maxCommuteMinutes, p.step1.wfhStatus)
+    : commuteVerdict(
+        sp.coordinates,
+        { lat: p.step1.workplaceLat, lng: p.step1.workplaceLng },
+        p.step1.commuteMode,
+        p.step1.maxCommuteMinutes,
+        p.step1.wfhStatus,
+      );
 
   const userBudgetBracket = deriveUserBudgetBracket(
     p.step7.monthlyHouseholdIncome,
@@ -177,10 +266,18 @@ export function computeAllVerdicts(shadowProperty, preferences) {
     sp.userProvidedSpecs.listingType,
   );
 
+  const _vastuVerdict = vastuVerdict(p.step4.facingDirection, p.step4.vastuPreference);
+
+  const communityResult = communityVerdict(intel.amenities, p.step6?.communityPreference);
+  const _communityMatchVerdict = communityResult.communityMatchVerdict;
+
   const allVerdicts = [
     _noiseVerdict, _aqiVerdict, _solarVerdict,
     _amenityVerdict, _commuteVerdict, _budgetVerdict,
+    _communityMatchVerdict,
   ];
+  // Vastu counts toward flags only when the user explicitly opted in
+  if (p.step4.vastuPreference === 'Yes') allVerdicts.push(_vastuVerdict);
 
   // NOTE: localNews is informational only — no verdict function.
   // If news sentiment verdict is added in future, update allVerdicts array.
@@ -188,7 +285,7 @@ export function computeAllVerdicts(shadowProperty, preferences) {
   const totalCautions = allVerdicts.filter(v => v === 'caution').length;
   const totalPasses   = allVerdicts.filter(v => v === 'pass').length;
 
-  const estimatedCommuteMins = (() => {
+  const estimatedCommuteMins = overrides.realCommuteMins ?? (() => {
     if (p.step1.wfhStatus === 'full-time') return 0;
     if (!p.step1.workplaceLat)             return null;
     const km = haversineKm(
@@ -205,7 +302,10 @@ export function computeAllVerdicts(shadowProperty, preferences) {
     amenityVerdict:   _amenityVerdict,
     commuteVerdict:   _commuteVerdict,
     budgetVerdict:    _budgetVerdict,
-    estimatedDb:      intel.noise.estimatedDb,
+    estimatedDb:      _effectiveNoiseDb,
+    rawNoiseDb:       _rawNoiseDb,
+    floorNoiseReduction: _floorNoiseReduction,
+    floorBand:        sp.userProvidedSpecs?.floor ?? null,
     aqiValue:         intel.aqi.value,
     peakSunHours:     intel.solar.peakSunHours,
     nearestHospitalM: intel.amenities.hospitals[0]?.distanceM ?? null,
@@ -214,7 +314,13 @@ export function computeAllVerdicts(shadowProperty, preferences) {
     propertyBudgetBracket: sp.userProvidedSpecs.budgetBracket,
     userNoiseSensitivity:  p.step3.noiseSensitivity,
     estimatedCommuteMins,
-    listingType:     sp.userProvidedSpecs.listingType,
+    listingType:           sp.userProvidedSpecs.listingType,
+    vastuVerdict:          _vastuVerdict,
+    userVastuPreference:   p.step4.vastuPreference ?? null,
+    derivedCharacter:      communityResult.derivedCharacter,
+    communityMatchVerdict: _communityMatchVerdict,
+    communityAmenityCounts: communityResult.communityAmenityCounts,
+    userCommunityPreference: p.step6?.communityPreference ?? null,
     totalRedFlags,
     totalCautions,
     totalPasses,

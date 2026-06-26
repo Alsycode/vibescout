@@ -8,7 +8,7 @@
 
 import { useState, useCallback } from 'react';
 
-export default function SharePDFBar({ sessionId, shareToken, readonly }) {
+export default function SharePDFBar({ sessionId, shareToken, readonly, compact }) {
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
 
@@ -82,6 +82,41 @@ export default function SharePDFBar({ sessionId, shareToken, readonly }) {
   }, [sessionId]);
 
   if (readonly) return null;
+
+  // Compact mode: vertical stack for use inside rental intelligence column
+  if (compact) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, width: '100%' }}>
+        <p style={{ fontSize: 11, fontWeight: 300, color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>
+          Share this report or save a copy
+        </p>
+        <button
+          onClick={handleCopyLink}
+          disabled={!shareToken}
+          className="btn-primary"
+          style={{
+            fontSize: 12, padding: '7px 14px', width: '100%', textAlign: 'center',
+            cursor: shareToken ? 'pointer' : 'not-allowed',
+            opacity: shareToken ? 1 : 0.4,
+          }}
+        >
+          {copied ? '✓ Copied' : 'Copy Share Link'}
+        </button>
+        <button
+          onClick={handleExportPDF}
+          disabled={exporting}
+          className="btn-secondary"
+          style={{
+            fontSize: 12, padding: '7px 14px', width: '100%', textAlign: 'center',
+            cursor: exporting ? 'wait' : 'pointer',
+            opacity: exporting ? 0.5 : 1,
+          }}
+        >
+          {exporting ? 'Exporting...' : 'Export PDF'}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div

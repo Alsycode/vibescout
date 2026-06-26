@@ -159,7 +159,7 @@ export default function BrokersPage() {
     setLoading(true);
     api
       .get('/admin/brokers')
-      .then((res) => setData(res.data?.brokers ?? res.data ?? []))
+      .then((res) => setData(res.data?.data ?? []))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);

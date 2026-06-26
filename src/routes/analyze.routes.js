@@ -36,10 +36,21 @@ async function getCoordinatesFromPlaceId(placeId) {
 
 async function reverseGeocode(lat, lng) {
   const url = `https://nominatim.openstreetmap.org/reverse`
-    + `?lat=${lat}&lon=${lng}&format=json`;
+    + `?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
   const res = await fetch(url, { headers: { 'User-Agent': 'Vibescout/1.0' } });
   const data = await res.json();
-  return { displayName: data.display_name ?? 'Selected location' };
+  const addr = data.address ?? {};
+  // Most-specific → broadest: neighbourhood/suburb → city/town → district/county
+  const suburb = addr.suburb || addr.neighbourhood || addr.quarter || null;
+  const city   = addr.city || addr.town || null;
+  const county = addr.county || addr.state_district || null;
+  const locationCascade = [suburb, city, county].filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
+  return {
+    displayName: data.display_name ?? 'Selected location',
+    cityName: city || suburb || county || null,
+    locationCascade: locationCascade.length ? locationCascade : null,
+  };
 }
 
 const VALID_BHK = ['1BHK', '2BHK', '3BHK', '4BHK+', 'Studio', 'Villa', 'Plot', 'PG'];
@@ -108,17 +119,16 @@ router.post('/start', requireAuth, async (req, res, next) => {
     res.json({ sessionId, shadowPropertyId: sp._id });
 
     let cityName = name;
+    let locationCascade = null;
     try {
       const geo = await reverseGeocode(lat, lng);
-      if (geo.displayName && geo.displayName !== 'Selected location') {
-        const parts = geo.displayName.split(',').map(p => p.trim());
-        cityName = parts.find(p => p.length > 2 && !p.match(/^\d/)) || name;
-      }
+      if (geo.cityName) cityName = geo.cityName;
+      if (geo.locationCascade) locationCascade = geo.locationCascade;
     } catch {
       // fallback to name
     }
 
-    runPipeline(sp._id, lat, lng, clusterId, cityName).catch(err => {
+    runPipeline(sp._id, lat, lng, clusterId, cityName, locationCascade).catch(err => {
       console.error(`[Pipeline] Error for session ${sessionId}:`, err.message);
     });
   } catch (err) {

@@ -40,9 +40,18 @@ async function cacheClusterSignal(clusterId, signalType, data) {
       JSON.stringify(data),
       86400,
     );
+
+    // Cluster schema stores AQI as 'aqi', but fetchAQI returns 'value' — align on write
+    const dbPayload = { ...data, updatedAt: new Date() };
+    if (signalType === 'AQI') {
+      if (dbPayload.value !== undefined) dbPayload.aqi = dbPayload.value;
+      delete dbPayload.value;
+      delete dbPayload.source;
+    }
+
     await Cluster.findOneAndUpdate(
       { clusterId },
-      { [cacheField]: { ...data, updatedAt: new Date() } },
+      { [cacheField]: dbPayload },
     );
   } catch (err) {
     console.error(`[Pipeline] Cache write failed for ${signalType}:`, err.message);
@@ -67,7 +76,10 @@ export async function getOrFetchClusterSignal(clusterId, lat, lng, signalType, c
     try {
       const cluster = await Cluster.findOne({ clusterId });
       if (cluster?.[cacheField]?.updatedAt) {
-        return { ...cluster[cacheField].toObject(), source: 'cache' };
+        const raw = cluster[cacheField].toObject();
+        // Cluster schema stores AQI as 'aqi', pipeline expects 'value' — normalize on read
+        if (signalType === 'AQI' && raw.aqi != null) raw.value = raw.aqi;
+        return { ...raw, source: 'cache' };
       }
     } catch {
       // DB miss — continue
@@ -153,7 +165,7 @@ export function getFallbackSignal(signalType, lat, lng, cityName) {
 
 // ─── Part 9b — Orchestrator ─────────────────────────────────────────
 
-export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityName) {
+export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityName, locationCascade) {
   const sp = await ShadowProperty.findById(shadowPropertyId);
   const sessionId = sp?.sessionId;
 
@@ -163,7 +175,7 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
     getOrFetchClusterSignal(clusterId, lat, lng, 'Solar', cityName),
     getOrFetchClusterSignal(clusterId, lat, lng, 'Weather', cityName),
     fetchAmenitiesWithFallback(lat, lng, clusterId, cityName),
-    fetchNewsWithFallback(clusterId, cityName),
+    fetchNewsWithFallback(clusterId, locationCascade || cityName),
   ]);
 
   // SF-02: Removed dead Redis write — session:{sessionId}:intelligence was never read

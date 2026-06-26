@@ -148,51 +148,41 @@ async function fetchFromGoogleRSS(cityName) {
   }
 }
 
-// Full 4-level news waterfall — never throws, always returns { headlines, source }
+// News waterfall with location cascade — never throws, always returns { headlines, source }
+// Tries each location name most-specific → broadest (e.g. ["Vyttila", "Kochi", "Ernakulam"]).
+// For each location: GNews → NewsAPI → Google RSS. Stops at first non-empty result.
 // Cluster-level Redis cache: cluster:{clusterId}:news EX 86400
-export async function fetchNewsWithFallback(clusterId, cityName) {
+export async function fetchNewsWithFallback(clusterId, locationNames) {
+  const locations = Array.isArray(locationNames)
+    ? locationNames.filter(Boolean)
+    : [locationNames].filter(Boolean);
+
   // Check cluster Redis cache first
   if (clusterId) {
     try {
       const cached = await redisGet(`cluster:${clusterId}:news`);
       if (cached) {
-        const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
-        return parsed;
+        return typeof cached === 'string' ? JSON.parse(cached) : cached;
       }
     } catch {
       // ignore Redis errors
     }
   }
 
-  let result = null;
+  for (const loc of locations) {
+    const result =
+      await fetchFromGNews(loc) ||
+      await fetchFromNewsAPI(loc) ||
+      await fetchFromGoogleRSS(loc);
 
-  // Level 1: GNews
-  result = await fetchFromGNews(cityName);
-  if (result) {
-    if (clusterId) {
-      await redisSet(`cluster:${clusterId}:news`, JSON.stringify(result), 86400);
+    if (result) {
+      if (clusterId) {
+        await redisSet(`cluster:${clusterId}:news`, JSON.stringify(result), 86400);
+      }
+      return result;
     }
-    return result;
   }
 
-  // Level 2: NewsAPI
-  result = await fetchFromNewsAPI(cityName);
-  if (result) {
-    if (clusterId) {
-      await redisSet(`cluster:${clusterId}:news`, JSON.stringify(result), 86400);
-    }
-    return result;
-  }
-
-  // Level 3: Google News RSS
-  result = await fetchFromGoogleRSS(cityName);
-  if (result) {
-    if (clusterId) {
-      await redisSet(`cluster:${clusterId}:news`, JSON.stringify(result), 86400);
-    }
-    return result;
-  }
-
-  // Level 4: Empty fallback — always returns, never null
+  // All locations exhausted — empty fallback
   return { headlines: [], source: 'fallback' };
 }

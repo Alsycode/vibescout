@@ -39,6 +39,40 @@ export const COMMUTE_TEMPLATES = {
     : `Estimated commute of ${mins} minutes is within your preferred range.`,
 };
 
+export const VASTU_TEMPLATES = {
+  red_flag: (dir) => `${dir}-facing is considered inauspicious in Vastu — a notable concern.`,
+  caution:  (dir) => `${dir}-facing is a moderate Vastu direction — some remedies may help.`,
+  pass:     (dir) => dir ? `${dir}-facing aligns well with Vastu principles.` : 'Vastu alignment is favourable.',
+  neutral:  ()    => 'Vastu not applied for this report.',
+};
+
+export const COMMUNITY_TEMPLATES = {
+  pass: (derived, pref, counts) => {
+    const evidence = buildCommunityEvidence(derived, counts);
+    return pref && pref !== 'Mixed'
+      ? `${derived} character matches your preference — ${evidence}.`
+      : `Area has a ${derived} character — ${evidence}.`;
+  },
+  caution: (derived, pref, counts) => {
+    const evidence = buildCommunityEvidence(derived, counts);
+    return `Area leans ${derived} (${evidence}) — partial match for your ${pref} preference.`;
+  },
+  red_flag: (derived, pref, counts) => {
+    const evidence = buildCommunityEvidence(derived, counts);
+    return `Area is ${derived} (${evidence}) — a mismatch for your ${pref} preference.`;
+  },
+};
+
+function buildCommunityEvidence(derived, counts) {
+  if (!counts) return 'amenity data limited';
+  const parts = [];
+  if (counts.schoolsNear > 0) parts.push(`${counts.schoolsNear} school${counts.schoolsNear > 1 ? 's' : ''}`);
+  if (counts.parksNear   > 0) parts.push(`${counts.parksNear} park${counts.parksNear > 1 ? 's' : ''}`);
+  if (counts.cafesNear   > 0) parts.push(`${counts.cafesNear} cafe${counts.cafesNear > 1 ? 's' : ''}`);
+  if (counts.gymsNear    > 0) parts.push(`${counts.gymsNear} gym${counts.gymsNear > 1 ? 's' : ''}`);
+  return parts.length > 0 ? parts.join(', ') + ' nearby' : 'few amenities nearby';
+}
+
 // PATCH #7 — NEWS_TEMPLATES added
 export const NEWS_TEMPLATES = {
   has_headlines: (count) => `${count} recent local headlines available for this area.`,
@@ -50,6 +84,7 @@ export function buildTemplateReport(verdictObject, listingType) {
   const hosp = v.nearestHospitalM ?? 9999;
   const sch  = v.nearestSchoolM   ?? 9999;
   const mins = v.estimatedCommuteMins ?? 0;
+  const vastuPref = v.userVastuPreference;
 
   const noiseLabel   = NOISE_TEMPLATES[v.noiseVerdict]?.(v.estimatedDb, v.userNoiseSensitivity)
     ?? NOISE_TEMPLATES.pass(v.estimatedDb);
@@ -74,6 +109,16 @@ export function buildTemplateReport(verdictObject, listingType) {
     ? 'All signals clear — strong overall fit.'
     : `${v.totalRedFlags} concern${v.totalRedFlags !== 1 ? 's' : ''}, ${v.totalCautions} caution${v.totalCautions !== 1 ? 's' : ''} noted.`;
 
+  const vastuLabel = vastuPref === 'Yes'
+    ? (VASTU_TEMPLATES[v.vastuVerdict]?.(v.facingDirection) ?? VASTU_TEMPLATES.pass(v.facingDirection))
+    : VASTU_TEMPLATES.neutral();
+
+  const communityLabel = COMMUNITY_TEMPLATES[v.communityMatchVerdict]?.(
+    v.derivedCharacter,
+    v.userCommunityPreference,
+    v.communityAmenityCounts,
+  ) ?? COMMUNITY_TEMPLATES.pass(v.derivedCharacter, v.userCommunityPreference, v.communityAmenityCounts);
+
   const base = {
     noiseLabel,
     aqiLabel,
@@ -81,6 +126,8 @@ export function buildTemplateReport(verdictObject, listingType) {
     amenityLabel,
     budgetLabel,
     commuteLabel,
+    vastuLabel,
+    communityLabel,
     matchKeywords: [],
     verdict,
     newsLabel: NEWS_TEMPLATES.no_headlines(),

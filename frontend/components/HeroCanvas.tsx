@@ -4,12 +4,17 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 
 const TOTAL_FRAMES = 200;
+// Only these frames must load before the loading screen exits.
+// The rest stream in silently while the user reads the hero.
+const INITIAL_FRAMES = 20;
 const FRAME_PREFIX = "ezgif-frame-";
 const FRAME_EXT = ".jpg";
 const FRAME_PAD = 3;
-const SCROLL_HEIGHT = 7500;
+const SCROLL_HEIGHT_DESKTOP = 7500;
+const SCROLL_HEIGHT_MOBILE  = 3000;
 
 const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
+const getScrollHeight = () => isMobile() ? SCROLL_HEIGHT_MOBILE : SCROLL_HEIGHT_DESKTOP;
 
 function frameSrc(i: number) {
   const folder = isMobile() ? "/vibescout-hero-mobile" : "/vibescout-hero";
@@ -24,34 +29,46 @@ interface HeroCanvasProps {
 export default function HeroCanvas({ onLoadProgress, onLoadComplete }: HeroCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [scrollHeight, setScrollHeight] = useState(SCROLL_HEIGHT_DESKTOP);
+  const scrollHeightRef = useRef(SCROLL_HEIGHT_DESKTOP);
   const images = useRef<(HTMLImageElement | null)[]>(Array(TOTAL_FRAMES).fill(null));
+  const loadedFrames = useRef(new Set<number>());
   const currentFrame = useRef(0);
   const rafId = useRef<number>(0);
   const lastDrawnFrame = useRef(-1);
   const loadedRef = useRef(false);
 
-  // Framer Motion scroll-based values for text overlays
+  // Framer Motion scroll values — kept for scroll-driven text overlays
   const scrollProgress = useMotionValue(0);
   const springProgress = useSpring(scrollProgress, { stiffness: 60, damping: 20, mass: 1.2 });
 
-  // Text overlay opacities mapped to scroll ranges
   const headlineOpacity = useTransform(springProgress, [0.0, 0.06, 0.22, 0.30], [0, 1, 1, 0]);
-  const headlineY = useTransform(springProgress, [0.0, 0.06], [32, 0]);
+  const headlineY      = useTransform(springProgress, [0.0, 0.06], [32, 0]);
   const sublineOpacity = useTransform(springProgress, [0.08, 0.15, 0.25, 0.32], [0, 1, 1, 0]);
-  const sublineY = useTransform(springProgress, [0.08, 0.15], [24, 0]);
+  const sublineY       = useTransform(springProgress, [0.08, 0.15], [24, 0]);
   const systemLabelOpacity = useTransform(springProgress, [0.55, 0.65, 0.80, 0.88], [0, 1, 1, 0]);
-  const scrollHintOpacity = useTransform(springProgress, [0.0, 0.04], [1, 0]);
+  const scrollHintOpacity  = useTransform(springProgress, [0.0, 0.04], [1, 0]);
+  const counterOpacity     = useTransform(springProgress, [0, 0.05, 0.95, 1], [0, 0.4, 0.4, 0]);
 
-  // Canvas draw
+  // Draw a frame; falls back to nearest already-loaded frame if target isn't ready
   const draw = useCallback((frameIndex: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const img = images.current[frameIndex];
+
+    let idx = frameIndex;
+    if (!loadedFrames.current.has(idx)) {
+      // Walk back to the nearest loaded frame so there's no blank flash
+      for (let i = idx - 1; i >= 0; i--) {
+        if (loadedFrames.current.has(i)) { idx = i; break; }
+      }
+    }
+    const img = images.current[idx];
     if (!img) return;
-const cw = window.innerWidth;
-const ch = window.innerHeight;
+
+    const cw = window.innerWidth;
+    const ch = window.innerHeight;
     const iw = img.naturalWidth || img.width;
     const ih = img.naturalHeight || img.height;
 
@@ -64,7 +81,6 @@ const ch = window.innerHeight;
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, dx, dy, dw, dh);
 
-    // Atmospheric gradient overlays
     const top = ctx.createLinearGradient(0, 0, 0, ch * 0.28);
     top.addColorStop(0, "rgba(5,5,5,0.42)");
     top.addColorStop(1, "rgba(5,5,5,0)");
@@ -80,79 +96,83 @@ const ch = window.innerHeight;
     lastDrawnFrame.current = frameIndex;
   }, []);
 
-  // Resize handler
- const resizeCanvas = useCallback(() => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
+  const resizeCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const dw = window.innerWidth;
+    const dh = window.innerHeight;
+    canvas.width = dw * dpr;
+    canvas.height = dh * dpr;
+    canvas.style.width = `${dw}px`;
+    canvas.style.height = `${dh}px`;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    draw(currentFrame.current);
+  }, [draw]);
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-
-  // Device pixel ratio
-  const dpr = window.devicePixelRatio || 1;
-
-  // Actual display size
-  const displayWidth = window.innerWidth;
-  const displayHeight = window.innerHeight;
-
-  // Set INTERNAL canvas resolution higher
-  canvas.width = displayWidth * dpr;
-  canvas.height = displayHeight * dpr;
-
-  // Set VISUAL canvas size
-  canvas.style.width = `${displayWidth}px`;
-  canvas.style.height = `${displayHeight}px`;
-
-  // Reset transform before scaling
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-  // Scale everything for DPR
-  ctx.scale(dpr, dpr);
-
-  // Better scaling quality
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  draw(currentFrame.current);
-}, [draw]);
-
-  // Preload frames
   const preload = useCallback(() => {
-    let loaded = 0;
-    const onLoad = () => {
-      loaded++;
-      const pct = Math.round((loaded / TOTAL_FRAMES) * 100);
-      onLoadProgress(pct);
-      if (loaded === TOTAL_FRAMES) {
+    let initialLoaded = 0;
+
+    const onInitialLoad = (i: number) => {
+      loadedFrames.current.add(i);
+      initialLoaded++;
+      onLoadProgress(Math.round((initialLoaded / INITIAL_FRAMES) * 100));
+
+      if (initialLoaded === INITIAL_FRAMES) {
         loadedRef.current = true;
         draw(0);
         onLoadComplete();
+
+        // Stream remaining frames in the background without blocking the UI
+        setTimeout(() => {
+          for (let j = INITIAL_FRAMES; j < TOTAL_FRAMES; j++) {
+            const img = new Image();
+            img.onload = () => loadedFrames.current.add(j);
+            img.src = frameSrc(j);
+            images.current[j] = img;
+          }
+        }, 500);
       }
     };
 
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
+    for (let i = 0; i < INITIAL_FRAMES; i++) {
       const img = new Image();
-      img.onload = onLoad;
-      img.onerror = onLoad; // count errors so bar completes
+      img.onload = () => onInitialLoad(i);
+      img.onerror = () => onInitialLoad(i);
       img.src = frameSrc(i);
       images.current[i] = img;
     }
   }, [draw, onLoadProgress, onLoadComplete]);
 
-  useEffect(() => {
-    preload();
-  }, [preload]);
+  useEffect(() => { preload(); }, [preload]);
 
-  // Scroll handler
+  useEffect(() => {
+    const updateScrollHeight = () => {
+      const h = getScrollHeight();
+      scrollHeightRef.current = h;
+      setScrollHeight(h);
+    };
+    updateScrollHeight();
+    window.addEventListener("resize", updateScrollHeight);
+    return () => window.removeEventListener("resize", updateScrollHeight);
+  }, []);
+
   useEffect(() => {
     const onScroll = () => {
       if (!loadedRef.current) return;
-      const maxScroll = SCROLL_HEIGHT - window.innerHeight;
+      const maxScroll = scrollHeightRef.current - window.innerHeight;
       const progress = Math.min(Math.max(window.scrollY / maxScroll, 0), 1);
       scrollProgress.set(progress);
 
-      const frameMultiplier = isMobile() ? 1.6 : 1;
-      const idx = Math.min(Math.floor(progress * (TOTAL_FRAMES - 1) * frameMultiplier), TOTAL_FRAMES - 1);
+      const idx = Math.min(
+        Math.floor(progress * (TOTAL_FRAMES - 1)),
+        TOTAL_FRAMES - 1
+      );
       currentFrame.current = idx;
 
       if (idx !== lastDrawnFrame.current) {
@@ -168,7 +188,6 @@ const ch = window.innerHeight;
     };
   }, [draw, scrollProgress]);
 
-  // Resize
   useEffect(() => {
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
@@ -176,12 +195,7 @@ const ch = window.innerHeight;
   }, [resizeCanvas]);
 
   return (
-    <section
-      ref={containerRef}
-      style={{ height: SCROLL_HEIGHT }}
-      className="relative"
-    >
-      {/* Sticky canvas container */}
+    <section ref={containerRef} style={{ height: scrollHeight }} className="relative">
       <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
         <canvas
           ref={canvasRef}
@@ -189,10 +203,25 @@ const ch = window.innerHeight;
           style={{ display: "block" }}
         />
 
-        {/* Atmospheric particles layer (slow) */}
+        {/* Top fade — lets the transparent navbar bleed into the hero image */}
+        <div
+          aria-hidden
+          style={{
+            position:   'absolute',
+            top:        0,
+            left:       0,
+            right:      0,
+            height:     '120px',
+            background: 'linear-gradient(to bottom, rgba(8,8,18,0.72) 0%, rgba(8,8,18,0.20) 55%, transparent 100%)',
+            pointerEvents: 'none',
+            zIndex:     1,
+          }}
+        />
+
+        {/* Atmospheric particles — CSS animations, no Framer Motion scheduler */}
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(12)].map((_, i) => (
-            <motion.div
+            <div
               key={i}
               className="absolute rounded-full"
               style={{
@@ -204,23 +233,13 @@ const ch = window.innerHeight;
                   i % 2 === 0
                     ? "rgba(231,197,138,0.6)"
                     : "rgba(93,116,138,0.5)",
-              }}
-              animate={{
-                y: [-20, 20, -20],
-                opacity: [0, 0.6, 0, 0.4, 0],
-              }}
-              transition={{
-                duration: 12 + i * 2.3,
-                repeat: Infinity,
-                delay: i * 1.4,
-                ease: "easeInOut",
+                animation: `heroParticle ${12 + i * 2.3}s ease-in-out ${i * 1.4}s infinite`,
               }}
             />
           ))}
         </div>
 
-        {/* Text overlays */}
-        {/* Headline — offset top to clear navbar */}
+        {/* Headline text overlay — Framer Motion for scroll-driven opacity/y */}
         <motion.div
           className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
           style={{ opacity: headlineOpacity, paddingTop: "4rem" }}
@@ -286,17 +305,18 @@ const ch = window.innerHeight;
           </motion.p>
         </motion.div>
 
-        {/* System active label (mid-scroll) */}
+        {/* System active label — CSS dot pulse */}
         <motion.div
           className="absolute top-1/2 right-12 md:right-20 -translate-y-1/2 pointer-events-none"
           style={{ opacity: systemLabelOpacity }}
         >
           <div className="flex items-center gap-2.5">
-            <motion.div
+            <div
               className="w-1 h-1 rounded-full"
-              style={{ background: "#E7C58A" }}
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
+              style={{
+                background: "#E7C58A",
+                animation: "glowPulse 1.8s ease-in-out infinite",
+              }}
             />
             <span
               className="text-[8px] tracking-[0.45em] uppercase"
@@ -307,7 +327,7 @@ const ch = window.innerHeight;
           </div>
         </motion.div>
 
-        {/* Scroll hint */}
+        {/* Scroll hint — CSS scale animation */}
         <motion.div
           className="absolute bottom-16 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-3"
           style={{ opacity: scrollHintOpacity }}
@@ -318,27 +338,28 @@ const ch = window.innerHeight;
           >
             Scroll to Explore
           </span>
-          <motion.div
+          <div
             className="w-px h-10"
             style={{
-              background:
-                "linear-gradient(to bottom, rgba(231,197,138,0.5), transparent)",
+              background: "linear-gradient(to bottom, rgba(231,197,138,0.5), transparent)",
+              animation: "scrollHint 1.8s ease-in-out infinite",
+              transformOrigin: "top center",
             }}
-            animate={{ scaleY: [0, 1, 0], originY: 0 }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
           />
         </motion.div>
 
-        {/* Corner frame counter (subtle detail) */}
+        {/* Frame counter detail */}
         <motion.div
           className="absolute bottom-8 right-8 pointer-events-none"
-          style={{ opacity: useTransform(springProgress, [0, 0.05, 0.95, 1], [0, 0.4, 0.4, 0]) }}
+          style={{ opacity: counterOpacity }}
         >
           <span
             className="text-[7px] tracking-[0.4em] tabular-nums"
             style={{ color: "rgba(255,255,255,0.15)", fontVariantNumeric: "tabular-nums" }}
           >
-            {String(Math.min(Math.floor((springProgress.get() * (TOTAL_FRAMES - 1)) + 1), TOTAL_FRAMES)).padStart(3, "0")}/{TOTAL_FRAMES}
+            {String(
+              Math.min(Math.floor(springProgress.get() * (TOTAL_FRAMES - 1)) + 1, TOTAL_FRAMES)
+            ).padStart(3, "0")}/{TOTAL_FRAMES}
           </span>
         </motion.div>
       </div>

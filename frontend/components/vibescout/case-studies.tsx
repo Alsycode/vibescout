@@ -88,7 +88,7 @@ const VERDICT_LABEL: Record<VerdictKey, string> = {
 };
 
 // Signal icons as inline SVG strings
-const SIGNAL_ICONS: Record<string, JSX.Element> = {
+const SIGNAL_ICONS: Record<string, React.ReactElement> = {
   noise: (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M2 12h2M6 8v8M10 5v14M14 8v8M18 5v14M22 12h-2"/>

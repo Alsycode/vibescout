@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 type VerdictKey = 'proceed' | 'caution' | 'red_flag';
 

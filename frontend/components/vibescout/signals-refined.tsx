@@ -6,7 +6,7 @@
 //   Layered ambient glows · glassmorphism cards with spotlight glow border
 //   Framer Motion useInView + staggerChildren
 
-import { useRef, useEffect, type CSSProperties } from 'react';
+import React, { useRef, useEffect, type CSSProperties } from 'react';
 import { motion, useInView, type Variants } from 'framer-motion';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -21,7 +21,7 @@ interface SignalSpec {
   source:      string;
   verdict:     SignalVerdict;
   description: string;
-  Icon:        () => JSX.Element;
+  Icon:        () => React.ReactElement;
 }
 
 // ── Verdict maps ───────────────────────────────────────────────────────────────

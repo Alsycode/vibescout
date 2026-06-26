@@ -4,7 +4,7 @@
 // Layout: two-column, left editorial + right broker disclosure audit dashboard
 // Motion: Framer Motion stagger reveal, floating card, row sequential entrance
 
-import { useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView, type Variants } from 'framer-motion';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -149,7 +149,7 @@ const AUDIT_ROWS: {
   label: string;
   value: string;
   verdict: VerdictDot;
-  Icon: () => JSX.Element;
+  Icon: () => React.ReactElement;
 }[] = [
   { label: 'NOISE LEVEL (24HR AVG)',     value: '62 dB · High Risk',        verdict: 'red_flag', Icon: NoiseIcon       },
   { label: 'BUILDER LITIGATION HISTORY', value: '3 Cases Filed · NCLT',     verdict: 'red_flag', Icon: LitigationIcon  },

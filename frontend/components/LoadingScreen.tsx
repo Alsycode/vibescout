@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { CoreSpinLoader } from "./ui/core-spin-loader";
 
 interface LoadingScreenProps {
   progress: number;
@@ -44,11 +45,11 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
   return (
     <motion.div
       className="fixed inset-0 z-[9990] flex flex-col items-center justify-center"
-      style={{ background: "#050505" }}
+      style={{ background: "#080812" }}
       initial={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 1.8, ease: [0.16, 1, 0.3, 1] } }}
     >
-      {/* Radial atmospheric glow — CSS animation replaces motion.div */}
+      {/* Radial atmospheric glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div
           className="rounded-full"
@@ -62,7 +63,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         />
       </div>
 
-      {/* Subtle scan line — CSS animation */}
+      {/* Subtle scan line */}
       <div
         className="absolute inset-0 pointer-events-none overflow-hidden opacity-20"
         style={{ zIndex: 1 }}
@@ -77,7 +78,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         />
       </div>
 
-      {/* Floating particles — CSS animation, no Framer Motion scheduler overhead */}
+      {/* Floating particles */}
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 1 }}>
         {particles.map((p) => (
           <div
@@ -95,9 +96,9 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         ))}
       </div>
 
-      {/* Brand identity — keep motion.div for the entrance animation */}
+      {/* Brand identity */}
       <motion.div
-        className="relative z-10 text-center mb-16"
+        className="relative z-10 text-center mb-8"
         initial={{ opacity: 0, y: 28 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -125,9 +126,19 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         </div>
       </motion.div>
 
+      {/* Spinner */}
+      <motion.div
+        className="relative z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.7 }}
+      >
+        <CoreSpinLoader />
+      </motion.div>
+
       {/* Loading bar */}
       <motion.div
-        className="relative z-10 w-52"
+        className="relative z-10 w-52 mt-2"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 0.6 }}

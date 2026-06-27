@@ -11,7 +11,7 @@ const FRAME_PREFIX = "ezgif-frame-";
 const FRAME_EXT = ".jpg";
 const FRAME_PAD = 3;
 const SCROLL_HEIGHT_DESKTOP = 7500;
-const SCROLL_HEIGHT_MOBILE  = 3000;
+const SCROLL_HEIGHT_MOBILE  = 1500;
 
 const isMobile = () => typeof window !== "undefined" && window.innerWidth < 768;
 const getScrollHeight = () => isMobile() ? SCROLL_HEIGHT_MOBILE : SCROLL_HEIGHT_DESKTOP;

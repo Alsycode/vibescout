@@ -15,6 +15,7 @@ const LocationIntelligence = dynamic(() => import('@/components/vibescout/locati
 const SignalsRefined        = dynamic(() => import('@/components/vibescout/signals-refined'));
 const IntelligenceEngine    = dynamic(() => import('@/components/vibescout/intelligence-engine'));
 const CaseStudies           = dynamic(() => import('@/components/vibescout/case-studies'));
+const Testimonials          = dynamic(() => import('@/components/vibescout/testimonials'));
 const Pricing               = dynamic(() => import('@/components/vibescout/pricing'));
 
 // ── Status strip content ───────────────────────────────────────────────────────
@@ -307,7 +308,10 @@ export default function LandingPage() {
       {/* S6: Case Studies */}
       <CaseStudies />
 
-      {/* S7: Pricing */}
+      {/* S7: Testimonials */}
+      <Testimonials />
+
+      {/* S8: Pricing */}
       <Pricing />
 
       {/* Inline keyframe for cardLand */}

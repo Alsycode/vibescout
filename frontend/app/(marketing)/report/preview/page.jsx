@@ -1,3 +1,6 @@
+'use client';
+
+import Link from 'next/link';
 import ReportViewer from '../../../../components/report/ReportViewer';
 
 // Whitefield, Bengaluru — Prestige Lakeside Habitat area
@@ -40,7 +43,6 @@ const MOCK_REPORT = {
       estimatedMins: 38,
       verdict: 'red_flag',
       label: 'Commute exceeds your 30-minute threshold. Peak-hour traffic may add 10–15 mins.',
-      // Map coordinates — property + workplace + route
       propertyLat: PROPERTY_LAT,
       propertyLng: PROPERTY_LNG,
       workplaceLat: 12.9352,
@@ -163,27 +165,188 @@ const MOCK_PREFERENCES = {
 
 export default function ReportPreviewPage() {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--color-bg)', paddingTop: '56px' }}>
-      {/* Dev banner */}
+    <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }}>
+
+      {/* ── Preview mode banner ─────────────────────────────────────── */}
       <div style={{
-        position: 'fixed', top: 56, left: 0, right: 0, zIndex: 999,
-        background: 'rgba(232,160,48,0.12)', borderBottom: '1px solid rgba(232,160,48,0.25)',
-        padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 10,
+        position:   'fixed',
+        top:        0,
+        left:       0,
+        right:      0,
+        zIndex:     999,
+        background: 'rgba(8,8,18,0.96)',
+        borderBottom: '1px solid rgba(232,160,48,0.18)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
       }}>
-        <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.8)' }}>
-          Preview Mode
-        </span>
-        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
-          Mock report — edit components/report/* to see changes live
-        </span>
+        <div style={{
+          maxWidth:       '1100px',
+          margin:         '0 auto',
+          padding:        '0 24px',
+          height:         '52px',
+          display:        'flex',
+          alignItems:     'center',
+          justifyContent: 'space-between',
+          gap:            '16px',
+        }}>
+          {/* Left: brand + label */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Link href="/" style={{ textDecoration: 'none' }}>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 600, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)' }}>
+                VIBESCOUT
+              </span>
+            </Link>
+            <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.10)' }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                fontFamily:    "'Geist Mono', monospace",
+                fontSize:      '9px',
+                fontWeight:    600,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color:         'rgba(232,160,48,0.80)',
+                padding:       '3px 8px',
+                background:    'rgba(232,160,48,0.08)',
+                border:        '1px solid rgba(232,160,48,0.20)',
+                borderRadius:  '4px',
+              }}>
+                Sample Report
+              </span>
+              <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.28)', fontWeight: 300 }}>
+                Prestige Lakeside Habitat · Whitefield, Bengaluru
+              </span>
+            </div>
+          </div>
+
+          {/* Right: CTA */}
+          <Link
+            href="/analyze"
+            style={{
+              display:        'inline-flex',
+              alignItems:     'center',
+              gap:            '8px',
+              padding:        '8px 18px',
+              background:     '#E8A030',
+              borderRadius:   '8px',
+              textDecoration: 'none',
+              fontFamily:     "'Inter', sans-serif",
+              fontSize:       '12px',
+              fontWeight:     600,
+              color:          '#080812',
+              letterSpacing:  '-0.01em',
+              transition:     'all 200ms ease',
+              boxShadow:      '0 4px 16px rgba(232,160,48,0.22)',
+              whiteSpace:     'nowrap',
+              flexShrink:     0,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#D4911F'; e.currentTarget.style.boxShadow = '0 0 0 1px #E8A030, 0 4px 20px rgba(232,160,48,0.30)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#E8A030'; e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,160,48,0.22)'; }}
+          >
+            Run on your property →
+          </Link>
+        </div>
       </div>
-      <div style={{ paddingTop: 32 }}>
+
+      {/* ── Intro hero — positioned below banner ────────────────────── */}
+      <div style={{
+        paddingTop:     '52px',
+        background:     '#080812',
+        backgroundImage: 'var(--grid-bg-image)',
+        backgroundSize:  '64px 64px',
+        position:       'relative',
+        overflow:       'hidden',
+        borderBottom:   '1px solid rgba(255,255,255,0.05)',
+      }}>
+        {/* Ambient amber glow */}
+        <div aria-hidden style={{ position: 'absolute', top: '-30%', left: '50%', transform: 'translateX(-50%)', width: '60vw', height: '60vw', borderRadius: '50%', background: 'radial-gradient(circle, rgba(232,160,48,0.04) 0%, transparent 65%)', pointerEvents: 'none' }} />
+
+        <div style={{ maxWidth: '860px', margin: '0 auto', padding: '40px 24px 36px', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+            <div style={{ width: '16px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(232,160,48,0.7))' }} />
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#E8A030', margin: 0 }}>
+              SAMPLE INTELLIGENCE REPORT
+            </p>
+            <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, rgba(232,160,48,0.55), transparent)' }} />
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
+            <div>
+              <h1 style={{ margin: '0 0 8px' }}>
+                <span style={{ display: 'block', fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(22px, 3vw, 36px)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.12, color: 'rgba(255,255,255,0.92)' }}>
+                  This is what a real report looks like.
+                </span>
+              </h1>
+              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '14px', fontWeight: 400, lineHeight: 1.65, color: 'rgba(255,255,255,0.38)', margin: 0 }}>
+                Six live signals. One honest verdict. Run yours in under 5 minutes.
+              </p>
+            </div>
+
+            {/* Signal pill summary */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flexShrink: 0 }}>
+              {[
+                { label: '4 PASS', color: '#34D399', bg: 'rgba(52,211,153,0.08)', border: 'rgba(52,211,153,0.20)' },
+                { label: '2 CAUTION', color: '#F59E0B', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.20)' },
+                { label: '1 FLAG', color: '#E63946', bg: 'rgba(230,57,70,0.08)', border: 'rgba(230,57,70,0.20)' },
+              ].map(({ label, color, bg, border }) => (
+                <span key={label} style={{ fontFamily: "'Geist Mono', monospace", fontSize: '9px', fontWeight: 600, letterSpacing: '0.10em', color, padding: '5px 10px', background: bg, border: `1px solid ${border}`, borderRadius: '5px' }}>
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Report viewer ────────────────────────────────────────────── */}
+      <div style={{ paddingTop: '8px' }}>
         <ReportViewer
           report={MOCK_REPORT}
           shareToken={null}
           readonly={false}
           preferences={MOCK_PREFERENCES}
         />
+      </div>
+
+      {/* ── Bottom CTA bar ───────────────────────────────────────────── */}
+      <div style={{
+        background:   '#0A0A16',
+        borderTop:    '1px solid rgba(232,160,48,0.12)',
+        padding:      '36px 24px',
+      }}>
+        <div style={{ maxWidth: '860px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '24px', flexWrap: 'wrap' }}>
+          <div>
+            <p style={{ fontFamily: "'Instrument Serif', serif", fontSize: 'clamp(18px, 2.5vw, 26px)', fontWeight: 400, color: 'rgba(255,255,255,0.88)', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
+              Ready to audit your property?
+            </p>
+            <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', color: 'rgba(255,255,255,0.35)', margin: 0 }}>
+              One-time · ₹199 · Report ready in under 5 minutes
+            </p>
+          </div>
+          <Link
+            href="/analyze"
+            style={{
+              display:        'inline-flex',
+              alignItems:     'center',
+              gap:            '10px',
+              padding:        '14px 28px',
+              background:     '#E8A030',
+              borderRadius:   '12px',
+              textDecoration: 'none',
+              fontFamily:     "'Inter', sans-serif",
+              fontSize:       '14px',
+              fontWeight:     600,
+              color:          '#080812',
+              letterSpacing:  '-0.01em',
+              transition:     'all 200ms ease',
+              boxShadow:      '0 8px 24px rgba(232,160,48,0.25)',
+              flexShrink:     0,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#D4911F'; e.currentTarget.style.boxShadow = '0 0 0 1px #E8A030, 0 8px 32px rgba(232,160,48,0.30)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = '#E8A030'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,160,48,0.25)'; }}
+          >
+            Run Intelligence on a Property →
+          </Link>
+        </div>
       </div>
     </div>
   );

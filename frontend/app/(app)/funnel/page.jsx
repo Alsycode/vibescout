@@ -504,6 +504,87 @@ function JourneyBanner() {
   );
 }
 
+// ── Resume banner ─────────────────────────────────────────────────────────────
+
+function ResumeBanner({ stepLabel, onResume, onStartOver }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 'var(--space-lg)',
+        padding: 'var(--space-lg) 0',
+        textAlign: 'center',
+      }}
+    >
+      <div
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: 'rgba(13,216,192,0.10)',
+          border: '1px solid rgba(13,216,192,0.25)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+        </svg>
+      </div>
+
+      <div>
+        <h2 style={{ fontSize: '22px', fontWeight: 500, color: 'var(--color-text-primary)', margin: '0 0 8px' }}>
+          Welcome back
+        </h2>
+        <p style={{ fontSize: '14px', fontWeight: 300, color: 'var(--color-text-secondary)', margin: 0, lineHeight: 1.6 }}>
+          You left off at <span style={{ color: 'var(--color-accent)', fontWeight: 500 }}>{stepLabel}</span>.
+          <br />Pick up where you left off or start fresh.
+        </p>
+      </div>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)', width: '100%', maxWidth: 320 }}>
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={onResume}
+          style={{ width: '100%' }}
+        >
+          Resume from {stepLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onStartOver}
+          style={{
+            width: '100%',
+            padding: '11px 0',
+            fontSize: '13px',
+            fontWeight: 400,
+            color: 'var(--color-text-secondary)',
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: 'var(--radius-md)',
+            cursor: 'pointer',
+            transition: 'border-color 0.2s ease, color 0.2s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)';
+            e.currentTarget.style.color = 'rgba(255,255,255,0.75)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+            e.currentTarget.style.color = 'var(--color-text-secondary)';
+          }}
+        >
+          Start over
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function FunnelPage() {
@@ -514,11 +595,15 @@ export default function FunnelPage() {
   const {
     step,
     stepData,
+    serverDefaults,
     listingTypeContext,
     setListingTypeContext,
     loading,
     error,
     saveStep,
+    resumeCandidate,
+    applyResume,
+    dismissResume,
   } = useFunnel(sessionId);
 
   const [contextDone,      setContextDone]      = useState(false);
@@ -539,6 +624,15 @@ export default function FunnelPage() {
     },
     [setListingTypeContext],
   );
+
+  const handleResume = useCallback(() => {
+    applyResume();
+    setContextDone(true);
+  }, [applyResume]);
+
+  const handleStartOver = useCallback(() => {
+    dismissResume();
+  }, [dismissResume]);
 
   const handleStepSubmit = useCallback(
     async (data) => {
@@ -618,17 +712,6 @@ export default function FunnelPage() {
           <MobileStepper currentPhase={currentPhase} />
 
           <div className="funnel-card-shell">
-            {/* Floating building — only on Step 1 (context screen) */}
-            {!contextDone && (
-              <img
-                src="/cyanbuilding.png"
-                alt=""
-                aria-hidden="true"
-                draggable="false"
-                className="funnel-building-float"
-              />
-            )}
-
             <div
               className="funnel-content-card"
               key={transitioning ? `loader-${activeLoaderStep}` : animKey}
@@ -637,6 +720,12 @@ export default function FunnelPage() {
               <CoreSpinLoader
                 title={STEP_LOADERS[activeLoaderStep]?.title}
                 messages={STEP_LOADERS[activeLoaderStep]?.messages}
+              />
+            ) : resumeCandidate ? (
+              <ResumeBanner
+                stepLabel={SIDEBAR_STEPS.find((s) => s.phase === resumeCandidate.step)?.label ?? `Step ${resumeCandidate.step}`}
+                onResume={handleResume}
+                onStartOver={handleStartOver}
               />
             ) : !contextDone ? (
               <ContextScreen
@@ -647,6 +736,7 @@ export default function FunnelPage() {
               <FunnelStep
                 step={step}
                 stepData={stepData}
+                initialData={(stepData[step] ?? serverDefaults?.[step]) || null}
                 listingTypeContext={listingTypeContext}
                 onSubmit={handleStepSubmit}
                 loading={loading}

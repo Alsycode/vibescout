@@ -26,7 +26,7 @@ log('Init', 'RAZORPAY_KEY_SECRET set?', !!keySecret);
 
 const razorpay = new Razorpay({ key_id: keyId, key_secret: keySecret });
 
-const REPORT_PRICE_PAISE = 9900; // ₹99
+const REPORT_PRICE_PAISE = 19900; // ₹199
 
 // POST /payment/create-order
 router.post('/create-order', requireAuth, async (req, res, next) => {

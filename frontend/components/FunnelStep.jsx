@@ -138,12 +138,18 @@ function ToggleButton({ active, onClick, label }) {
 
 // ── Step 1: Location & Commute ─────────────────────────────────────────────────
 
-function Step1({ onSubmit, loading }) {
-  const [wfhStatus, setWfhStatus] = useState('');
-  const [workplaceResolved, setWorkplaceResolved] = useState(null);
-  const [workplaceConfirmed, setWorkplaceConfirmed] = useState(false);
-  const [commuteMode, setCommuteMode] = useState('');
-  const [maxCommuteMinutes, setMaxCommuteMinutes] = useState('');
+function Step1({ onSubmit, loading, initialData }) {
+  const [wfhStatus, setWfhStatus] = useState(initialData?.wfhStatus ?? '');
+  const [workplaceResolved, setWorkplaceResolved] = useState(
+    initialData?.workplaceLat
+      ? { lat: initialData.workplaceLat, lng: initialData.workplaceLng, name: 'Saved workplace' }
+      : null
+  );
+  const [workplaceConfirmed, setWorkplaceConfirmed] = useState(!!initialData?.workplaceLat);
+  const [commuteMode, setCommuteMode] = useState(initialData?.commuteMode ?? '');
+  const [maxCommuteMinutes, setMaxCommuteMinutes] = useState(
+    initialData?.maxCommuteMinutes ? String(initialData.maxCommuteMinutes) : ''
+  );
 
   const isWfhFullTime = wfhStatus === 'full-time';
   const canSubmit = wfhStatus && (isWfhFullTime || (workplaceConfirmed && commuteMode && maxCommuteMinutes));
@@ -315,8 +321,8 @@ function Step1({ onSubmit, loading }) {
 
 // ── Step 2: Lifestyle type ─────────────────────────────────────────────────────
 
-function Step2({ onSubmit, loading }) {
-  const [lifestyleType, setLifestyleType] = useState('');
+function Step2({ onSubmit, loading, initialData }) {
+  const [lifestyleType, setLifestyleType] = useState(initialData?.lifestyleType ?? '');
 
   const options = [
     { value: 'remote', label: 'Remote worker' },
@@ -358,9 +364,9 @@ function Step2({ onSubmit, loading }) {
 
 // ── Step 3: Environmental sensitivity ──────────────────────────────────────────
 
-function Step3({ onSubmit, loading }) {
-  const [aqiSensitivity, setAqiSensitivity] = useState('');
-  const [noiseSensitivity, setNoiseSensitivity] = useState('');
+function Step3({ onSubmit, loading, initialData }) {
+  const [aqiSensitivity, setAqiSensitivity] = useState(initialData?.aqiSensitivity ?? '');
+  const [noiseSensitivity, setNoiseSensitivity] = useState(initialData?.noiseSensitivity ?? '');
 
   const aqiOptions = ['Sensitive', 'Moderate', 'Low'];
   const noiseOptions = ['High', 'Moderate', 'Low'];
@@ -410,10 +416,10 @@ function Step3({ onSubmit, loading }) {
 
 // ── Step 4: Home usage ─────────────────────────────────────────────────────────
 
-function Step4({ onSubmit, loading, stepData }) {
+function Step4({ onSubmit, loading, stepData, initialData }) {
   const wfhStatus = stepData?.[1]?.wfhStatus ?? '';
-  const [vastuPreference, setVastuPreference] = useState('');
-  const [facingDirection, setFacingDirection] = useState('');
+  const [vastuPreference, setVastuPreference] = useState(initialData?.vastuPreference ?? '');
+  const [facingDirection, setFacingDirection] = useState(initialData?.facingDirection ?? '');
 
   const vastuOptions = ['Yes', 'No', 'No preference'];
   const facingOptions = ['East', 'West', 'North', 'South', 'No preference'];
@@ -483,8 +489,8 @@ function Step4({ onSubmit, loading, stepData }) {
 
 // ── Step 5: Amenity priorities ─────────────────────────────────────────────────
 
-function Step5({ onSubmit, loading }) {
-  const [priorities, setPriorities] = useState([]);
+function Step5({ onSubmit, loading, initialData }) {
+  const [priorities, setPriorities] = useState(initialData?.amenityPriorities ?? []);
 
   const amenities = [
     { value: 'schools', label: 'Schools' },
@@ -567,8 +573,8 @@ function Step5({ onSubmit, loading }) {
 
 // ── Step 6: Community preferences ──────────────────────────────────────────────
 
-function Step6({ onSubmit, loading }) {
-  const [communityPreference, setCommunityPreference] = useState('');
+function Step6({ onSubmit, loading, initialData }) {
+  const [communityPreference, setCommunityPreference] = useState(initialData?.communityPreference ?? '');
 
   const options = [
     'Family-friendly',
@@ -618,11 +624,11 @@ const DOWN_PAYMENT_BRACKETS = [
   'Under 5L', '5L–10L', '10L–20L', '20L–50L', '50L–1Cr', 'Above 1Cr',
 ];
 
-function Step7Sale({ onSubmit, loading }) {
-  const [monthlyHouseholdIncome, setMonthlyHouseholdIncome] = useState('');
-  const [downPaymentBracket, setDownPaymentBracket] = useState('');
-  const [loanPreApproved, setLoanPreApproved] = useState('');
-  const [investmentIntent, setInvestmentIntent] = useState('');
+function Step7Sale({ onSubmit, loading, initialData }) {
+  const [monthlyHouseholdIncome, setMonthlyHouseholdIncome] = useState(initialData?.monthlyHouseholdIncome ?? '');
+  const [downPaymentBracket, setDownPaymentBracket] = useState(initialData?.downPaymentBracket ?? '');
+  const [loanPreApproved, setLoanPreApproved] = useState(initialData?.loanPreApproved ?? '');
+  const [investmentIntent, setInvestmentIntent] = useState(initialData?.investmentIntent ?? '');
 
   const canSubmit = monthlyHouseholdIncome && downPaymentBracket && loanPreApproved && investmentIntent;
 
@@ -706,8 +712,8 @@ function Step7Sale({ onSubmit, loading }) {
 
 // ── Step 7 (Rent): Rental profile ──────────────────────────────────────────────
 
-function Step7Rent({ onSubmit, loading }) {
-  const [monthlyHouseholdIncome, setMonthlyHouseholdIncome] = useState('');
+function Step7Rent({ onSubmit, loading, initialData }) {
+  const [monthlyHouseholdIncome, setMonthlyHouseholdIncome] = useState(initialData?.monthlyHouseholdIncome ?? '');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -840,21 +846,21 @@ const STEP_META = {
 
 // ── Main export ────────────────────────────────────────────────────────────────
 
-export default function FunnelStep({ step, stepData, listingTypeContext, onSubmit, loading }) {
+export default function FunnelStep({ step, stepData, initialData, listingTypeContext, onSubmit, loading }) {
   const meta = STEP_META[step] ?? STEP_META[1];
 
   function renderStep() {
     switch (step) {
-      case 1: return <Step1 onSubmit={onSubmit} loading={loading} />;
-      case 2: return <Step2 onSubmit={onSubmit} loading={loading} />;
-      case 3: return <Step3 onSubmit={onSubmit} loading={loading} />;
-      case 4: return <Step4 onSubmit={onSubmit} loading={loading} stepData={stepData} />;
-      case 5: return <Step5 onSubmit={onSubmit} loading={loading} />;
-      case 6: return <Step6 onSubmit={onSubmit} loading={loading} />;
+      case 1: return <Step1 onSubmit={onSubmit} loading={loading} initialData={initialData} />;
+      case 2: return <Step2 onSubmit={onSubmit} loading={loading} initialData={initialData} />;
+      case 3: return <Step3 onSubmit={onSubmit} loading={loading} initialData={initialData} />;
+      case 4: return <Step4 onSubmit={onSubmit} loading={loading} stepData={stepData} initialData={initialData} />;
+      case 5: return <Step5 onSubmit={onSubmit} loading={loading} initialData={initialData} />;
+      case 6: return <Step6 onSubmit={onSubmit} loading={loading} initialData={initialData} />;
       case 7:
         return listingTypeContext === 'rent'
-          ? <Step7Rent onSubmit={onSubmit} loading={loading} />
-          : <Step7Sale onSubmit={onSubmit} loading={loading} />;
+          ? <Step7Rent onSubmit={onSubmit} loading={loading} initialData={initialData} />
+          : <Step7Sale onSubmit={onSubmit} loading={loading} initialData={initialData} />;
       case 8:
         return (
           <Step8

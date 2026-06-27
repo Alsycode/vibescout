@@ -110,6 +110,29 @@ function validatePreferencesComplete(preferences) {
   return missing;
 }
 
+// GET /report — list caller's reports (metadata only, no snapshot)
+router.get('/', requireAuth, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.userId).select('reportHistory unlockedReports');
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const reports = (user.reportHistory ?? [])
+      .map(({ sessionId, listingType, propertyName, generatedAt, shareToken }) => ({
+        sessionId,
+        listingType,
+        propertyName,
+        generatedAt,
+        shareToken,
+        paid: user.unlockedReports?.includes(sessionId) ?? false,
+      }))
+      .sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt));
+
+    res.json({ reports });
+  } catch (err) {
+    next(err);
+  }
+});
+
 // GET /report/generate
 router.get('/generate', requireAuth, async (req, res, next) => {
   try {
@@ -358,7 +381,8 @@ router.get('/:sessionId', async (req, res, next) => {
       return res.status(404).json({ error: 'Report not found' });
     }
 
-    res.json({ report: entry.reportSnapshot, shareToken: entry.shareToken });
+    const paid = user.unlockedReports?.includes(sessionId) ?? false;
+    res.json({ report: entry.reportSnapshot, shareToken: entry.shareToken, paid });
   } catch (err) {
     next(err);
   }

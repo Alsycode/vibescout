@@ -3,66 +3,123 @@
 import { useState, useCallback } from 'react';
 import api from '../../lib/api';
 
-function LockIcon() {
+// ── Background decoration (mirrors funnel) ────────────────────────────────────
+
+const STARS = [
+  [65, 8, 0.45], [82, 5, 0.65], [91, 19, 0.40], [73, 15, 0.55], [88, 32, 0.45],
+  [60, 40, 0.35], [95, 45, 0.60], [77, 52, 0.45], [67, 62, 0.40], [86, 67, 0.55],
+  [72, 74, 0.45], [90, 77, 0.35], [63, 27, 0.50], [97, 13, 0.40], [75, 37, 0.45],
+  [55, 70, 0.55], [80, 84, 0.45], [92, 88, 0.35], [68, 87, 0.65], [58, 54, 0.40],
+  [87, 57, 0.45], [76, 71, 0.35], [93, 31, 0.55], [61, 47, 0.45], [84, 19, 0.40],
+  [70, 3, 0.60], [96, 61, 0.45], [59, 81, 0.55], [86, 44, 0.35], [74, 91, 0.45],
+];
+
+function PaywallBg() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-      <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="12" cy="16" r="1.5" fill="currentColor" />
-    </svg>
+    <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }} aria-hidden="true">
+      <div style={{
+        position: 'absolute', right: '8%', top: '5%',
+        width: '55vw', height: '55vw', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(13,216,192,0.045) 0%, transparent 65%)',
+        transform: 'translate(15%, -15%)',
+      }} />
+      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}
+        viewBox="0 0 100 100" preserveAspectRatio="none">
+        {STARS.map(([cx, cy, op], i) => (
+          <circle key={i} cx={cx} cy={cy} r="0.22" fill={`rgba(255,255,255,${op})`} />
+        ))}
+      </svg>
+      <svg style={{ position: 'absolute', right: '-4%', bottom: '-4%', width: '60%', height: '72%', opacity: 0.14 }}
+        viewBox="0 0 720 580" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="pwg" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%"   stopColor="#0DD8C0" stopOpacity="0" />
+            <stop offset="30%"  stopColor="#0DD8C0" stopOpacity="0.90" />
+            <stop offset="100%" stopColor="#0DD8C0" stopOpacity="0.12" />
+          </linearGradient>
+        </defs>
+        <path d="M-80 340 C60 290 200 370 350 335 C490 300 600 240 760 290" stroke="url(#pwg)" strokeWidth="1.6" fill="none" />
+        <path d="M-80 385 C80 335 230 415 390 380 C530 345 640 285 800 335" stroke="url(#pwg)" strokeWidth="1.3" fill="none" opacity="0.85" />
+        <path d="M-80 430 C100 380 260 460 430 425 C570 390 680 330 840 380" stroke="url(#pwg)" strokeWidth="1.0" fill="none" opacity="0.70" />
+        <path d="M-80 300 C40 255 165 330 300 300 C440 268 555 208 720 255" stroke="url(#pwg)" strokeWidth="1.4" fill="none" opacity="0.75" />
+        <path d="M-80 475 C120 425 290 505 460 470 C600 435 715 375 860 425" stroke="url(#pwg)" strokeWidth="0.8" fill="none" opacity="0.55" />
+      </svg>
+    </div>
   );
 }
 
-function GhostLine({ width = '100%', height = 10, opacity = 0.18 }) {
+// ── Flag dot ──────────────────────────────────────────────────────────────────
+
+function FlagDot({ color, glow }) {
   return (
-    <div
-      style={{
-        width,
-        height,
-        borderRadius: 6,
-        background: `rgba(34,211,238,${opacity})`,
-        flexShrink: 0,
-      }}
-    />
+    <span style={{
+      width: 7, height: 7, borderRadius: '50%', flexShrink: 0,
+      background: color, boxShadow: `0 0 8px ${glow}`,
+      display: 'inline-block',
+    }} />
   );
 }
 
-function LockedChapter({ title, icon }) {
+// ── Locked chapter row (funnel-step style) ────────────────────────────────────
+
+function LockedChapter({ index, label }) {
   return (
-    <div
-      style={{
-        maxWidth: 672,
-        width: '100%',
-        margin: '0 auto',
-        padding: '28px 32px',
-        background: 'rgba(8,16,34,0.55)',
-        border: '1px solid rgba(34,211,238,0.08)',
-        borderRadius: 16,
-        position: 'relative',
-        overflow: 'hidden',
-        filter: 'blur(3px)',
-        userSelect: 'none',
-        pointerEvents: 'none',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-        <span style={{ fontSize: 13, opacity: 0.5 }}>{icon}</span>
-        <GhostLine width={120} height={9} opacity={0.25} />
+    <div style={{
+      display: 'flex', alignItems: 'flex-start', gap: 16,
+      padding: '18px 0',
+      borderBottom: '1px solid rgba(255,255,255,0.04)',
+    }}>
+      {/* Step circle — locked state */}
+      <div style={{
+        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        background: 'rgba(255,255,255,0.025)',
+        border: '1px solid rgba(255,255,255,0.09)',
+        color: 'rgba(255,255,255,0.20)',
+        fontSize: 13,
+      }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </svg>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <GhostLine width="90%" />
-        <GhostLine width="75%" />
-        <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-          <GhostLine width={80} height={32} opacity={0.12} />
-          <GhostLine width={80} height={32} opacity={0.12} />
-          <GhostLine width={80} height={32} opacity={0.12} />
+
+      {/* Content */}
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+          <p style={{
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 10, fontWeight: 500,
+            letterSpacing: '0.13em', textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.20)', margin: 0,
+          }}>
+            {label}
+          </p>
+          <span style={{
+            padding: '2px 8px', borderRadius: 4,
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 8, fontWeight: 500, letterSpacing: '0.12em',
+            color: 'rgba(255,255,255,0.18)', textTransform: 'uppercase',
+          }}>LOCKED</span>
         </div>
-        <GhostLine width="60%" />
-        <GhostLine width="82%" />
+        {/* Blurred ghost content */}
+        <div style={{ filter: 'blur(4px)', userSelect: 'none', pointerEvents: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ height: 9, borderRadius: 5, background: 'rgba(13,216,192,0.15)', width: '78%' }} />
+          <div style={{ height: 9, borderRadius: 5, background: 'rgba(13,216,192,0.10)', width: '55%' }} />
+          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+            <div style={{ height: 28, width: 72, borderRadius: 7, background: 'rgba(255,255,255,0.07)' }} />
+            <div style={{ height: 28, width: 72, borderRadius: 7, background: 'rgba(255,255,255,0.05)' }} />
+            <div style={{ height: 28, width: 72, borderRadius: 7, background: 'rgba(255,255,255,0.04)' }} />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
+
+// ── Razorpay loader ───────────────────────────────────────────────────────────
 
 function loadRazorpay() {
   return new Promise((resolve) => {
@@ -75,19 +132,21 @@ function loadRazorpay() {
   });
 }
 
+// ── Main component ────────────────────────────────────────────────────────────
+
 export default function ReportPaywall({ report, sessionId, onUnlocked }) {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError]     = useState('');
 
-  const headline = report?.headline ?? 'Your property analysis is ready.';
-  const matchKeywords = report?.matchKeywords ?? [];
-  const verdict = report?.verdict ?? '';
-  const summary = report?.summary ?? {};
-  const propertyName = report?.propertyName;
-  const listingType = report?.listingType;
+  const headline       = report?.headline ?? 'Your property analysis is ready.';
+  const matchKeywords  = report?.matchKeywords ?? [];
+  const verdict        = report?.verdict ?? '';
+  const summary        = report?.summary ?? {};
+  const propertyName   = report?.propertyName;
+  const listingType    = report?.listingType;
 
-  const verdictPreview = verdict.length > 90
-    ? verdict.slice(0, 87).trimEnd() + '…'
+  const verdictPreview = verdict.length > 120
+    ? verdict.slice(0, 117).trimEnd() + '…'
     : verdict;
 
   const handleUnlock = useCallback(async () => {
@@ -116,19 +175,17 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
       amount: order.amount,
       currency: order.currency,
       name: 'VibeScout',
-      description: 'Full Property Report',
+      description: 'Full Property Intelligence Report',
       order_id: order.id,
-      theme: { color: '#22D3EE' },
-      modal: {
-        ondismiss: () => setLoading(false),
-      },
+      theme: { color: '#0DD8C0' },
+      modal: { ondismiss: () => setLoading(false) },
       handler: async (response) => {
         try {
           await api.post('/payment/verify', {
             sessionId,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
+            razorpay_order_id:    response.razorpay_order_id,
+            razorpay_payment_id:  response.razorpay_payment_id,
+            razorpay_signature:   response.razorpay_signature,
           });
           onUnlocked();
         } catch {
@@ -146,7 +203,6 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
     rzp.open();
   }, [sessionId, onUnlocked]);
 
-  // TEST ONLY — skips the gateway entirely. Button is hidden in production.
   const handleDevUnlock = useCallback(async () => {
     setError('');
     setLoading(true);
@@ -160,154 +216,259 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
   }, [sessionId, onUnlocked]);
 
   return (
-    <div
-      className="rv-paywall-wrap"
-      style={{
-        minHeight: '100vh',
-        background: 'var(--color-bg)',
-      }}
-    >
-      {/* ── Preview: Summary Card ─────────────────────────────────── */}
-      <div
-        className="rv-paywall-card"
-        style={{
-          maxWidth: 672,
-          width: '100%',
-          margin: '0 auto 24px',
-          background: 'rgba(8,16,34,0.75)',
-          border: '1px solid rgba(34,211,238,0.16)',
+    <div style={{ minHeight: '100vh', background: '#080812', position: 'relative' }}>
+      <PaywallBg />
+
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 720, margin: '0 auto', padding: '48px 24px 180px' }}>
+
+        {/* ── Section label ──────────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
+          <div style={{ width: 18, height: 1, background: 'linear-gradient(90deg, transparent, rgba(13,216,192,0.7))' }} />
+          <span style={{
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 10, fontWeight: 600,
+            letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: '#0DD8C0',
+          }}>
+            PROPERTY INTELLIGENCE · PREVIEW
+          </span>
+        </div>
+
+        {/* ── Preview card ───────────────────────────────────────────── */}
+        <div style={{
+          background: 'rgba(255,255,255,0.025)',
+          border: '1px solid rgba(255,255,255,0.07)',
           borderRadius: 16,
           position: 'relative',
           overflow: 'hidden',
-        }}
-      >
-        {/* Top accent */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0,
-            height: 1,
-            background: 'linear-gradient(90deg,transparent,rgba(34,211,238,0.55),transparent)',
-          }}
-        />
+          marginBottom: 8,
+        }}>
+          {/* Top teal accent line */}
+          <div style={{
+            position: 'absolute', top: 0, left: 0, right: 0, height: 1,
+            background: 'linear-gradient(90deg, transparent, rgba(13,216,192,0.55), transparent)',
+          }} />
 
-        {/* Header row */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-          <div>
-            <p style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.70)', marginBottom: 5 }}>
-              VIBESCOUT INTELLIGENCE
-            </p>
-            {propertyName && (
-              <p style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.5)' }}>
-                {propertyName}
+          <div style={{ padding: '28px 28px 24px' }}>
+            {/* Header row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+              <div>
+                <p style={{
+                  fontFamily: "'Geist Mono', monospace",
+                  fontSize: 9, fontWeight: 500,
+                  letterSpacing: '0.16em', textTransform: 'uppercase',
+                  color: 'rgba(232,160,48,0.70)', margin: '0 0 6px',
+                }}>
+                  VIBESCOUT INTELLIGENCE
+                </p>
+                {propertyName && (
+                  <p style={{
+                    fontFamily: "'Geist Mono', monospace",
+                    fontSize: 12, fontWeight: 400,
+                    letterSpacing: '0.06em',
+                    color: 'rgba(255,255,255,0.45)', margin: 0,
+                  }}>
+                    {propertyName}
+                  </p>
+                )}
+              </div>
+              {listingType && (
+                <span style={{
+                  fontFamily: "'Geist Mono', monospace",
+                  fontSize: 9, fontWeight: 500,
+                  letterSpacing: '0.12em', textTransform: 'uppercase',
+                  padding: '4px 12px', borderRadius: 4,
+                  background: 'rgba(13,216,192,0.07)',
+                  border: '1px solid rgba(13,216,192,0.20)',
+                  color: 'rgba(13,216,192,0.70)',
+                  flexShrink: 0,
+                }}>
+                  {listingType === 'sale' ? 'FOR SALE' : 'FOR RENT'}
+                </span>
+              )}
+            </div>
+
+            {/* Headline */}
+            <h1 style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 'clamp(22px, 3.5vw, 34px)',
+              fontWeight: 400, lineHeight: 1.2,
+              color: 'rgba(255,255,255,0.92)',
+              margin: '0 0 18px',
+            }}>
+              {headline}
+            </h1>
+
+            {/* Keywords */}
+            {matchKeywords.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 20 }}>
+                {matchKeywords.slice(0, 4).map((kw, i) => (
+                  <span key={i} style={{
+                    fontFamily: "'Geist Mono', monospace",
+                    fontSize: 10, fontWeight: 400,
+                    letterSpacing: '0.06em',
+                    padding: '4px 12px', borderRadius: 4,
+                    color: 'rgba(13,216,192,0.80)',
+                    background: 'rgba(13,216,192,0.07)',
+                    border: '1px solid rgba(13,216,192,0.20)',
+                  }}>
+                    {kw}
+                  </span>
+                ))}
+                {matchKeywords.length > 4 && (
+                  <span style={{
+                    fontFamily: "'Geist Mono', monospace",
+                    fontSize: 10, padding: '4px 12px', borderRadius: 4,
+                    color: 'rgba(255,255,255,0.22)',
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    filter: 'blur(3px)', userSelect: 'none',
+                  }}>
+                    +{matchKeywords.length - 4} more
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Verdict preview */}
+            {verdictPreview && (
+              <div style={{
+                padding: '14px 16px',
+                background: 'rgba(255,255,255,0.02)',
+                borderLeft: '2px solid rgba(13,216,192,0.35)',
+                borderRadius: '0 10px 10px 0',
+                marginBottom: 24,
+              }}>
+                <p style={{
+                  fontFamily: "'Inter', sans-serif",
+                  fontSize: 14, fontWeight: 300,
+                  color: 'rgba(255,255,255,0.55)',
+                  lineHeight: 1.75, margin: 0,
+                }}>
+                  {verdictPreview}
+                </p>
+              </div>
+            )}
+
+            {/* Flag scan summary */}
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 18 }}>
+              <p style={{
+                fontFamily: "'Geist Mono', monospace",
+                fontSize: 9, fontWeight: 500,
+                letterSpacing: '0.16em', textTransform: 'uppercase',
+                color: 'rgba(13,216,192,0.40)', margin: '0 0 12px',
+              }}>
+                SIGNAL SCAN RESULTS
               </p>
-            )}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {summary.totalRedFlags > 0 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 16px',
+                    background: 'rgba(255,255,255,0.025)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: 10,
+                  }}>
+                    <FlagDot color="#D4645A" glow="rgba(212,100,90,0.55)" />
+                    <span style={{ fontSize: 20, fontWeight: 600, color: 'rgba(255,255,255,0.88)', lineHeight: 1, fontVariantNumeric: 'tabular-nums', fontFamily: "'Geist Mono', monospace" }}>
+                      {summary.totalRedFlags}
+                    </span>
+                    <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>
+                      Red Flag{summary.totalRedFlags !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                )}
+                {summary.totalCautions > 0 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 16px',
+                    background: 'rgba(255,255,255,0.025)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: 10,
+                  }}>
+                    <FlagDot color="#D4A853" glow="rgba(212,168,83,0.55)" />
+                    <span style={{ fontSize: 20, fontWeight: 600, color: 'rgba(255,255,255,0.88)', lineHeight: 1, fontVariantNumeric: 'tabular-nums', fontFamily: "'Geist Mono', monospace" }}>
+                      {summary.totalCautions}
+                    </span>
+                    <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>
+                      Caution{summary.totalCautions !== 1 ? 's' : ''}
+                    </span>
+                  </div>
+                )}
+                {summary.totalPasses > 0 && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 16px',
+                    background: 'rgba(255,255,255,0.025)',
+                    border: '1px solid rgba(255,255,255,0.06)',
+                    borderRadius: 10,
+                  }}>
+                    <FlagDot color="#6ECB7A" glow="rgba(110,203,122,0.55)" />
+                    <span style={{ fontSize: 20, fontWeight: 600, color: 'rgba(255,255,255,0.88)', lineHeight: 1, fontVariantNumeric: 'tabular-nums', fontFamily: "'Geist Mono', monospace" }}>
+                      {summary.totalPasses}
+                    </span>
+                    <span style={{ fontFamily: "'Geist Mono', monospace", fontSize: 9, fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)' }}>
+                      Pass{summary.totalPasses !== 1 ? 'es' : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-          {listingType && (
-            <span style={{ fontSize: 10, fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '3px 11px', borderRadius: 9999, background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.2)', color: 'rgba(34,211,238,0.7)' }}>
-              {listingType === 'sale' ? 'For Sale' : 'For Rent'}
-            </span>
-          )}
         </div>
 
-        {/* Headline */}
-        <h1 className="rv-paywall-h1">
-          {headline}
-        </h1>
+        {/* ── Locked chapters ────────────────────────────────────────── */}
+        <div style={{ position: 'relative' }}>
+          {/* Vertical connector — mirrors funnel sidebar */}
+          <div style={{
+            position: 'absolute', left: 15, top: 16, bottom: 80, width: 1,
+            background: 'linear-gradient(to bottom, rgba(13,216,192,0.20) 0%, rgba(255,255,255,0.02) 100%)',
+          }} />
 
-        {/* Keywords — show first 3, blur the rest */}
-        {matchKeywords.length > 0 && (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
-            {matchKeywords.slice(0, 3).map((kw, i) => (
-              <span
-                key={i}
-                style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 13px', fontSize: 11, fontWeight: 400, letterSpacing: '0.04em', color: 'rgba(34,211,238,0.85)', background: 'rgba(34,211,238,0.08)', border: '1px solid rgba(34,211,238,0.22)', borderRadius: 9999 }}
-              >
-                {kw}
-              </span>
-            ))}
-            {matchKeywords.length > 3 && (
-              <span style={{ display: 'inline-flex', alignItems: 'center', padding: '4px 13px', fontSize: 11, color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 9999, filter: 'blur(3px)', userSelect: 'none' }}>
-                +{matchKeywords.length - 3} more
-              </span>
-            )}
+          <div style={{ paddingLeft: 0 }}>
+            <LockedChapter index={1} label="Environmental Scan" />
+            <LockedChapter index={2} label="Personal Matrix" />
+            <LockedChapter index={3} label="Financial Analysis" />
+            <LockedChapter index={4} label="Community Pulse" />
           </div>
-        )}
 
-        {/* Verdict — truncated */}
-        {verdictPreview && (
-          <div style={{ padding: '12px 16px', background: 'rgba(8,16,34,0.55)', border: '1px solid rgba(34,211,238,0.08)', borderLeft: '2px solid rgba(34,211,238,0.35)', borderRadius: '0 10px 10px 0', marginBottom: 24 }}>
-            <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.62)', lineHeight: 1.7 }}>
-              {verdictPreview}
-            </p>
-          </div>
-        )}
-
-        {/* Flag counts */}
-        <div style={{ borderTop: '1px solid rgba(34,211,238,0.08)', paddingTop: 18 }}>
-          <p style={{ fontSize: 9, fontWeight: 500, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(34,211,238,0.4)', marginBottom: 12 }}>
-            Flag Scan Results
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {summary.totalRedFlags > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', background: 'rgba(8,16,34,0.6)', border: '1px solid rgba(34,211,238,0.07)', borderRadius: 10 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#D4645A', boxShadow: '0 0 8px rgba(212,100,90,0.6)', flexShrink: 0 }} />
-                <span style={{ fontSize: 22, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{summary.totalRedFlags}</span>
-                <span style={{ fontSize: 10, fontWeight: 400, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Red Flag{summary.totalRedFlags !== 1 ? 's' : ''}</span>
-              </div>
-            )}
-            {summary.totalCautions > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', background: 'rgba(8,16,34,0.6)', border: '1px solid rgba(34,211,238,0.07)', borderRadius: 10 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#D4A853', boxShadow: '0 0 8px rgba(212,168,83,0.6)', flexShrink: 0 }} />
-                <span style={{ fontSize: 22, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{summary.totalCautions}</span>
-                <span style={{ fontSize: 10, fontWeight: 400, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Caution{summary.totalCautions !== 1 ? 's' : ''}</span>
-              </div>
-            )}
-            {summary.totalPasses > 0 && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', background: 'rgba(8,16,34,0.6)', border: '1px solid rgba(34,211,238,0.07)', borderRadius: 10 }}>
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#6ECB7A', boxShadow: '0 0 8px rgba(110,203,122,0.6)', flexShrink: 0 }} />
-                <span style={{ fontSize: 22, fontWeight: 600, color: 'rgba(255,255,255,0.92)', lineHeight: 1, fontVariantNumeric: 'tabular-nums' }}>{summary.totalPasses}</span>
-                <span style={{ fontSize: 10, fontWeight: 400, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Pass{summary.totalPasses !== 1 ? 'es' : ''}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* ── Locked ghost chapters ─────────────────────────────────── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, position: 'relative' }}>
-        <LockedChapter title="Environmental Scan" icon="🌿" />
-        <LockedChapter title="Personal Matrix" icon="🧭" />
-        <LockedChapter title="Financial Analysis" icon="📊" />
-
-        {/* Fade-out gradient over ghost cards */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: 0, left: 0, right: 0,
-            height: 220,
-            background: 'linear-gradient(to bottom, transparent, var(--color-bg) 80%)',
+          {/* Fade-out gradient over ghost cards */}
+          <div style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: 160,
+            background: 'linear-gradient(to bottom, transparent, #080812 85%)',
             pointerEvents: 'none',
-          }}
-        />
+          }} />
+        </div>
       </div>
 
-      {/* ── Unlock CTA — fixed bottom bar ────────────────────────── */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: 0, left: 0, right: 0,
-          padding: '20px 24px 28px',
-          background: 'linear-gradient(to top, rgba(4,8,20,0.98) 60%, transparent)',
-          zIndex: 50,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: 10,
-        }}
-      >
+      {/* ── Unlock CTA — fixed bottom bar ──────────────────────────── */}
+      <div style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 50,
+        padding: '16px 24px 28px',
+        background: 'linear-gradient(to top, rgba(8,8,18,0.99) 55%, transparent)',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
+      }}>
+        {/* Section label above button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+          <div style={{ width: 14, height: 1, background: 'rgba(232,160,48,0.45)' }} />
+          <span style={{
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 9, fontWeight: 600,
+            letterSpacing: '0.15em', textTransform: 'uppercase',
+            color: 'rgba(232,160,48,0.55)',
+          }}>
+            UNLOCK FULL INTELLIGENCE
+          </span>
+          <div style={{ width: 14, height: 1, background: 'rgba(232,160,48,0.45)' }} />
+        </div>
+
         {error && (
-          <p style={{ fontSize: 12, color: '#D4645A', textAlign: 'center', maxWidth: 400 }}>
+          <p style={{
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 11, color: '#D4645A',
+            textAlign: 'center', maxWidth: 400, margin: 0,
+            letterSpacing: '0.04em',
+          }}>
             {error}
           </p>
         )}
@@ -316,63 +477,70 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
           onClick={handleUnlock}
           disabled={loading}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 10,
-            width: '100%',
-            maxWidth: 420,
-            padding: '16px 28px',
-            background: loading ? 'rgba(232,160,48,0.12)' : '#E8A030',
-            border: '1px solid transparent',
-            borderRadius: 14,
-            color: loading ? 'rgba(232,160,48,0.5)' : '#080812',
-            fontSize: 16,
-            fontWeight: 600,
-            letterSpacing: '-0.01em',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+            width: '100%', maxWidth: 440,
+            padding: '15px 28px',
+            background: loading ? 'rgba(232,160,48,0.10)' : '#E8A030',
+            border: loading ? '1px solid rgba(232,160,48,0.20)' : '1px solid transparent',
+            borderRadius: 12,
+            color: loading ? 'rgba(232,160,48,0.45)' : '#080812',
+            fontFamily: "'Geist Mono', monospace",
+            fontSize: 12, fontWeight: 600,
+            letterSpacing: '0.10em', textTransform: 'uppercase',
             cursor: loading ? 'not-allowed' : 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: loading ? 'none' : '0 8px 24px rgba(232,160,48,0.25)',
+            boxShadow: loading ? 'none' : '0 0 0 1px rgba(232,160,48,0.30), 0 8px 28px rgba(232,160,48,0.22)',
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = '#D4911F';
-              e.currentTarget.style.boxShadow  = '0 0 0 1px #E8A030, 0 8px 32px rgba(232,160,48,0.30)';
+              e.currentTarget.style.background  = '#D4911F';
+              e.currentTarget.style.boxShadow   = '0 0 0 2px rgba(232,160,48,0.50), 0 8px 32px rgba(232,160,48,0.30)';
             }
           }}
           onMouseLeave={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = '#E8A030';
-              e.currentTarget.style.boxShadow  = '0 8px 24px rgba(232,160,48,0.25)';
+              e.currentTarget.style.background  = '#E8A030';
+              e.currentTarget.style.boxShadow   = '0 0 0 1px rgba(232,160,48,0.30), 0 8px 28px rgba(232,160,48,0.22)';
             }
           }}
         >
           {loading ? (
-            <span style={{ opacity: 0.6 }}>Processing…</span>
+            <>
+              <div style={{
+                width: 13, height: 13, borderRadius: '50%',
+                border: '1.5px solid rgba(232,160,48,0.25)',
+                borderTop: '1.5px solid rgba(232,160,48,0.60)',
+                animation: 'spin 0.8s linear infinite',
+              }} />
+              <span>Processing…</span>
+            </>
           ) : (
             <>
-              <LockIcon />
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
               <span>Unlock Full Report</span>
-              <span
-                style={{
-                  marginLeft: 4,
-                  padding: '2px 10px',
-                  background: 'rgba(8,8,18,0.30)',
-                  border: '1px solid rgba(8,8,18,0.25)',
-                  borderRadius: 9999,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: '#080812',
-                }}
-              >
+              <span style={{
+                padding: '2px 10px', borderRadius: 4,
+                background: 'rgba(8,8,18,0.25)',
+                border: '1px solid rgba(8,8,18,0.20)',
+                fontSize: 11, fontWeight: 700,
+                letterSpacing: '0.06em',
+              }}>
                 ₹199
               </span>
             </>
           )}
         </button>
 
-        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', textAlign: 'center' }}>
-          One-time payment · UPI, Cards &amp; Net Banking · Secured by Razorpay
+        <p style={{
+          fontFamily: "'Geist Mono', monospace",
+          fontSize: 9, fontWeight: 400,
+          letterSpacing: '0.12em', textTransform: 'uppercase',
+          color: 'rgba(255,255,255,0.20)', margin: 0, textAlign: 'center',
+        }}>
+          ONE-TIME PAYMENT · UPI, CARDS &amp; NET BANKING · SECURED BY RAZORPAY
         </p>
 
         {process.env.NODE_ENV !== 'production' && (
@@ -380,20 +548,22 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
             onClick={handleDevUnlock}
             disabled={loading}
             style={{
-              marginTop: 4,
-              padding: '8px 16px',
+              marginTop: 2, padding: '7px 16px',
               background: 'transparent',
-              border: '1px dashed rgba(255,255,255,0.25)',
-              borderRadius: 8,
-              color: 'rgba(255,255,255,0.45)',
-              fontSize: 12,
+              border: '1px dashed rgba(255,255,255,0.18)',
+              borderRadius: 7,
+              fontFamily: "'Geist Mono', monospace",
+              fontSize: 10, letterSpacing: '0.08em',
+              color: 'rgba(255,255,255,0.35)',
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
           >
-            ⚙ Dev: skip payment &amp; unlock
+            ⚙ DEV: SKIP PAYMENT &amp; UNLOCK
           </button>
         )}
       </div>
+
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </div>
   );
 }

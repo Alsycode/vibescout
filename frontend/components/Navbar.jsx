@@ -5,7 +5,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ShinyButton } from '@/components/ui/shiny-button';
 
@@ -18,16 +18,31 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const pathname  = usePathname();
-  const [open, setOpen]   = useState(false);
-  const [atTop, setAtTop] = useState(true);
+  const router    = useRouter();
+  const [open, setOpen]     = useState(false);
+  const [atTop, setAtTop]   = useState(true);
+  const [authed, setAuthed] = useState(false);
   const drawerRef = useRef(null);
   const btnRef    = useRef(null);
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    setAuthed(false);
+    setOpen(false);
+    router.push('/');
+  }
 
   useEffect(() => {
     const onScroll = () => setAtTop(window.scrollY < 60);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((r) => { if (r.ok) setAuthed(true); })
+      .catch(() => {});
   }, []);
 
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -118,6 +133,35 @@ export default function Navbar() {
             {NAV_LINKS.map(({ href, label }) => (
               <NavLink key={href} href={href} label={label} pathname={pathname} />
             ))}
+
+            {authed && (
+              <NavLink href="/my-reports" label="MY REPORTS" pathname={pathname} />
+            )}
+
+            {authed && (
+              <button
+                onClick={handleLogout}
+                style={{
+                  display:       'inline-flex',
+                  alignItems:    'center',
+                  gap:           '5px',
+                  background:    'none',
+                  border:        'none',
+                  cursor:        'pointer',
+                  padding:       0,
+                  fontFamily:    "'Geist Mono', monospace",
+                  fontSize:      '9.5px',
+                  fontWeight:    500,
+                  letterSpacing: '0.12em',
+                  color:         'rgba(255,255,255,0.38)',
+                  transition:    'color 150ms ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = 'rgba(255,80,80,0.85)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.38)'; }}
+              >
+                LOGOUT
+              </button>
+            )}
 
             {/* CTA */}
             <ShinyButton href="/analyze" className="shiny-cta-nav">
@@ -210,6 +254,49 @@ export default function Navbar() {
             </span>
           </Link>
         ))}
+
+        {authed && (
+          <Link
+            href="/my-reports"
+            className="nav-mobile-link"
+            onClick={() => setOpen(false)}
+          >
+            <span style={{
+              fontFamily:    "'Geist Mono', monospace",
+              fontSize:      '10px',
+              fontWeight:    500,
+              letterSpacing: '0.14em',
+              color:         'inherit',
+            }}>
+              MY REPORTS
+            </span>
+          </Link>
+        )}
+
+        {authed && (
+          <button
+            onClick={handleLogout}
+            className="nav-mobile-link"
+            style={{
+              width:      '100%',
+              background: 'none',
+              border:     'none',
+              cursor:     'pointer',
+              textAlign:  'left',
+              padding:    0,
+            }}
+          >
+            <span style={{
+              fontFamily:    "'Geist Mono', monospace",
+              fontSize:      '10px',
+              fontWeight:    500,
+              letterSpacing: '0.14em',
+              color:         'rgba(255,80,80,0.70)',
+            }}>
+              LOGOUT
+            </span>
+          </button>
+        )}
 
         <div className="nav-mobile-cta">
           <ShinyButton href="/analyze">

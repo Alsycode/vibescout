@@ -1400,21 +1400,6 @@ tr:hover {
   max-width: 600px;
 }
 
-.funnel-building-float {
-  position: absolute;
-  right: -220px;
-  top: -30px;
-  width: 320px;
-  pointer-events: none;
-  filter: drop-shadow(0 0 40px rgba(13,216,192,0.28)) drop-shadow(0 20px 60px rgba(0,0,0,0.5));
-  z-index: 2;
-  user-select: none;
-}
-
-@media (max-width: 1200px) {
-  .funnel-building-float { display: none; }
-}
-
 .context-fields-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

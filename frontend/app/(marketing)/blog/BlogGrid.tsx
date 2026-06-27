@@ -35,27 +35,33 @@ export default function BlogGrid({ posts }: { posts: BlogPost[] }) {
           >
             <article
               style={{
-                background:    '#0C0C18',
-                border:        '1px solid rgba(255,255,255,0.06)',
-                borderRadius:  '12px',
+                background:   '#10101E',
+                borderTop:    '1px solid rgba(255,255,255,0.10)',
+                borderRight:  '1px solid rgba(255,255,255,0.06)',
+                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                borderLeft:   '1px solid rgba(255,255,255,0.06)',
+                borderRadius: '12px',
+                boxShadow:    '0 0 0 1px rgba(255,255,255,0.03), 0 24px 80px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.06)',
                 padding:       '28px',
                 height:        '100%',
                 display:       'flex',
                 flexDirection: 'column',
                 gap:           '16px',
-                transition:    'border-color 200ms ease, transform 200ms ease',
+                transition:    'border-top-color 200ms ease, transform 200ms ease, box-shadow 200ms ease',
                 cursor:        'pointer',
                 animation:     `sectionEnter 600ms cubic-bezier(0.25,0.46,0.45,0.94) ${i * 80}ms both`,
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget;
-                el.style.borderColor = 'rgba(255,255,255,0.12)';
-                el.style.transform   = 'translateY(-2px)';
+                el.style.borderTopColor = 'rgba(255,255,255,0.18)';
+                el.style.transform      = 'translateY(-3px)';
+                el.style.boxShadow      = '0 0 0 1px rgba(255,255,255,0.05), 0 32px 100px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.08)';
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget;
-                el.style.borderColor = 'rgba(255,255,255,0.06)';
-                el.style.transform   = 'translateY(0)';
+                el.style.borderTopColor = 'rgba(255,255,255,0.10)';
+                el.style.transform      = 'translateY(0)';
+                el.style.boxShadow      = '0 0 0 1px rgba(255,255,255,0.03), 0 24px 80px rgba(0,0,0,0.70), inset 0 1px 0 rgba(255,255,255,0.06)';
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

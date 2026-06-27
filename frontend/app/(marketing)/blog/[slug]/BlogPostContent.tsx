@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { BlogPost } from '@/lib/blog';
+import { ShinyButton } from '@/components/ui/shiny-button';
 
 const CATEGORY_COLORS: Record<string, string> = {
   'Signal Deep Dive':       '#22D3EE',
@@ -16,16 +17,29 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
   });
 
   return (
-    <div style={{ background: '#080812', minHeight: '100vh' }}>
+    <div className="grid-surface" style={{ background: '#080812', minHeight: '100vh' }}>
       <div className="noise-overlay" />
 
       <header
         style={{
+          position: 'relative',
           maxWidth: '760px',
           margin:   '0 auto',
           padding:  '120px 40px 56px',
+          overflow: 'hidden',
         }}
       >
+        {/* Ambient teal glow behind header */}
+        <div
+          aria-hidden
+          style={{
+            position:      'absolute',
+            inset:         0,
+            background:    'radial-gradient(ellipse 600px 300px at 50% 40%, rgba(3,211,189,0.05) 0%, transparent 70%)',
+            pointerEvents: 'none',
+          }}
+        />
+
         <Link
           href="/blog"
           style={{
@@ -37,8 +51,9 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
             fontSize:      '11px',
             color:         'rgba(255,255,255,0.30)',
             letterSpacing: '0.06em',
-            marginBottom:  '40px',
+            marginBottom:  '44px',
             transition:    'color 150ms ease',
+            position:      'relative',
           }}
           onMouseEnter={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.65)'; }}
           onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.30)'; }}
@@ -46,40 +61,46 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
           ← INTELLIGENCE JOURNAL
         </Link>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '20px' }}>
-          <span
-            style={{
-              width:        '5px',
-              height:       '5px',
-              borderRadius: '50%',
-              background:   accentColor,
-              boxShadow:    `0 0 6px ${accentColor}80`,
-              flexShrink:   0,
-            }}
-          />
+        {/* Eyebrow — decorative lines + category */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', position: 'relative' }}>
+          <div style={{
+            width:      '18px',
+            height:     '1px',
+            flexShrink: 0,
+            background: `linear-gradient(90deg, transparent, ${accentColor}B3)`,
+          }} />
           <span
             style={{
               fontFamily:    "'Geist Mono', monospace",
               fontSize:      '10px',
-              fontWeight:    500,
-              letterSpacing: '0.10em',
+              fontWeight:    600,
+              letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color:         accentColor,
+              whiteSpace:    'nowrap',
             }}
           >
             {post.category}
           </span>
+          <div style={{
+            height:     '1px',
+            width:      '64px',
+            flexShrink: 0,
+            background: `linear-gradient(90deg, ${accentColor}8C 0%, transparent 100%)`,
+          }} />
         </div>
 
         <h1
           style={{
-            fontFamily:    "'Inter', sans-serif",
-            fontSize:      'clamp(28px, 4vw, 48px)',
-            fontWeight:    800,
-            letterSpacing: '-0.03em',
+            fontFamily:    "'Instrument Serif', serif",
+            fontStyle:     'normal',
+            fontSize:      'clamp(28px, 4vw, 56px)',
+            fontWeight:    400,
+            letterSpacing: '-0.01em',
             lineHeight:    1.08,
             color:         'rgba(255,255,255,0.92)',
             margin:        '0 0 20px',
+            position:      'relative',
           }}
         >
           {post.title}
@@ -181,77 +202,125 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
           ))}
         </div>
 
+        {/* CTA card — homepage design language */}
         <div
           style={{
-            marginTop:    '56px',
-            background:   '#0C0C18',
-            border:       '1px solid rgba(232,160,48,0.15)',
-            borderRadius: '12px',
-            padding:      '32px',
+            position:      'relative',
+            marginTop:     '64px',
+            background:    '#161628',
+            borderTop:     '1px solid rgba(255,255,255,0.14)',
+            borderRight:   '1px solid rgba(255,255,255,0.07)',
+            borderBottom:  '1px solid rgba(255,255,255,0.04)',
+            borderLeft:    '1px solid rgba(255,255,255,0.07)',
+            borderRadius:  '16px',
+            padding:       '40px',
+            boxShadow:     '0 0 0 1px rgba(255,255,255,0.03), 0 32px 100px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.07)',
+            overflow:      'hidden',
           }}
         >
-          <p
+          {/* Ambient teal glow */}
+          <div
+            aria-hidden
             style={{
+              position:      'absolute',
+              inset:         0,
+              background:    'radial-gradient(ellipse 500px 250px at 0% 100%, rgba(3,211,189,0.07) 0%, transparent 70%)',
+              pointerEvents: 'none',
+            }}
+          />
+
+          {/* Eyebrow — decorative lines + label */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', position: 'relative' }}>
+            <div style={{
+              width:      '18px',
+              height:     '1px',
+              flexShrink: 0,
+              background: 'linear-gradient(90deg, transparent, rgba(34,211,238,0.7))',
+            }} />
+            <span style={{
               fontFamily:    "'Geist Mono', monospace",
-              fontSize:      '9px',
-              fontWeight:    500,
-              letterSpacing: '0.10em',
+              fontSize:      '10px',
+              fontWeight:    600,
               textTransform: 'uppercase',
-              color:         '#E8A030',
-              margin:        '0 0 12px',
-            }}
-          >
-            PUT IT TO USE
+              letterSpacing: '0.14em',
+              color:         '#03d3bd',
+              whiteSpace:    'nowrap',
+            }}>
+              PUT IT TO USE
+            </span>
+            <div style={{
+              height:     '1px',
+              width:      '64px',
+              flexShrink: 0,
+              background: 'linear-gradient(90deg, rgba(34,211,238,0.55) 0%, transparent 100%)',
+            }} />
+          </div>
+
+          {/* Headline — Instrument Serif */}
+          <p style={{ margin: '0 0 12px', position: 'relative' }}>
+            <span style={{
+              display:       'block',
+              fontFamily:    "'Instrument Serif', serif",
+              fontStyle:     'normal',
+              fontSize:      'clamp(22px, 3vw, 32px)',
+              fontWeight:    400,
+              letterSpacing: '-0.01em',
+              lineHeight:    1.1,
+              color:         'rgba(255,255,255,0.92)',
+            }}>
+              Run these signals
+            </span>
+            <span style={{
+              display:       'block',
+              fontFamily:    "'Instrument Serif', serif",
+              fontStyle:     'normal',
+              fontSize:      'clamp(22px, 3vw, 32px)',
+              fontWeight:    400,
+              letterSpacing: '-0.01em',
+              lineHeight:    1.1,
+              color:         '#03d3bd',
+              textShadow:    '0 0 32px rgba(3,211,189,0.25)',
+            }}>
+              on your property.
+            </span>
           </p>
-          <p
-            style={{
-              fontFamily: "'Inter', sans-serif",
-              fontSize:   '17px',
-              fontWeight: 700,
-              color:      'rgba(255,255,255,0.88)',
-              margin:     '0 0 8px',
-            }}
-          >
-            Run these signals on your property.
-          </p>
+
           <p
             style={{
               fontFamily: "'Inter', sans-serif",
               fontSize:   '14px',
-              lineHeight: 1.6,
-              color:      'rgba(255,255,255,0.40)',
-              margin:     '0 0 24px',
+              lineHeight: 1.65,
+              color:      'rgba(255,255,255,0.38)',
+              margin:     '0 0 28px',
+              maxWidth:   '420px',
+              position:   'relative',
             }}
           >
             AQI, noise risk, solar access, commute, financials — sourced live, computed
             deterministically. Under 5 minutes.
           </p>
-          <Link
-            href="/analyze"
-            style={{
-              display:       'inline-block',
-              textDecoration:'none',
-              background:    '#E8A030',
-              color:         '#080812',
-              fontFamily:    "'Inter', sans-serif",
-              fontSize:      '13px',
-              fontWeight:    600,
-              letterSpacing: '0.02em',
-              padding:       '12px 24px',
-              borderRadius:  '6px',
-              transition:    'all 200ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#D4911F';
-              e.currentTarget.style.boxShadow  = '0 0 0 1px #E8A030, 0 4px 16px rgba(232,160,48,0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#E8A030';
-              e.currentTarget.style.boxShadow  = 'none';
-            }}
-          >
-            Run Intelligence on a Property →
-          </Link>
+
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            <ShinyButton href="/analyze">
+              Run Intelligence on a Property →
+            </ShinyButton>
+            <Link
+              href="/report/preview"
+              style={{
+                textDecoration: 'none',
+                fontFamily:     "'Inter', sans-serif",
+                fontSize:       '13px',
+                fontWeight:     400,
+                color:          'rgba(255,255,255,0.35)',
+                letterSpacing:  '0.01em',
+                transition:     'color 150ms ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.70)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; }}
+            >
+              See a sample report
+            </Link>
+          </div>
         </div>
       </article>
 

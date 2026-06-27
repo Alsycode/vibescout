@@ -45,12 +45,12 @@ const CASES: CaseStudy[] = [
     listingClaim:
       '"Green surroundings. Walking distance to IT hubs. Vaastu-compliant."',
     findings: [
-      { signal: 'FLOOD ZONE',  found: 'Zone B — 2023 waterlogging on record',      verdict: 'red_flag', icon: 'flood'   },
-      { signal: 'AIR QUALITY', found: '58 AQI · Moderate · Near Baner bypass',     verdict: 'caution',  icon: 'air'     },
-      { signal: 'SOLAR YIELD', found: '3.2 kWh/m² · North-facing · Low potential', verdict: 'caution',  icon: 'solar'   },
+      { signal: 'NOISE RISK',  found: '67 dB est. · Ground floor · Baner-Pashan Road', verdict: 'red_flag', icon: 'noise'   },
+      { signal: 'AIR QUALITY', found: '58 AQI · Moderate · Near Baner bypass',          verdict: 'caution',  icon: 'air'     },
+      { signal: 'SOLAR YIELD', found: '3.2 kWh/m² · North-facing · Low potential',      verdict: 'caution',  icon: 'solar'   },
     ],
     outcome:
-      'Buyer requested a higher floor unit in the same complex. Builder disclosed the 2023 waterlogging only after the report was produced.',
+      'Buyer requested a higher floor unit in the same complex. Noise from Baner-Pashan Road was the primary concern flagged by the report.',
   },
   {
     id:       '003',
@@ -418,10 +418,8 @@ export default function CaseStudies() {
       id="case-studies"
       className="section-pad-std"
       style={{
-        background:      '#080812',
-        backgroundImage: 'var(--grid-bg-image)',
-        backgroundSize:  '64px 64px',
-        position:        'relative',
+        background: '#080812',
+        position:   'relative',
       }}
     >
       <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative' }}>

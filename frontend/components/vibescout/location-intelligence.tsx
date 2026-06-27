@@ -203,11 +203,8 @@ export default function LocationIntelligence() {
       ref={sectionRef}
       id="how-it-works"
       style={{
-        background:          '#080812',
-        backgroundImage:     'var(--grid-bg-image)',
-        backgroundSize:      '64px 64px',
-        backgroundPosition:  'center center',
-        position:            'relative',
+        background: '#080812',
+        position:   'relative',
         overflow:            'hidden',
         padding:             'clamp(80px, 10vw, 140px) clamp(24px, 5vw, 80px)',
       }}

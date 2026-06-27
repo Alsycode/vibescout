@@ -30,10 +30,8 @@ export default function ReportPreview() {
       id="sample"
       className="section-pad-std"
       style={{
-        background:      '#080812',
-        backgroundImage: 'var(--grid-bg-image)',
-        backgroundSize:  '64px 64px',
-        position:        'relative',
+        background: '#080812',
+        position:   'relative',
         overflow:        'hidden',
       }}
     >

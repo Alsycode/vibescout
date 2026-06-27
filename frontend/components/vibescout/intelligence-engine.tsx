@@ -350,11 +350,9 @@ export default function IntelligenceEngine() {
       id="architecture"
       className="section-pad-std"
       style={{
-        background:      '#080812',
-        backgroundImage: 'var(--grid-bg-image)',
-        backgroundSize:  '64px 64px',
-        position:        'relative',
-        overflow:        'hidden',
+        background: '#080812',
+        position:   'relative',
+        overflow:   'hidden',
       }}
     >
       {/* Ambient glow — strong dual-color radial anchored to card positions */}

@@ -480,27 +480,29 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
             width: '100%', maxWidth: 440,
             padding: '15px 28px',
-            background: loading ? 'rgba(232,160,48,0.10)' : '#E8A030',
-            border: loading ? '1px solid rgba(232,160,48,0.20)' : '1px solid transparent',
+            background: loading ? 'rgba(13,216,192,0.08)' : '#0DD8C0',
+            border: loading ? '1px solid rgba(13,216,192,0.20)' : '1px solid transparent',
             borderRadius: 12,
-            color: loading ? 'rgba(232,160,48,0.45)' : '#080812',
+            color: loading ? 'rgba(13,216,192,0.45)' : '#080812',
             fontFamily: "'Geist Mono', monospace",
             fontSize: 12, fontWeight: 600,
             letterSpacing: '0.10em', textTransform: 'uppercase',
             cursor: loading ? 'not-allowed' : 'pointer',
             transition: 'all 0.2s ease',
-            boxShadow: loading ? 'none' : '0 0 0 1px rgba(232,160,48,0.30), 0 8px 28px rgba(232,160,48,0.22)',
+            boxShadow: loading ? 'none' : '0 0 0 1px rgba(13,216,192,0.30), 0 8px 28px rgba(13,216,192,0.22)',
           }}
           onMouseEnter={(e) => {
             if (!loading) {
-              e.currentTarget.style.background  = '#D4911F';
-              e.currentTarget.style.boxShadow   = '0 0 0 2px rgba(232,160,48,0.50), 0 8px 32px rgba(232,160,48,0.30)';
+              e.currentTarget.style.background  = '#0BC5AF';
+              e.currentTarget.style.boxShadow   = '0 0 0 1px #0DD8C0, 0 8px 32px rgba(13,216,192,0.28)';
+              e.currentTarget.style.transform   = 'translateY(-1px)';
             }
           }}
           onMouseLeave={(e) => {
             if (!loading) {
-              e.currentTarget.style.background  = '#E8A030';
-              e.currentTarget.style.boxShadow   = '0 0 0 1px rgba(232,160,48,0.30), 0 8px 28px rgba(232,160,48,0.22)';
+              e.currentTarget.style.background  = '#0DD8C0';
+              e.currentTarget.style.boxShadow   = '0 0 0 1px rgba(13,216,192,0.30), 0 8px 28px rgba(13,216,192,0.22)';
+              e.currentTarget.style.transform   = 'translateY(0)';
             }
           }}
         >
@@ -508,8 +510,8 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
             <>
               <div style={{
                 width: 13, height: 13, borderRadius: '50%',
-                border: '1.5px solid rgba(232,160,48,0.25)',
-                borderTop: '1.5px solid rgba(232,160,48,0.60)',
+                border: '1.5px solid rgba(13,216,192,0.25)',
+                borderTop: '1.5px solid rgba(13,216,192,0.70)',
                 animation: 'spin 0.8s linear infinite',
               }} />
               <span>Processing…</span>

@@ -113,7 +113,12 @@ router.post('/login', async (req, res, next) => {
 
 // POST /auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('vb_session', { path: '/' });
+  res.clearCookie('vb_session', {
+    httpOnly: true,
+    secure:   process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    path:     '/',
+  });
   return res.json({ ok: true });
 });
 

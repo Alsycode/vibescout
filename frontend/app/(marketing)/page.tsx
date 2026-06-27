@@ -153,9 +153,6 @@ export default function LandingPage() {
           flexDirection:      'column',
           justifyContent:     'center',
           overflow:           'hidden',
-          backgroundImage:    'var(--grid-bg-image)',
-          backgroundSize:     'var(--grid-bg-size)',
-          backgroundPosition: 'center center',
         }}
       >
         {/* Ambient amber radial glow */}

@@ -32,10 +32,10 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         height: `${Math.random() * 2 + 0.5}px`,
         color:
           i % 3 === 0
-            ? "rgba(232,160,48,0.7)"
+            ? "rgba(13,216,192,0.6)"
             : i % 3 === 1
             ? "rgba(93,116,138,0.5)"
-            : "rgba(255,255,255,0.25)",
+            : "rgba(255,255,255,0.20)",
         duration: 2.5 + Math.random() * 3,
         delay: Math.random() * 4,
       }))
@@ -56,7 +56,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
           style={{
             width: 700,
             height: 420,
-            background: "radial-gradient(ellipse, rgba(232,160,48,0.12) 0%, transparent 65%)",
+            background: "radial-gradient(ellipse, rgba(13,216,192,0.10) 0%, transparent 65%)",
             filter: "blur(40px)",
             animation: "glowBlob 4s ease-in-out infinite",
           }}
@@ -72,7 +72,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
           className="absolute left-0 right-0 h-[1px]"
           style={{
             background:
-              "linear-gradient(90deg, transparent 0%, rgba(232,160,48,0.4) 50%, transparent 100%)",
+              "linear-gradient(90deg, transparent 0%, rgba(13,216,192,0.35) 50%, transparent 100%)",
             animation: "loadingScan 6s linear 1s infinite",
           }}
         />
@@ -106,7 +106,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         <div
           className="text-[9px] tracking-[0.55em] uppercase mb-4"
           style={{
-            color: "rgba(232,160,48,0.55)",
+            color: "rgba(13,216,192,0.55)",
             animation: "glowPulse 3s ease-in-out infinite",
           }}
         >
@@ -146,13 +146,13 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
         <div className="flex justify-between mb-2.5">
           <span
             className="text-[8px] tracking-[0.4em] uppercase"
-            style={{ color: "rgba(232,160,48,0.4)" }}
+            style={{ color: "rgba(13,216,192,0.4)" }}
           >
             Loading
           </span>
           <span
             className="text-[8px] tracking-[0.3em] tabular-nums"
-            style={{ color: "rgba(232,160,48,0.55)" }}
+            style={{ color: "rgba(13,216,192,0.55)" }}
           >
             {progress}%
           </span>
@@ -165,9 +165,9 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
             className="h-full rounded-full"
             style={{
               background:
-                "linear-gradient(90deg, rgba(232,160,48,0.35) 0%, rgba(232,160,48,0.95) 60%, rgba(255,230,190,1) 100%)",
+                "linear-gradient(90deg, rgba(13,216,192,0.35) 0%, rgba(13,216,192,0.95) 60%, rgba(180,255,248,1) 100%)",
               boxShadow:
-                "0 0 8px rgba(232,160,48,0.7), 0 0 16px rgba(232,160,48,0.3)",
+                "0 0 8px rgba(13,216,192,0.6), 0 0 16px rgba(13,216,192,0.25)",
             }}
             initial={{ width: "0%" }}
             animate={{ width: `${progress}%` }}

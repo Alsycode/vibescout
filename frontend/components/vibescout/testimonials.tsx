@@ -102,12 +102,10 @@ export default function Testimonials() {
       ref={sectionRef}
       id="testimonials"
       style={{
-        background:     '#080812',
-        position:       'relative',
-        overflow:       'hidden',
-        padding:        'clamp(80px, 10vw, 130px) clamp(24px, 5vw, 80px)',
-        backgroundImage: 'var(--grid-bg-image)',
-        backgroundSize:  '64px 64px',
+        background: '#080812',
+        position:   'relative',
+        overflow:   'hidden',
+        padding:    'clamp(80px, 10vw, 130px) clamp(24px, 5vw, 80px)',
       }}
     >
       {/* ── Star field ─────────────────────────────────────── */}
@@ -229,11 +227,12 @@ export default function Testimonials() {
         {/* ── Scrolling columns ──────────────────────────────── */}
         <div
           style={{
-            display:    'flex',
-            gap:        '16px',
-            maxHeight:  '720px',
-            overflow:   'hidden',
-            maskImage:  'linear-gradient(to bottom, transparent 0%, #080812 8%, #080812 88%, transparent 100%)',
+            display:         'flex',
+            justifyContent:  'center',
+            gap:             '16px',
+            maxHeight:       '720px',
+            overflow:        'hidden',
+            maskImage:       'linear-gradient(to bottom, transparent 0%, #080812 8%, #080812 88%, transparent 100%)',
             WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, #080812 8%, #080812 88%, transparent 100%)',
           }}
         >

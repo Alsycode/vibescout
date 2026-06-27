@@ -11,10 +11,52 @@ import { useFunnel } from '../../../hooks/useFunnel';
 import ContextScreen from '../../../components/ContextScreen';
 import FunnelStep from '../../../components/FunnelStep';
 import Navbar from '../../../components/Navbar';
+import { CoreSpinLoader } from '../../../components/ui/core-spin-loader';
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+// ── Per-step loader content ───────────────────────────────────────────────────
+
+const STEP_LOADERS = {
+  context: {
+    title: 'Pinning your property',
+    messages: ['Verifying location...', 'Locking address...', 'Setting up analysis...'],
+  },
+  1: {
+    title: 'Saving commute preferences',
+    messages: ['Mapping your route...', 'Checking traffic data...', 'Loading next step...'],
+  },
+  2: {
+    title: 'Logging lifestyle data',
+    messages: ['Syncing your profile...', 'Building preferences...', 'Loading next step...'],
+  },
+  3: {
+    title: 'Queuing environmental scan',
+    messages: ['Preparing air check...', 'Noise model loading...', 'Loading next step...'],
+  },
+  4: {
+    title: 'Saving home usage data',
+    messages: ['Reading orientation...', 'Parsing Vastu params...', 'Loading next step...'],
+  },
+  5: {
+    title: 'Logging amenity priorities',
+    messages: ['Scanning nearby places...', 'Mapping distances...', 'Loading next step...'],
+  },
+  6: {
+    title: 'Profiling the neighbourhood',
+    messages: ['Reading community data...', 'Analysing local vibe...', 'Loading next step...'],
+  },
+  7: {
+    title: 'Running budget analysis',
+    messages: ['Crunching rental data...', 'Checking price fit...', 'Loading final step...'],
+  },
+  8: {
+    title: 'Generating your report',
+    messages: ['Running 6 signal checks...', 'Fetching live data...', 'Computing verdicts...', 'Preparing insights...', 'Almost ready...'],
+  },
+};
 
 // ── Sidebar step definitions ──────────────────────────────────────────────────
 
@@ -479,17 +521,20 @@ export default function FunnelPage() {
     saveStep,
   } = useFunnel(sessionId);
 
-  const [contextDone, setContextDone] = useState(false);
-  const [fading,      setFading]      = useState(false);
-  const [animKey,     setAnimKey]     = useState(0);
+  const [contextDone,      setContextDone]      = useState(false);
+  const [animKey,          setAnimKey]          = useState(0);
+  const [transitioning,    setTransitioning]    = useState(false);
+  const [activeLoaderStep, setActiveLoaderStep] = useState(null);
 
   const handleContextComplete = useCallback(
     async (listingType) => {
-      setFading(true);
-      await delay(200);
+      setActiveLoaderStep('context');
+      setTransitioning(true);
       setListingTypeContext(listingType);
       setContextDone(true);
-      setFading(false);
+      await delay(1400);
+      setTransitioning(false);
+      setActiveLoaderStep(null);
       setAnimKey((k) => k + 1);
     },
     [setListingTypeContext],
@@ -498,14 +543,19 @@ export default function FunnelPage() {
   const handleStepSubmit = useCallback(
     async (data) => {
       const currentStep = step;
-      setFading(true);
-      await delay(200);
-      const isComplete = await saveStep(currentStep, data);
+      setActiveLoaderStep(currentStep);
+      setTransitioning(true);
+      const [isComplete] = await Promise.all([
+        saveStep(currentStep, data),
+        delay(currentStep === 8 ? 0 : 1200),
+      ]);
       if (isComplete) {
+        // loader stays visible (step 8 config) until page navigates
         router.push(`/report/${sessionId}`);
         return;
       }
-      setFading(false);
+      setTransitioning(false);
+      setActiveLoaderStep(null);
       setAnimKey((k) => k + 1);
     },
     [step, saveStep, router, sessionId],
@@ -581,18 +631,14 @@ export default function FunnelPage() {
 
             <div
               className="funnel-content-card"
-              key={animKey}
-              style={
-                fading
-                  ? {
-                      opacity: 0,
-                      transform: 'translateY(20px)',
-                      transition: 'opacity 200ms ease, transform 200ms ease',
-                    }
-                  : {}
-              }
+              key={transitioning ? `loader-${activeLoaderStep}` : animKey}
             >
-            {!contextDone ? (
+            {transitioning ? (
+              <CoreSpinLoader
+                title={STEP_LOADERS[activeLoaderStep]?.title}
+                messages={STEP_LOADERS[activeLoaderStep]?.messages}
+              />
+            ) : !contextDone ? (
               <ContextScreen
                 sessionId={sessionId}
                 onComplete={handleContextComplete}

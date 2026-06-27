@@ -221,7 +221,7 @@ export default function Pricing() {
               fontWeight:    600,
               letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              color:         '#0DD8C0',
+              color:         '#03d3bd',
               marginBottom:  '28px',
               margin:        '0 0 28px',
             }}

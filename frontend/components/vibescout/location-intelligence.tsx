@@ -290,7 +290,7 @@ export default function LocationIntelligence() {
                 fontWeight:    600,
                 textTransform: 'uppercase',
                 letterSpacing: '0.14em',
-                color:         'rgba(34,211,238,0.75)',
+                color:         '#03d3bd',
                 margin:        0,
               }}
             >
@@ -323,8 +323,8 @@ export default function LocationIntelligence() {
                 fontWeight:    400,
                 letterSpacing: '-0.01em',
                 lineHeight:    1.16,
-                color:         '#22D3EE',
-                textShadow:    '0 0 40px rgba(34,211,238,0.25)',
+                color:         '#03d3bd',
+                textShadow:    '0 0 40px rgba(3,211,189,0.25)',
               }}
             >
               what they want you to see.

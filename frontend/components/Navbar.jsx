@@ -21,6 +21,7 @@ export default function Navbar() {
   const [open, setOpen]   = useState(false);
   const [atTop, setAtTop] = useState(true);
   const drawerRef = useRef(null);
+  const btnRef    = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setAtTop(window.scrollY < 60);
@@ -34,10 +35,15 @@ export default function Navbar() {
   useEffect(() => {
     if (!open) return;
     const handler = (e) => {
+      if (btnRef.current && btnRef.current.contains(e.target)) return;
       if (drawerRef.current && !drawerRef.current.contains(e.target)) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler, { passive: true });
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -121,6 +127,7 @@ export default function Navbar() {
 
           {/* ── Mobile hamburger ─────────────────────────────── */}
           <button
+            ref={btnRef}
             className="nav-hamburger-btn"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}

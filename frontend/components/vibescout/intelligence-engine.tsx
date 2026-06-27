@@ -386,7 +386,7 @@ export default function IntelligenceEngine() {
               fontWeight:    500,
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
-              color:         '#22D3EE',
+              color:         '#03d3bd',
               margin:        0,
               flexShrink:    0,
             }}>
@@ -427,8 +427,8 @@ export default function IntelligenceEngine() {
               fontWeight:    400,
               letterSpacing: '-0.01em',
               lineHeight:    1.16,
-              color:         '#22D3EE',
-              textShadow:    '0 0 40px rgba(34,211,238,0.22)',
+              color:         '#03d3bd',
+              textShadow:    '0 0 40px rgba(3,211,189,0.22)',
             }}>
               Never reversed.
             </span>

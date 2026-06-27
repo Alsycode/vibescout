@@ -291,12 +291,12 @@ export default function IntelligenceCard({
 
     let rafId = 0;
 
-    const onMove = (e: MouseEvent) => {
+    const applyTilt = (clientX: number, clientY: number) => {
       cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         const r  = card.getBoundingClientRect();
-        const x  = e.clientX - r.left;
-        const y  = e.clientY - r.top;
+        const x  = clientX - r.left;
+        const y  = clientY - r.top;
         const cx = r.width  / 2;
         const cy = r.height / 2;
         card.style.transition = 'transform 80ms linear';
@@ -308,25 +308,42 @@ export default function IntelligenceCard({
         glare.style.background = `radial-gradient(circle at ${gx}% ${gy}%, rgba(34,211,238,0.06) 0%, rgba(255,255,255,0.03) 38%, transparent 65%)`;
       });
     };
-    const onLeave = () => {
+
+    const resetTilt = () => {
       cancelAnimationFrame(rafId);
-      card.style.transition = 'transform 600ms cubic-bezier(0.25,0.46,0.45,0.94)';
-      card.style.transform  = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
-      glare.style.opacity   = '0';
+      card.style.transition  = 'transform 600ms cubic-bezier(0.25,0.46,0.45,0.94)';
+      card.style.transform   = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+      glare.style.opacity    = '0';
       glare.style.transition = 'opacity 500ms ease';
     };
 
-    card.addEventListener('mousemove', onMove);
+    const onMove  = (e: MouseEvent) => applyTilt(e.clientX, e.clientY);
+    const onLeave = () => resetTilt();
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) applyTilt(e.touches[0].clientX, e.touches[0].clientY);
+    };
+    const onTouchEnd = () => resetTilt();
+
+    card.addEventListener('mousemove',  onMove);
     card.addEventListener('mouseleave', onLeave);
-    return () => { cancelAnimationFrame(rafId); card.removeEventListener('mousemove', onMove); card.removeEventListener('mouseleave', onLeave); };
+    card.addEventListener('touchmove',  onTouchMove, { passive: true });
+    card.addEventListener('touchend',   onTouchEnd);
+    return () => {
+      cancelAnimationFrame(rafId);
+      card.removeEventListener('mousemove',  onMove);
+      card.removeEventListener('mouseleave', onLeave);
+      card.removeEventListener('touchmove',  onTouchMove);
+      card.removeEventListener('touchend',   onTouchEnd);
+    };
   }, []);
 
   return (
     <div
       ref={cardRef}
       style={{
-        width:        `${width}px`,
-        maxWidth:     '100%',
+        width:        '100%',
+        maxWidth:     `${width}px`,
         background:   'linear-gradient(145deg, #0e0e1e 0%, #0b0b19 60%, #090914 100%)',
         border:       '1px solid rgba(255,255,255,0.07)',
         borderTop:    '1px solid rgba(255,255,255,0.13)',
@@ -510,6 +527,22 @@ export default function IntelligenceCard({
           {generatedIn}
         </span>
       </div>
+
+      {/* ── RESPONSIVE OVERRIDES ───────────────────────────── */}
+      <style>{`
+        @media (max-width: 480px) {
+          .ic-sparkline { display: none !important; }
+          .ic-badge     { display: none !important; }
+          .ic-time      { display: none !important; }
+          .ic-footer    { flex-direction: column; gap: 4px; align-items: flex-start; }
+          .ic-sources   { white-space: normal !important; overflow: visible !important; }
+          .ic-row       { gap: 8px !important; }
+          .ic-row-icon  { width: 26px !important; height: 26px !important; }
+        }
+        @media (max-width: 360px) {
+          .ic-row-icon { display: none !important; }
+        }
+      `}</style>
 
       {/* ── DYNAMIC GLARE OVERLAY ──────────────────────────── */}
       <div

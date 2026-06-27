@@ -96,7 +96,7 @@ export default function ReportPreview() {
               fontWeight:    600,
               textTransform: 'uppercase',
               letterSpacing: '0.14em',
-              color:         'rgba(34,211,238,0.75)',
+              color:         '#03d3bd',
               whiteSpace:    'nowrap',
             }}>
               WHAT YOU RECEIVE
@@ -137,8 +137,8 @@ export default function ReportPreview() {
               fontWeight:    400,
               letterSpacing: '-0.01em',
               lineHeight:    1.16,
-              color:         '#22D3EE',
-              textShadow:    '0 0 40px rgba(34,211,238,0.22)',
+              color:         '#03d3bd',
+              textShadow:    '0 0 40px rgba(3,211,189,0.22)',
             }}>
               In under 5 minutes.
             </span>
@@ -162,18 +162,15 @@ export default function ReportPreview() {
 
         {/* Card — centered, 680px, verdictStamp on entry */}
         <div
+          className="report-card-wrapper"
           style={{
-            display:        'flex',
-            justifyContent: 'center',
-            opacity:        visible ? 1 : 0,
-            transition:     'opacity 300ms ease 200ms',
+            opacity:    visible ? 1 : 0,
+            transition: 'opacity 300ms ease 200ms',
           }}
         >
           <div
             className={visible ? 'verdict-stamp-enter' : ''}
-            style={{
-              animationDelay: '300ms',
-            }}
+            style={{ animationDelay: '300ms', width: '100%' }}
           >
             <IntelligenceCard
               width={680}
@@ -271,6 +268,17 @@ export default function ReportPreview() {
         </motion.div>
 
         <style>{`
+          .report-card-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 0 16px;
+            box-sizing: border-box;
+          }
+          .report-card-wrapper > div {
+            width: 100%;
+            max-width: 680px;
+          }
           .report-feature-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);

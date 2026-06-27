@@ -129,7 +129,7 @@ const SIGNAL_ICONS: Record<string, React.ReactElement> = {
   ),
 };
 
-const TEAL = '#00D4BE';
+const TEAL = '#03d3bd';
 
 function DossierCard({ cs, index, visible }: { cs: CaseStudy; index: number; visible: boolean }) {
   const color = VERDICT_COLOR[cs.verdict];
@@ -483,8 +483,8 @@ export default function CaseStudies() {
               fontWeight:    400,
               letterSpacing: '-0.01em',
               lineHeight:    1.16,
-              color:         '#22D3EE',
-              textShadow:    '0 0 40px rgba(34,211,238,0.22)',
+              color:         '#03d3bd',
+              textShadow:    '0 0 40px rgba(3,211,189,0.22)',
             }}>
               What we found.
             </span>

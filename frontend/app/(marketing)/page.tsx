@@ -14,7 +14,6 @@ import LoadingScreen from '@/components/LoadingScreen';
 const LocationIntelligence = dynamic(() => import('@/components/vibescout/location-intelligence'));
 const SignalsRefined        = dynamic(() => import('@/components/vibescout/signals-refined'));
 const IntelligenceEngine    = dynamic(() => import('@/components/vibescout/intelligence-engine'));
-const ReportPreview         = dynamic(() => import('@/components/vibescout/report-preview'));
 const CaseStudies           = dynamic(() => import('@/components/vibescout/case-studies'));
 const Pricing               = dynamic(() => import('@/components/vibescout/pricing'));
 
@@ -22,221 +21,7 @@ const Pricing               = dynamic(() => import('@/components/vibescout/prici
 const STRIP_TEXT =
   'SYSTEM OPERATIONAL  ·  847 REPORTS TODAY  ·  LAST GENERATED: 4 MIN AGO  ·  BENGALURU  ·  MUMBAI  ·  PUNE  ·  HYDERABAD  ·  ';
 
-// ── Redaction panel data ───────────────────────────────────────────────────────
-const REDACTED_ROWS = [
-  { label: 'AIR QUALITY', abbr: 'AQI', value: '42 AQI',      verdictColor: '#34D399', rgb: '52,211,153'  },
-  { label: 'COMMUTE',     abbr: 'TRF', value: '47 min peak',  verdictColor: '#F59E0B', rgb: '245,158,11'  },
-  { label: 'PRICE FIT',   abbr: 'FIN', value: '+12% above',   verdictColor: '#F59E0B', rgb: '245,158,11'  },
-];
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  RedactionPanel — styled to match the intelligence-section card language
-// ─────────────────────────────────────────────────────────────────────────────
-function RedactionPanel({ revealed }: { revealed: boolean }) {
-  return (
-    <div
-      style={{
-        background:   '#0C0C18',
-        borderRadius: '12px',
-        border:       '1px solid rgba(255,255,255,0.07)',
-        borderTop:    '1px solid rgba(255,255,255,0.13)',
-        overflow:     'hidden',
-        marginTop:    '32px',
-        marginBottom: '36px',
-        boxShadow: [
-          '0 0 0 1px rgba(255,255,255,0.04)',
-          '0 24px 64px rgba(0,0,0,0.55)',
-          'inset 0 1px 0 rgba(255,255,255,0.06)',
-        ].join(', '),
-      }}
-    >
-      {/* Card header — mirrors intelligence-engine LayerCard header */}
-      <div
-        style={{
-          padding:      '11px 16px',
-          borderBottom: '1px solid rgba(255,255,255,0.05)',
-          background:   'rgba(34,211,238,0.025)',
-          display:      'flex',
-          alignItems:   'center',
-          gap:          '10px',
-        }}
-      >
-        {/* Status dot */}
-        <span style={{
-          width:        '6px',
-          height:       '6px',
-          borderRadius: '50%',
-          background:   '#22D3EE',
-          boxShadow:    '0 0 8px rgba(34,211,238,0.8)',
-          display:      'inline-block',
-          flexShrink:   0,
-        }} />
-
-        {/* Badge */}
-        <span style={{
-          fontFamily:    "'Geist Mono', monospace",
-          fontSize:      '9px',
-          fontWeight:    500,
-          textTransform: 'uppercase',
-          letterSpacing: '0.08em',
-          color:         '#E8A030',
-          padding:       '2px 7px',
-          background:    'rgba(232,160,48,0.08)',
-          border:        '1px solid rgba(232,160,48,0.22)',
-          borderRadius:  '3px',
-          flexShrink:    0,
-        }}>
-          SIGNAL PREVIEW
-        </span>
-
-        {/* Role text */}
-        <span style={{
-          fontFamily:    "'Inter', sans-serif",
-          fontSize:      '9px',
-          fontWeight:    400,
-          color:         'rgba(255,255,255,0.28)',
-          letterSpacing: '0.03em',
-        }}>
-          Live · broker-withheld
-        </span>
-
-        {/* State indicator */}
-        <span style={{
-          fontFamily:    "'Geist Mono', monospace",
-          fontSize:      '9px',
-          fontWeight:    500,
-          letterSpacing: '0.06em',
-          color:         revealed ? '#34D399' : 'rgba(255,255,255,0.20)',
-          marginLeft:    'auto',
-          transition:    'color 400ms ease',
-        }}>
-          {revealed ? '◆ LIVE' : '▬ REDACTED'}
-        </span>
-      </div>
-
-      {/* Inner top-glow wash */}
-      <div aria-hidden style={{
-        position:      'absolute',
-        top:           0,
-        left:          0,
-        right:         0,
-        height:        '120px',
-        pointerEvents: 'none',
-        background:    'radial-gradient(ellipse 90% 80px at 50% 0%, rgba(34,211,238,0.06) 0%, transparent 100%)',
-      }} />
-
-      {/* Rows */}
-      {REDACTED_ROWS.map((row, i) => (
-        <div
-          key={row.label}
-          style={{
-            display:     'grid',
-            gridTemplateColumns: 'auto auto 1fr auto',
-            alignItems:  'center',
-            gap:         '12px',
-            padding:     '11px 16px',
-            borderBottom: i < REDACTED_ROWS.length - 1
-              ? '1px solid rgba(255,255,255,0.04)'
-              : 'none',
-            position:    'relative',
-          }}
-        >
-          {/* Icon square */}
-          <div style={{
-            width:          '34px',
-            height:         '34px',
-            borderRadius:   '8px',
-            background:     `rgba(${row.rgb},0.07)`,
-            border:         `1px solid rgba(${row.rgb},0.18)`,
-            display:        'flex',
-            alignItems:     'center',
-            justifyContent: 'center',
-            flexShrink:     0,
-            boxShadow:      `0 0 14px rgba(${row.rgb},0.14)`,
-          }}>
-            <span style={{
-              fontFamily:    "'Geist Mono', monospace",
-              fontSize:      '8px',
-              fontWeight:    500,
-              color:         row.verdictColor,
-              letterSpacing: '0.04em',
-            }}>
-              {row.abbr}
-            </span>
-          </div>
-
-          {/* Label */}
-          <span style={{
-            fontFamily:    "'Inter', sans-serif",
-            fontSize:      '9px',
-            fontWeight:    500,
-            textTransform: 'uppercase',
-            letterSpacing: '0.08em',
-            color:         'rgba(255,255,255,0.30)',
-            flexShrink:    0,
-            width:         '76px',
-          }}>
-            {row.label}
-          </span>
-
-          {/* Value / redaction bar */}
-          <div style={{ position: 'relative', height: '22px' }}>
-            <span style={{
-              fontFamily:    "'Geist Mono', monospace",
-              fontSize:      '14px',
-              fontWeight:    400,
-              color:         row.verdictColor,
-              textShadow:    `0 0 16px ${row.verdictColor}55`,
-              letterSpacing: '-0.01em',
-              position:      'absolute',
-              top:           '50%',
-              left:          0,
-              transform:     'translateY(-50%)',
-              opacity:       revealed ? 1 : 0,
-              transition:    `opacity 300ms ease ${i * 150 + 450}ms`,
-              whiteSpace:    'nowrap',
-            }}>
-              {row.value}
-            </span>
-            <div style={{
-              position:        'absolute',
-              inset:           0,
-              background:      '#0F0F1C',
-              backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 8px, transparent 8px, transparent 12px)',
-              borderRadius:    '3px',
-              borderBottom:    `1px solid rgba(${row.rgb},0.35)`,
-              animation:       revealed
-                ? `unredactBar 600ms cubic-bezier(0.76,0,0.24,1) ${i * 150}ms forwards`
-                : 'none',
-            }} />
-          </div>
-
-          {/* Glowing status dot + label */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-            <div style={{
-              width:        '7px',
-              height:       '7px',
-              borderRadius: '50%',
-              background:   revealed ? row.verdictColor : 'rgba(255,255,255,0.12)',
-              boxShadow:    revealed ? `0 0 8px rgba(${row.rgb},0.80)` : 'none',
-              transition:   `background 300ms ease ${i * 150 + 500}ms, box-shadow 300ms ease ${i * 150 + 500}ms`,
-            }} />
-            <span style={{
-              fontFamily:    "'Geist Mono', monospace",
-              fontSize:      '8px',
-              fontWeight:    500,
-              letterSpacing: '0.06em',
-              color:         revealed ? row.verdictColor : 'rgba(255,255,255,0.18)',
-              transition:    `color 300ms ease ${i * 150 + 500}ms`,
-            }}>
-              {revealed ? 'LIVE' : 'WITHHELD'}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  StatusStrip — infinite marquee at bottom of hero
@@ -289,7 +74,6 @@ export default function LandingPage() {
   const router       = useRouter();
   const cardWrapRef  = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed]       = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
   const [canvasLoaded, setCanvasLoaded] = useState(false);
 
@@ -307,12 +91,6 @@ export default function LandingPage() {
 
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // Redaction bars auto-lift at T+3s
-  useEffect(() => {
-    const t = setTimeout(() => setRevealed(true), 3000);
-    return () => clearTimeout(t);
   }, []);
 
   // IntersectionObserver — adds sectionEnter animation to .reveal elements
@@ -470,9 +248,6 @@ export default function LandingPage() {
               deterministically. Yours in under 5 minutes.
             </p>
 
-            {/* Redaction mini-demo */}
-            <RedactionPanel revealed={revealed} />
-
             {/* CTAs */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
               <ShinyButton onClick={() => router.push('/analyze')}>
@@ -480,7 +255,7 @@ export default function LandingPage() {
               </ShinyButton>
 
               <Link
-                href="#sample"
+                href="/report/preview"
                 style={{
                   textDecoration:'none',
                   fontFamily:    "'Inter', sans-serif",
@@ -528,9 +303,6 @@ export default function LandingPage() {
 
       {/* S4: Architecture of Trust */}
       <IntelligenceEngine />
-
-      {/* S5: Verdict Showcase */}
-      <ReportPreview />
 
       {/* S6: Case Studies */}
       <CaseStudies />

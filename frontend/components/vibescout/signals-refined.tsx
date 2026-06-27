@@ -197,9 +197,9 @@ const SIGNALS: SignalSpec[] = [
     name:        'Financial Fit',
     sample:      '+12%',
     unit:        'above area avg',
-    source:      'Comparable sales data',
+    source:      'Income bracket analysis',
     verdict:     'caution',
-    description: 'Compares the listed price against recent comparable transactions in the same block. Flags premium or discount versus area baseline.',
+    description: 'Checks whether the listed price fits your stated budget. Flags affordability stress based on your income bracket and a standard rent-to-income or EMI ratio.',
     Icon:        FinancialFitIcon,
   },
   {
@@ -209,7 +209,7 @@ const SIGNALS: SignalSpec[] = [
     unit:        '',
     source:      'GNews · 2h ago',
     verdict:     'proceed',
-    description: 'Scans recent local news for the property address and neighbourhood. Surfaces infrastructure disputes, civic issues, or incidents.',
+    description: 'Scans recent local news for the property\'s city and neighbourhood. Surfaces infrastructure disputes, civic issues, or incidents from the past 7 days.',
     Icon:        LocalNewsIcon,
   },
 ];

@@ -27,41 +27,37 @@ const DOT_GLOW: Record<VerdictDot, string> = {
 
 // ── Row SVG icons ─────────────────────────────────────────────────────────────
 
+function AQIIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
+      <path d="M1 7.5 L3 4.5 L5 10.5 L7 3 L9 12 L11 6.5 L13 8.5 L14 7.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function NoiseIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
-      <path
-        d="M1 7.5 L3 4.5 L5 10.5 L7 3 L9 12 L11 6.5 L13 8.5 L14 7.5"
-        stroke="rgba(255,255,255,0.40)"
-        strokeWidth="1.4"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M5 3.5 L5 11.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M5 3.5 L10 6 L10 9 L5 11.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M12 5.5 C13.2 6.5 13.2 8.5 12 9.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M1.5 7.5 L3.5 7.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }
 
-function LitigationIcon() {
+function SolarIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
-      <rect x="2.5" y="1" width="10" height="13" rx="1.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <line x1="5" y1="5" x2="10" y2="5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="5" y1="7.5" x2="10" y2="7.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
-      <line x1="5" y1="10" x2="8" y2="10" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <rect x="2" y="5" width="11" height="7" rx="0.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
+      <line x1="7.5" y1="1.5" x2="7.5" y2="4" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="11.5" y1="2.5" x2="10.2" y2="4" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <line x1="3.5" y1="2.5" x2="4.8" y2="4" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }
 
-function FloodIcon() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
-      <path d="M1 5.5 C2.5 3.5 4.5 7.5 7.5 5.5 C10.5 3.5 12.5 7.5 14 5.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M1 9.5 C2.5 7.5 4.5 11.5 7.5 9.5 C10.5 7.5 12.5 11.5 14 9.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function ClockIcon() {
+function CommuteIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
       <circle cx="7.5" cy="7.5" r="6" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
@@ -70,24 +66,20 @@ function ClockIcon() {
   );
 }
 
-function WindIcon() {
+function SchoolIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
-      <path d="M1 7 L9.5 7 C10.88 7 12 5.88 12 4.5 C12 3.12 10.88 2 9.5 2 C8.12 2 7 3.12 7 4.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
-      <path d="M1 10 L7.5 10 C8.605 10 9.5 10.895 9.5 12 C9.5 13.105 8.605 14 7.5 14 C6.395 14 5.5 13.105 5.5 12" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M7.5 1.5 L14 5 L7.5 8.5 L1 5 Z" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M3.5 6.5 L3.5 11 C3.5 11 5.5 12.5 7.5 12.5 C9.5 12.5 11.5 11 11.5 11 L11.5 6.5" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" strokeLinecap="round" />
     </svg>
   );
 }
 
-function MetroIcon() {
+function BudgetIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none" aria-hidden>
-      <rect x="1" y="4" width="13" height="7" rx="2" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <circle cx="4" cy="12" r="1.4" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <circle cx="11" cy="12" r="1.4" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <line x1="1" y1="8" x2="14" y2="8" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <line x1="5.5" y1="4" x2="5.5" y2="8" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
-      <line x1="9.5" y1="4" x2="9.5" y2="8" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
+      <circle cx="7.5" cy="7.5" r="6" stroke="rgba(255,255,255,0.40)" strokeWidth="1.4" />
+      <text x="7.5" y="10.5" textAnchor="middle" fill="rgba(255,255,255,0.40)" fontSize="7" fontFamily="sans-serif">₹</text>
     </svg>
   );
 }
@@ -151,12 +143,12 @@ const AUDIT_ROWS: {
   verdict: VerdictDot;
   Icon: () => React.ReactElement;
 }[] = [
-  { label: 'NOISE LEVEL (24HR AVG)',     value: '62 dB · High Risk',        verdict: 'red_flag', Icon: NoiseIcon       },
-  { label: 'BUILDER LITIGATION HISTORY', value: '3 Cases Filed · NCLT',     verdict: 'red_flag', Icon: LitigationIcon  },
-  { label: 'FLOOD ZONE CLASSIFICATION',  value: 'Zone B · Moderate Risk',   verdict: 'caution',  Icon: FloodIcon       },
-  { label: 'RESALE VELOCITY (BLOCK)',     value: '4.2 yr avg hold',          verdict: 'caution',  Icon: ClockIcon       },
-  { label: 'AIR QUALITY TREND (90D)',    value: 'Improving · AQI ↓ 8pt',   verdict: 'proceed',  Icon: WindIcon        },
-  { label: 'INFRASTRUCTURE PIPELINE',    value: 'Metro Ph3 · Est. 2028',    verdict: 'caution',  Icon: MetroIcon       },
+  { label: 'AIR QUALITY (LIVE AQI)',     value: '42 AQI · Good',            verdict: 'proceed',  Icon: AQIIcon     },
+  { label: 'NOISE RISK (OSM MODEL)',     value: 'Low · 38 dB est.',         verdict: 'proceed',  Icon: NoiseIcon   },
+  { label: 'SOLAR POTENTIAL',            value: '4.8 kWh/m² · High',        verdict: 'proceed',  Icon: SolarIcon   },
+  { label: 'COMMUTE TIME',               value: '47 min · Tue 08:30',       verdict: 'caution',  Icon: CommuteIcon },
+  { label: 'NEAREST SCHOOL',             value: '450 m · DPS nearby',       verdict: 'proceed',  Icon: SchoolIcon  },
+  { label: 'BUDGET FIT',                 value: '+12% above bracket',       verdict: 'caution',  Icon: BudgetIcon  },
 ];
 
 const STATS = [
@@ -614,7 +606,7 @@ export default function LocationIntelligence() {
               margin:        '14px 0 0',
             }}
           >
-            OPENAQ · OSM OVERPASS · GOOGLE SOLAR · GNEWS · ECOURT RECORDS
+            OPENAQ · OSM OVERPASS · GOOGLE SOLAR · GOOGLE MAPS · GNEWS
           </p>
         </motion.div>
       </div>

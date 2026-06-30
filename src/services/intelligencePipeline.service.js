@@ -163,19 +163,57 @@ export function getFallbackSignal(signalType, lat, lng, cityName) {
   }
 }
 
+// ─── Signal Timeout Wrapper ─────────────────────────────────────────
+// Prevents any single signal fetch from blocking the entire pipeline (max 10s each)
+function withTimeout(promise, timeoutMs = 10000) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`timeout after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
+
 // ─── Part 9b — Orchestrator ─────────────────────────────────────────
 
 export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityName, locationCascade) {
   const sp = await ShadowProperty.findById(shadowPropertyId);
   const sessionId = sp?.sessionId;
 
+  // Define timeout fallbacks for each signal
+  const aqiFallback = getFallbackSignal('AQI', lat, lng, cityName);
+  const noiseFallback = {
+    noiseRiskScore: 40,
+    estimatedDb: 58,
+    category: 'Moderate',
+    confidence: 'low',
+    factors: [],
+    explanation: ['Signal timeout — default moderate estimate applied'],
+    source: 'timeout_fallback',
+  };
+  const solarFallback = getFallbackSignal('Solar', lat, lng, cityName);
+  const weatherFallback = getFallbackSignal('Weather', lat, lng, cityName);
+  const amenitiesFallback = {
+    schools: [], hospitals: [], gyms: [],
+    restaurants: [], parks: [], worship: [], cafes: [],
+    source: 'timeout_fallback',
+  };
+  const newsFallback = { headlines: [], source: 'timeout_fallback' };
+
+  // Fetch all signals with 10s timeout per signal; use fallback if timeout occurs
   const [aqi, noise, solar, weather, amenities, localNews] = await Promise.all([
-    getOrFetchClusterSignal(clusterId, lat, lng, 'AQI', cityName),
-    fetchNoiseWithFallback(lat, lng, clusterId, cityName),
-    getOrFetchClusterSignal(clusterId, lat, lng, 'Solar', cityName),
-    getOrFetchClusterSignal(clusterId, lat, lng, 'Weather', cityName),
-    fetchAmenitiesWithFallback(lat, lng, clusterId, cityName),
-    fetchNewsWithFallback(clusterId, locationCascade || cityName),
+    withTimeout(getOrFetchClusterSignal(clusterId, lat, lng, 'AQI', cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] AQI timeout:', err.message); return aqiFallback; }),
+    withTimeout(fetchNoiseWithFallback(lat, lng, clusterId, cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] Noise timeout:', err.message); return noiseFallback; }),
+    withTimeout(getOrFetchClusterSignal(clusterId, lat, lng, 'Solar', cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] Solar timeout:', err.message); return solarFallback; }),
+    withTimeout(getOrFetchClusterSignal(clusterId, lat, lng, 'Weather', cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] Weather timeout:', err.message); return weatherFallback; }),
+    withTimeout(fetchAmenitiesWithFallback(lat, lng, clusterId, cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] Amenities timeout:', err.message); return amenitiesFallback; }),
+    withTimeout(fetchNewsWithFallback(clusterId, locationCascade || cityName), 10000)
+      .catch(err => { console.warn('[Pipeline] LocalNews timeout:', err.message); return newsFallback; }),
   ]);
 
   // SF-02: Removed dead Redis write — session:{sessionId}:intelligence was never read

@@ -8,18 +8,20 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard, Building2, Users, UserCheck,
   Network, Gavel, History, Settings, HelpCircle,
-  ChevronDown, BookOpen,
+  ChevronDown, BookOpen, TrendingUp, BarChart2,
 } from 'lucide-react';
 
 const TEAL = '#13DEB9';
 
 const NAV_ITEMS = [
-  { label: 'Overview',           href: '/admin',                  icon: LayoutDashboard, exact: true },
-  { label: 'Audited Properties', href: '/admin/shadow-properties', icon: Building2 },
-  { label: 'Leads',              href: '/admin/leads',             icon: Users },
-  { label: 'Brokers',            href: '/admin/brokers',           icon: UserCheck },
-  { label: 'Clusters',           href: '/admin/clusters',          icon: Network },
-  { label: 'Blog',               href: '/admin/blog',              icon: BookOpen },
+  { label: 'Overview',           href: '/admin',                   icon: LayoutDashboard, exact: true },
+  { label: 'Audited Properties', href: '/admin/shadow-properties',  icon: Building2 },
+  { label: 'Leads',              href: '/admin/leads',              icon: Users },
+  { label: 'Brokers',            href: '/admin/brokers',            icon: UserCheck },
+  { label: 'Clusters',           href: '/admin/clusters',           icon: Network },
+  { label: 'Blog',               href: '/admin/blog',               icon: BookOpen },
+  { label: 'Funnel Analytics',   href: '/admin/funnel-analytics',   icon: TrendingUp },
+  { label: 'Conversion',         href: '/admin/conversion',         icon: BarChart2 },
 ];
 
 const LEAD_SUBNAV = [

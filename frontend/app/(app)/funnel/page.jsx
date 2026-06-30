@@ -5,13 +5,33 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useFunnel } from '../../../hooks/useFunnel';
 import ContextScreen from '../../../components/ContextScreen';
 import FunnelStep from '../../../components/FunnelStep';
 import Navbar from '../../../components/Navbar';
 import { CoreSpinLoader } from '../../../components/ui/core-spin-loader';
+
+// Analytics tracking helper
+async function logAnalyticsEvent(sessionId, step, action, timeSpentMs = null, errorMessage = null) {
+  try {
+    await fetch('/funnel/analytics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId,
+        step,
+        action,
+        timeSpentMs,
+        errorMessage,
+        deviceType: window.innerWidth < 768 ? 'mobile' : 'desktop',
+      }),
+    });
+  } catch (err) {
+    console.error('[Analytics] Log failed:', err);
+  }
+}
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -611,6 +631,27 @@ export default function FunnelPage() {
   const [transitioning,    setTransitioning]    = useState(false);
   const [activeLoaderStep, setActiveLoaderStep] = useState(null);
 
+  // Analytics tracking refs
+  const stepEntryTimeRef = useRef(null);
+  const lastTrackedStepRef = useRef(null);
+
+  // Track step entry (when user enters a new step)
+  useEffect(() => {
+    if (contextDone && step && step !== lastTrackedStepRef.current) {
+      stepEntryTimeRef.current = Date.now();
+      lastTrackedStepRef.current = step;
+      logAnalyticsEvent(sessionId, step, 'enter');
+    }
+  }, [step, contextDone, sessionId]);
+
+  // Track context entry
+  useEffect(() => {
+    if (!contextDone) {
+      stepEntryTimeRef.current = Date.now();
+      logAnalyticsEvent(sessionId, 0, 'enter');
+    }
+  }, [sessionId]);
+
   const handleContextComplete = useCallback(
     async (listingType) => {
       setActiveLoaderStep('context');
@@ -637,6 +678,11 @@ export default function FunnelPage() {
   const handleStepSubmit = useCallback(
     async (data) => {
       const currentStep = step;
+      const timeSpentMs = stepEntryTimeRef.current ? Date.now() - stepEntryTimeRef.current : null;
+
+      // Log exit event with time spent
+      await logAnalyticsEvent(sessionId, currentStep, 'exit', timeSpentMs);
+
       setActiveLoaderStep(currentStep);
       setTransitioning(true);
       const [isComplete] = await Promise.all([

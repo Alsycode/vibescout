@@ -9,6 +9,7 @@ import { requireAuth } from '../middleware/auth.middleware.js';
 import { redisGet, redisSet } from '../lib/redis.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
 import { fetchCommuteRoute } from '../services/commute.service.js';
+import { trackReportGenerated, trackFunnelAbandon } from '../services/analytics.service.js';
 import { callGroq } from '../services/groq.service.js';
 import { validateGroqOutput } from '../services/groqValidator.service.js';
 import { buildTemplateReport, NEWS_TEMPLATES } from '../services/reportTemplates.service.js';
@@ -187,6 +188,10 @@ router.get('/generate', requireAuth, async (req, res, next) => {
     // FAIL-02: Validate all required preference steps before verdict computation
     const missingSteps = validatePreferencesComplete(preferences);
     if (missingSteps.length > 0) {
+      // Infer last completed step from which keys are present
+      const stepKeys = ['step1', 'step2', 'step3', 'step4', 'step5', 'step6', 'step7'];
+      const lastDone = stepKeys.reduce((acc, k) => (preferences?.[k] ? parseInt(k.replace('step', ''), 10) : acc), 0);
+      trackFunnelAbandon(req.user.userId, sessionId, lastDone);
       return res.status(400).json({ status: 'incomplete', message: `Funnel steps incomplete: ${missingSteps.join(', ')}` });
     }
 
@@ -334,6 +339,19 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       const existingEntry = existingUser?.reportHistory?.find(r => r.sessionId === sessionId);
       finalShareToken = existingEntry?.shareToken ?? shareToken;
     }
+
+    trackReportGenerated(req.user.userId, sessionId, {
+      listingType: sp.userProvidedSpecs.listingType,
+      budgetBracket: sp.userProvidedSpecs.budgetBracket,
+      bhk: sp.userProvidedSpecs.bhk ?? null,
+      location: {
+        suburb: sp.name ?? null,
+        city: null,
+        lat: sp.coordinates?.lat ?? null,
+        lng: sp.coordinates?.lng ?? null,
+      },
+      verdictObject,
+    });
 
     await redisSet(`report:${sessionId}`, JSON.stringify(report), 604800);
 

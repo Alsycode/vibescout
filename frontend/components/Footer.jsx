@@ -148,17 +148,18 @@ const footerLinks = [
   {
     title: 'Product',
     links: [
-      { label: 'Analyze a Property', href: '/analyze'       },
+      { label: 'Analyze a Property', href: '/analyze' },
       { label: 'How It Works',       href: '/#how-it-works' },
-      { label: 'Pricing',            href: '/#pricing'      },
+      { label: 'Pricing',            href: '/pricing' },
+      { label: 'Blog',               href: '/blog' },
     ],
   },
   {
     title: 'Company',
     links: [
       { label: 'About',   href: '#' },
-      { label: 'Privacy', href: '#' },
-      { label: 'Terms',   href: '#' },
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms',   href: '/terms' },
     ],
   },
 ];

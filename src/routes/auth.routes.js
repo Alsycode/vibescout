@@ -3,9 +3,11 @@
 
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import User from '../models/User.js';
 import { signToken } from '../services/token.service.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
+import { sendPasswordResetEmail } from '../services/email.service.js';
 
 const router = Router();
 
@@ -138,6 +140,96 @@ router.get('/me', requireAuth, async (req, res, next) => {
         role:  user.role,
       },
     });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /auth/forgot-password — generate reset token, send email
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email is required' });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    // Always return success to prevent user enumeration
+    if (!user) return res.json({ ok: true });
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    await User.findByIdAndUpdate(user._id, {
+      resetToken: token,
+      resetTokenExpiry: expiry,
+    });
+
+    await sendPasswordResetEmail(user.email, token);
+    return res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /auth/reset-password — verify token, set new password
+router.post('/reset-password', async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) return res.status(400).json({ error: 'Token and password are required' });
+    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpiry: { $gt: new Date() },
+    });
+
+    if (!user) return res.status(400).json({ error: 'Invalid or expired reset link' });
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    await User.findByIdAndUpdate(user._id, {
+      passwordHash,
+      resetToken: null,
+      resetTokenExpiry: null,
+    });
+
+    return res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /auth/profile — update name and phone
+router.put('/profile', requireAuth, async (req, res, next) => {
+  try {
+    const { name, phone } = req.body;
+    if (!name || !name.trim()) return res.status(400).json({ error: 'Name is required' });
+
+    const updated = await User.findByIdAndUpdate(
+      req.user.userId,
+      { name: name.trim(), phone: phone?.trim() ?? null },
+      { new: true, select: '-passwordHash' },
+    );
+
+    return res.json({ user: { id: updated._id, name: updated.name, email: updated.email, phone: updated.phone, role: updated.role } });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /auth/password — change password (requires current password)
+router.put('/password', requireAuth, async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword) return res.status(400).json({ error: 'Current and new password required' });
+    if (newPassword.length < 6) return res.status(400).json({ error: 'New password must be at least 6 characters' });
+
+    const user = await User.findById(req.user.userId);
+    const valid = await bcrypt.compare(currentPassword, user.passwordHash);
+    if (!valid) return res.status(401).json({ error: 'Current password is incorrect' });
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await User.findByIdAndUpdate(req.user.userId, { passwordHash });
+
+    return res.json({ ok: true });
   } catch (err) {
     next(err);
   }

@@ -6,6 +6,8 @@ import crypto from 'crypto';
 import Razorpay from 'razorpay';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import User from '../models/User.js';
+import ShadowProperty from '../models/ShadowProperty.js';
+import { trackReportUnlocked } from '../services/analytics.service.js';
 
 const router = Router();
 
@@ -84,6 +86,18 @@ router.post('/verify', requireAuth, async (req, res, next) => {
     await User.findByIdAndUpdate(req.user.userId, {
       $addToSet: { unlockedReports: sessionId },
     });
+
+    // Fire-and-forget: fetch SP for location/BHK context
+    ShadowProperty.findOne({ sessionId }).then(sp => {
+      if (sp) {
+        trackReportUnlocked(req.user.userId, sessionId, {
+          listingType: sp.userProvidedSpecs?.listingType ?? null,
+          budgetBracket: sp.userProvidedSpecs?.budgetBracket ?? null,
+          bhk: sp.userProvidedSpecs?.bhk ?? null,
+          location: { suburb: sp.name ?? null, city: null, lat: sp.coordinates?.lat ?? null, lng: sp.coordinates?.lng ?? null },
+        });
+      }
+    }).catch(() => {});
 
     res.json({ success: true });
   } catch (err) {

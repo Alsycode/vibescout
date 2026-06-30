@@ -192,9 +192,14 @@ export default function LoginPage() {
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <label htmlFor="password" style={{ fontFamily: "'Inter', sans-serif", fontSize: '10px', fontWeight: 600, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.40)' }}>
-                    Password
-                  </label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <label htmlFor="password" style={{ fontFamily: "'Inter', sans-serif", fontSize: '10px', fontWeight: 600, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.40)' }}>
+                      Password
+                    </label>
+                    <Link href="/forgot-password" style={{ fontSize: '11px', color: 'rgba(13,216,192,0.6)', textDecoration: 'none', fontWeight: 400 }}>
+                      Forgot password?
+                    </Link>
+                  </div>
                   <input
                     id="password" type="password" required autoComplete="current-password"
                     value={password} onChange={(e) => setPassword(e.target.value)}

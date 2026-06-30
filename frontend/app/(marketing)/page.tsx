@@ -11,6 +11,7 @@ import HeroCanvas from '@/components/HeroCanvas';
 import LoadingScreen from '@/components/LoadingScreen';
 
 // Below-fold sections — code-split, do not affect FCP/LCP
+const HowItWorks           = dynamic(() => import('@/components/vibescout/how-it-works'));
 const LocationIntelligence = dynamic(() => import('@/components/vibescout/location-intelligence'));
 const SignalsRefined        = dynamic(() => import('@/components/vibescout/signals-refined'));
 const IntelligenceEngine    = dynamic(() => import('@/components/vibescout/intelligence-engine'));
@@ -292,6 +293,9 @@ export default function LandingPage() {
 
       {/* ── STATUS STRIP ──────────────────────────────────── */}
       <StatusStrip />
+
+      {/* HOW IT WORKS — 3-step journey */}
+      <HowItWorks />
 
       {/* S2: Information Gap */}
       <LocationIntelligence />

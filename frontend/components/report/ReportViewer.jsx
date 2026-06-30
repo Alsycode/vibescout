@@ -6,6 +6,7 @@
 import { useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import SharePDFBar from '../SharePDFBar';
+import AmenitySummaryCard from './AmenitySummaryCard';
 
 const IntelligenceMapCard = dynamic(
   () => import('./IntelligenceMapCard'),
@@ -1056,8 +1057,10 @@ export default function ReportViewer({ report, shareToken, readonly, preferences
       <IntelligenceMapCard report={report} />
 
       <WhatWeDiscovered signals={signals} report={report} />
-      <NearbyPlaces
+      <AmenitySummaryCard
         amenities={signals.amenities}
+        lat={report.propertyLat}
+        lng={report.propertyLng}
         priorities={preferences?.step5?.amenityPriorities ?? []}
       />
       <LocalIntelligence localNews={signals.localNews} />

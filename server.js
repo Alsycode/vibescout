@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 
 import { errorHandler } from './src/middleware/errorHandler.js';
-import { apiLimiter } from './src/middleware/rateLimiter.js';
+import { apiLimiter, authLimiter, analyzeLimiter, reportLimiter } from './src/middleware/rateLimiter.js';
 
 import authRoutes from './src/routes/auth.routes.js';
 import analyzeRoutes from './src/routes/analyze.routes.js';
@@ -20,6 +20,7 @@ import leadsAdminRoutes from './src/routes/admin/leads.admin.routes.js';
 import brokersAdminRoutes from './src/routes/admin/brokers.admin.routes.js';
 import clustersAdminRoutes from './src/routes/admin/clusters.admin.routes.js';
 import blogAdminRoutes from './src/routes/admin/blog.admin.routes.js';
+import analyticsAdminRoutes from './src/routes/admin/analytics.admin.routes.js';
 import postsRoutes from './src/routes/posts.routes.js';
 
 import './src/jobs/cronJobs.js';
@@ -40,16 +41,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api', apiLimiter);
 
-app.use('/auth', authRoutes);
-app.use('/analyze', analyzeRoutes);
+app.use('/auth', authLimiter, authRoutes);
+app.use('/analyze', analyzeLimiter, analyzeRoutes);
 app.use('/funnel', funnelRoutes);
-app.use('/report', reportRoutes);
+app.use('/report', reportLimiter, reportRoutes);
 app.use('/payment', paymentRoutes);
 app.use('/admin/shadow-properties', shadowPropertiesAdminRoutes);
 app.use('/admin/leads', leadsAdminRoutes);
 app.use('/admin/brokers', brokersAdminRoutes);
 app.use('/admin/clusters', clustersAdminRoutes);
 app.use('/admin/blog', blogAdminRoutes);
+app.use('/admin/analytics', analyticsAdminRoutes);
 app.use('/posts', postsRoutes);
 
 app.use(errorHandler);

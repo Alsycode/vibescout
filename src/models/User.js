@@ -71,6 +71,8 @@ const UserSchema = new mongoose.Schema({
   }],
   unlockedReports: [{ type: String }],
   // sessionIds that have been paid for
+  resetToken:       { type: String, default: null },
+  resetTokenExpiry: { type: Date,   default: null },
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import api from '../../lib/api';
+import { ShinyButton } from '../ui/shiny-button';
 
 // ── Background decoration (mirrors funnel) ────────────────────────────────────
 
@@ -473,68 +474,40 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
           </p>
         )}
 
-        <button
-          onClick={handleUnlock}
-          disabled={loading}
-          style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
-            width: '100%', maxWidth: 440,
-            padding: '15px 28px',
-            background: loading ? 'rgba(13,216,192,0.08)' : '#0DD8C0',
-            border: loading ? '1px solid rgba(13,216,192,0.20)' : '1px solid transparent',
-            borderRadius: 12,
-            color: loading ? 'rgba(13,216,192,0.45)' : '#080812',
-            fontFamily: "'Geist Mono', monospace",
-            fontSize: 12, fontWeight: 600,
-            letterSpacing: '0.10em', textTransform: 'uppercase',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            transition: 'all 0.2s ease',
-            boxShadow: loading ? 'none' : '0 0 0 1px rgba(13,216,192,0.30), 0 8px 28px rgba(13,216,192,0.22)',
-          }}
-          onMouseEnter={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background  = '#0BC5AF';
-              e.currentTarget.style.boxShadow   = '0 0 0 1px #0DD8C0, 0 8px 32px rgba(13,216,192,0.28)';
-              e.currentTarget.style.transform   = 'translateY(-1px)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!loading) {
-              e.currentTarget.style.background  = '#0DD8C0';
-              e.currentTarget.style.boxShadow   = '0 0 0 1px rgba(13,216,192,0.30), 0 8px 28px rgba(13,216,192,0.22)';
-              e.currentTarget.style.transform   = 'translateY(0)';
-            }
-          }}
-        >
-          {loading ? (
-            <>
-              <div style={{
-                width: 13, height: 13, borderRadius: '50%',
-                border: '1.5px solid rgba(13,216,192,0.25)',
-                borderTop: '1.5px solid rgba(13,216,192,0.70)',
-                animation: 'spin 0.8s linear infinite',
-              }} />
-              <span>Processing…</span>
-            </>
-          ) : (
-            <>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <rect x="5" y="11" width="14" height="10" rx="2" />
-                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-              </svg>
-              <span>Unlock Full Report</span>
-              <span style={{
-                padding: '2px 10px', borderRadius: 4,
-                background: 'rgba(8,8,18,0.25)',
-                border: '1px solid rgba(8,8,18,0.20)',
-                fontSize: 11, fontWeight: 700,
-                letterSpacing: '0.06em',
-              }}>
-                ₹199
-              </span>
-            </>
-          )}
-        </button>
+        <div style={{ width: '100%', maxWidth: 440, opacity: loading ? 0.55 : 1, pointerEvents: loading ? 'none' : 'auto' }}>
+          <ShinyButton onClick={handleUnlock} className="shiny-cta-paywall">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              {loading ? (
+                <>
+                  <div style={{ position: 'relative', width: 16, height: 16, flexShrink: 0 }}>
+                    <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1px dashed rgba(13,216,192,0.5)', animation: 'spin 10s linear infinite' }} />
+                    <div style={{ position: 'absolute', inset: 1, borderRadius: '50%', border: '2px solid transparent', borderTopColor: 'rgba(13,216,192,0.9)', animation: 'spin 1.4s linear infinite' }} />
+                    <div style={{ position: 'absolute', inset: 3, borderRadius: '50%', border: '1.5px solid transparent', borderBottomColor: 'rgba(168,85,247,0.85)', animation: 'spin 2s linear infinite reverse' }} />
+                    <div style={{ position: 'absolute', inset: 0, animation: 'spin 2.5s linear infinite' }}>
+                      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 2, height: 2, borderRadius: '50%', background: '#0DD8C0' }} />
+                    </div>
+                  </div>
+                  <span>Processing…</span>
+                </>
+              ) : (
+                <>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <rect x="5" y="11" width="14" height="10" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                  </svg>
+                  <span>Unlock Full Report</span>
+                  <span style={{
+                    padding: '2px 10px', borderRadius: 4,
+                    background: 'rgba(255,255,255,0.08)',
+                    border: '1px solid rgba(255,255,255,0.12)',
+                    fontSize: 11, fontWeight: 700,
+                    letterSpacing: '0.06em',
+                  }}>₹199</span>
+                </>
+              )}
+            </div>
+          </ShinyButton>
+        </div>
 
         <p style={{
           fontFamily: "'Geist Mono', monospace",
@@ -545,7 +518,7 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
           ONE-TIME PAYMENT · UPI, CARDS &amp; NET BANKING · SECURED BY RAZORPAY
         </p>
 
-        {process.env.NODE_ENV !== 'production' && (
+        {process.env.NEXT_PUBLIC_DEV_UNLOCK === 'true' && (
           <button
             onClick={handleDevUnlock}
             disabled={loading}
@@ -565,7 +538,10 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
         )}
       </div>
 
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .shiny-cta-paywall { width: 100%; justify-content: center; padding: 0.9rem 1.75rem; font-family: 'Geist Mono', monospace; font-size: 0.75rem; letter-spacing: 0.09em; border-radius: 10px; }
+      `}</style>
     </div>
   );
 }

@@ -232,6 +232,8 @@ router.get('/generate', requireAuth, async (req, res, next) => {
     const report = {
       sessionId,
       propertyName: sp.name,
+      propertyLat: sp.coordinates?.lat ?? null,
+      propertyLng: sp.coordinates?.lng ?? null,
       listingType: sp.userProvidedSpecs.listingType,
       bhk: sp.userProvidedSpecs.bhk ?? null,
       floor: sp.userProvidedSpecs.floor ?? null,

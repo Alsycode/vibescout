@@ -17,6 +17,17 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 6000) {
   }
 }
 
+const IRRELEVANT_KEYWORDS = [
+  'sensex', 'nifty', 'bse', 'nse', 'stock market', 'share market',
+  'mutual fund', 'equity', 'ipo', 'rbi rate', 'repo rate', 'inflation rate',
+  'gdp', 'forex', 'cryptocurrency', 'bitcoin', 'crypto',
+];
+
+function isRelevantArticle(title = '', snippet = '') {
+  const text = `${title} ${snippet}`.toLowerCase();
+  return !IRRELEVANT_KEYWORDS.some(kw => text.includes(kw));
+}
+
 // Parses Google News RSS XML without external dependencies
 function parseRSSItems(xml) {
   const items = [];
@@ -82,14 +93,17 @@ async function fetchFromGNews(cityName) {
     const articles = data?.articles ?? [];
     if (!articles.length) return null;
 
-    const headlines = articles.map((a) => ({
-      title: a.title ?? '',
-      url: a.url ?? '',
-      source: a.source?.name ?? 'GNews',
-      publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
-      snippet: (a.description ?? '').substring(0, 200),
-    }));
+    const headlines = articles
+      .map((a) => ({
+        title: a.title ?? '',
+        url: a.url ?? '',
+        source: a.source?.name ?? 'GNews',
+        publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
+        snippet: (a.description ?? '').substring(0, 200),
+      }))
+      .filter(h => isRelevantArticle(h.title, h.snippet));
 
+    if (!headlines.length) return null;
     return { headlines, source: 'gnews' };
   } catch {
     return null;
@@ -114,14 +128,17 @@ async function fetchFromNewsAPI(cityName) {
     const articles = data?.articles ?? [];
     if (!articles.length) return null;
 
-    const headlines = articles.map((a) => ({
-      title: a.title ?? '',
-      url: a.url ?? '',
-      source: a.source?.name ?? 'NewsAPI',
-      publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
-      snippet: (a.description ?? '').substring(0, 200),
-    }));
+    const headlines = articles
+      .map((a) => ({
+        title: a.title ?? '',
+        url: a.url ?? '',
+        source: a.source?.name ?? 'NewsAPI',
+        publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
+        snippet: (a.description ?? '').substring(0, 200),
+      }))
+      .filter(h => isRelevantArticle(h.title, h.snippet));
 
+    if (!headlines.length) return null;
     return { headlines, source: 'newsapi' };
   } catch {
     return null;
@@ -132,15 +149,15 @@ async function fetchFromNewsAPI(cityName) {
 async function fetchFromGoogleRSS(cityName) {
   if (!cityName) return null;
   try {
-    const q = encodeURIComponent(`${cityName} real estate property`);
+    const q = encodeURIComponent(`"${cityName}" real estate OR property OR neighbourhood OR locality`);
     const url = `https://news.google.com/rss/search?q=${q}&hl=en-IN&gl=IN&ceid=IN:en`;
     const res = await fetchWithTimeout(url, {}, 6000);
     if (!res.ok) return null;
     const xml = await res.text();
-    const headlines = parseRSSItems(xml).slice(0, 10).map((item) => ({
-      ...item,
-      source: 'google-rss',
-    }));
+    const headlines = parseRSSItems(xml)
+      .filter(item => isRelevantArticle(item.title, item.snippet))
+      .slice(0, 10)
+      .map((item) => ({ ...item, source: 'google-rss' }));
     if (!headlines.length) return null;
     return { headlines, source: 'google-rss' };
   } catch {

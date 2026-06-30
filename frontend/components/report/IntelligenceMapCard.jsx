@@ -25,8 +25,8 @@ function makePropertyIcon() {
   return L.divIcon({
     className: '',
     html: `<div style="position:relative;width:16px;height:16px;">
-      <div style="position:absolute;inset:0;background:rgba(232,160,48,0.25);border-radius:50%;animation:ripple 2s ease-out infinite;"></div>
-      <div style="position:absolute;inset:3px;background:#E8A030;border-radius:50%;box-shadow:0 0 10px rgba(232,160,48,0.9),0 0 20px rgba(232,160,48,0.5);"></div>
+      <div style="position:absolute;inset:0;background:rgba(13,216,192,0.25);border-radius:50%;animation:ripple 2s ease-out infinite;"></div>
+      <div style="position:absolute;inset:3px;background:#0DD8C0;border-radius:50%;box-shadow:0 0 10px rgba(13,216,192,0.9),0 0 20px rgba(13,216,192,0.5);"></div>
     </div>`,
     iconSize: [16, 16], iconAnchor: [8, 8],
   });
@@ -252,8 +252,8 @@ export default function IntelligenceMapCard({ report }) {
           .map-label-property .leaflet-tooltip-content,
           .map-label-property {
             background: rgba(4,8,20,0.9) !important;
-            border: 1px solid rgba(232,160,48,0.3) !important;
-            color: #E8A030 !important;
+            border: 1px solid rgba(13,216,192,0.3) !important;
+            color: #0DD8C0 !important;
             font-size: 11px !important;
             font-weight: 600 !important;
             border-radius: 6px !important;

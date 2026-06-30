@@ -9,28 +9,28 @@ import { DataSourceLabel } from './DataSourceLabel';
 function SignalIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="9" cy="9" r="2" fill="rgba(231,197,138,0.7)" />
+      <circle cx="9" cy="9" r="2" fill="rgba(13,216,192,0.7)" />
       <path
         d="M5.5 12.5A5 5 0 0 1 5.5 5.5"
-        stroke="rgba(231,197,138,0.5)"
+        stroke="rgba(13,216,192,0.5)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M12.5 5.5A5 5 0 0 1 12.5 12.5"
-        stroke="rgba(231,197,138,0.5)"
+        stroke="rgba(13,216,192,0.5)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M3 15A9 9 0 0 1 3 3"
-        stroke="rgba(231,197,138,0.25)"
+        stroke="rgba(13,216,192,0.25)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M15 3A9 9 0 0 1 15 15"
-        stroke="rgba(231,197,138,0.25)"
+        stroke="rgba(13,216,192,0.25)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
@@ -72,8 +72,8 @@ function HeadlineItem({ headline }) {
       style={{
         padding: '12px 14px 12px 16px',
         background: 'rgba(11,11,11,0.55)',
-        border: '1px solid rgba(231,197,138,0.07)',
-        borderLeft: '2px solid rgba(231,197,138,0.3)',
+        border: '1px solid rgba(13,216,192,0.07)',
+        borderLeft: '2px solid rgba(13,216,192,0.3)',
         borderRadius: '0 10px 10px 0',
         transition: 'border-color var(--duration-fast) ease, background var(--duration-fast) ease',
       }}
@@ -103,7 +103,7 @@ function HeadlineItem({ headline }) {
             style={{
               fontSize: '10px',
               fontWeight: 300,
-              color: 'rgba(231,197,138,0.4)',
+              color: 'rgba(13,216,192,0.4)',
               whiteSpace: 'nowrap',
               flexShrink: 0,
               paddingTop: '2px',
@@ -133,7 +133,7 @@ function HeadlineItem({ headline }) {
             fontSize: '10px',
             fontWeight: 400,
             letterSpacing: '0.06em',
-            color: 'rgba(231,197,138,0.35)',
+            color: 'rgba(13,216,192,0.35)',
             textTransform: 'uppercase',
           }}
         >
@@ -154,14 +154,14 @@ if (headline.url) {
       onMouseEnter={(e) => {
         const div = e.currentTarget.querySelector('div');
         if (div) {
-          div.style.borderLeftColor = 'rgba(231,197,138,0.6)';
+          div.style.borderLeftColor = 'rgba(13,216,192,0.6)';
           div.style.background = 'rgba(11,11,11,0.75)';
         }
       }}
       onMouseLeave={(e) => {
         const div = e.currentTarget.querySelector('div');
         if (div) {
-          div.style.borderLeftColor = 'rgba(231,197,138,0.3)';
+          div.style.borderLeftColor = 'rgba(13,216,192,0.3)';
           div.style.background = 'rgba(11,11,11,0.55)';
         }
       }}
@@ -206,7 +206,7 @@ export default function LocalNewsCard({ localNews }) {
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.55)',
+              color: 'rgba(13,216,192,0.55)',
               marginBottom: '5px',
             }}
           >
@@ -236,7 +236,7 @@ export default function LocalNewsCard({ localNews }) {
               style={{
                 fontSize: '11px',
                 fontWeight: 300,
-                color: 'rgba(231,197,138,0.35)',
+                color: 'rgba(13,216,192,0.35)',
                 textAlign: 'center',
                 paddingTop: '4px',
                 letterSpacing: '0.04em',
@@ -250,7 +250,7 @@ export default function LocalNewsCard({ localNews }) {
             style={{
               marginTop: '4px',
               paddingTop: '12px',
-              borderTop: '1px solid rgba(231,197,138,0.07)',
+              borderTop: '1px solid rgba(13,216,192,0.07)',
             }}
           >
             <DataSourceLabel source={source} updatedAt={updatedAt} />
@@ -261,7 +261,7 @@ export default function LocalNewsCard({ localNews }) {
           style={{
             padding: '20px',
             background: 'rgba(11,11,11,0.55)',
-            border: '1px solid rgba(231,197,138,0.07)',
+            border: '1px solid rgba(13,216,192,0.07)',
             borderRadius: '12px',
             textAlign: 'center',
           }}
@@ -297,7 +297,7 @@ export default function LocalNewsCard({ localNews }) {
             lineHeight: 1.6,
             marginTop: '16px',
             paddingTop: '14px',
-            borderTop: '1px solid rgba(231,197,138,0.07)',
+            borderTop: '1px solid rgba(13,216,192,0.07)',
           }}
         >
           {localNews.label}

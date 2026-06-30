@@ -9,11 +9,11 @@ import { VerdictBadge } from './VerdictBadge';
 function RouteIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="3.5" cy="5" r="2" stroke="rgba(231,197,138,0.65)" strokeWidth="1.5" />
-      <circle cx="14.5" cy="13" r="2" stroke="rgba(231,197,138,0.65)" strokeWidth="1.5" />
+      <circle cx="3.5" cy="5" r="2" stroke="rgba(13,216,192,0.65)" strokeWidth="1.5" />
+      <circle cx="14.5" cy="13" r="2" stroke="rgba(13,216,192,0.65)" strokeWidth="1.5" />
       <path
         d="M3.5 7v2c0 2.2 1.8 4 4 4H9c2.2 0 4-1.8 4-4V7c0-2.2 1.8-4 4-4"
-        stroke="rgba(231,197,138,0.4)"
+        stroke="rgba(13,216,192,0.4)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
@@ -87,7 +87,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.55)',
+              color: 'rgba(13,216,192,0.55)',
               marginBottom: '5px',
             }}
           >
@@ -112,7 +112,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
           style={{
             padding: '20px',
             background: 'rgba(11,11,11,0.6)',
-            border: '1px solid rgba(231,197,138,0.08)',
+            border: '1px solid rgba(13,216,192,0.08)',
             borderRadius: '14px',
             position: 'relative',
             overflow: 'hidden',
@@ -127,7 +127,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
               width: '80px',
               height: '80px',
               background:
-                'radial-gradient(circle at top right, rgba(231,197,138,0.06) 0%, transparent 70%)',
+                'radial-gradient(circle at top right, rgba(13,216,192,0.06) 0%, transparent 70%)',
               pointerEvents: 'none',
             }}
           />
@@ -138,7 +138,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.45)',
+              color: 'rgba(13,216,192,0.45)',
               marginBottom: '14px',
             }}
           >
@@ -173,7 +173,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                   style={{
                     fontSize: '14px',
                     fontWeight: 300,
-                    color: 'rgba(231,197,138,0.55)',
+                    color: 'rgba(13,216,192,0.55)',
                     paddingBottom: '10px',
                     letterSpacing: '0.06em',
                   }}
@@ -196,7 +196,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                 style={{
                   fontSize: '22px',
                   fontWeight: 500,
-                  color: 'rgba(231,197,138,0.75)',
+                  color: 'rgba(13,216,192,0.75)',
                 }}
               >
                 Full-time remote
@@ -250,7 +250,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.38)',
+                    color: 'rgba(13,216,192,0.38)',
                     marginBottom: '3px',
                   }}
                 >
@@ -275,7 +275,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.38)',
+                    color: 'rgba(13,216,192,0.38)',
                     marginBottom: '3px',
                   }}
                 >
@@ -300,7 +300,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.38)',
+                    color: 'rgba(13,216,192,0.38)',
                     marginBottom: '3px',
                   }}
                 >
@@ -326,7 +326,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
             style={{
               padding: '18px 20px',
               background: 'rgba(11,11,11,0.55)',
-              border: '1px solid rgba(231,197,138,0.07)',
+              border: '1px solid rgba(13,216,192,0.07)',
               borderRadius: '14px',
             }}
           >
@@ -336,7 +336,7 @@ export default function HyperPersonalCard({ commute, preferences }) {
                 fontWeight: 500,
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'rgba(231,197,138,0.45)',
+                color: 'rgba(13,216,192,0.45)',
                 marginBottom: '10px',
               }}
             >
@@ -375,9 +375,9 @@ export default function HyperPersonalCard({ commute, preferences }) {
                       letterSpacing: '0.04em',
                       padding: '3px 10px',
                       borderRadius: '9999px',
-                      background: 'rgba(231,197,138,0.07)',
-                      border: '1px solid rgba(231,197,138,0.18)',
-                      color: 'rgba(231,197,138,0.65)',
+                      background: 'rgba(13,216,192,0.07)',
+                      border: '1px solid rgba(13,216,192,0.18)',
+                      color: 'rgba(13,216,192,0.65)',
                     }}
                   >
                     {tag}

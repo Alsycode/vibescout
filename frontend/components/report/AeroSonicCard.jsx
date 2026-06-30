@@ -13,19 +13,19 @@ function WindIcon() {
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M2 6.5h9c1.4 0 2.5-1.1 2.5-2.5S12.4 1.5 11 1.5"
-        stroke="rgba(231,197,138,0.65)"
+        stroke="rgba(13,216,192,0.65)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M2 9.5h6.5"
-        stroke="rgba(231,197,138,0.65)"
+        stroke="rgba(13,216,192,0.65)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M2 12.5h9c1.4 0 2.5 1.1 2.5 2.5s-1.1 2.5-2.5 2.5"
-        stroke="rgba(231,197,138,0.65)"
+        stroke="rgba(13,216,192,0.65)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
@@ -38,7 +38,7 @@ function PulseIcon() {
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <polyline
         points="1,9 4,9 5.5,3.5 7,14.5 8.5,9 11,9 12.5,5.5 14,12.5 15.5,9 17,9"
-        stroke="rgba(231,197,138,0.65)"
+        stroke="rgba(13,216,192,0.65)"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -51,26 +51,26 @@ function MetricBar({ value, max, verdict }) {
   const pct = Math.min(100, Math.max(0, (value / max) * 100));
   const barColor =
     verdict === 'pass'
-      ? 'rgba(231,197,138,0.75)'
+      ? 'rgba(13,216,192,0.75)'
       : verdict === 'caution'
       ? 'rgba(212,168,83,0.75)'
       : verdict === 'red_flag'
       ? 'rgba(212,100,90,0.75)'
-      : 'rgba(231,197,138,0.55)';
+      : 'rgba(13,216,192,0.55)';
   const barGlow =
     verdict === 'pass'
-      ? 'rgba(231,197,138,0.4)'
+      ? 'rgba(13,216,192,0.4)'
       : verdict === 'caution'
       ? 'rgba(212,168,83,0.4)'
       : verdict === 'red_flag'
       ? 'rgba(212,100,90,0.4)'
-      : 'rgba(231,197,138,0.3)';
+      : 'rgba(13,216,192,0.3)';
 
   return (
     <div
       style={{
         height: '3px',
-        background: 'rgba(231,197,138,0.08)',
+        background: 'rgba(13,216,192,0.08)',
         borderRadius: '2px',
         overflow: 'hidden',
         marginBottom: '14px',
@@ -97,7 +97,7 @@ function AeroPanel({ title, icon, value, unit, verdict, category, groqLabel, sou
         minWidth: '200px',
         padding: '20px',
         background: 'rgba(11,11,11,0.6)',
-        border: '1px solid rgba(231,197,138,0.08)',
+        border: '1px solid rgba(13,216,192,0.08)',
         borderRadius: '14px',
         position: 'relative',
         overflow: 'hidden',
@@ -112,7 +112,7 @@ function AeroPanel({ title, icon, value, unit, verdict, category, groqLabel, sou
           width: '80px',
           height: '80px',
           background:
-            'radial-gradient(circle at top right, rgba(231,197,138,0.07) 0%, transparent 70%)',
+            'radial-gradient(circle at top right, rgba(13,216,192,0.07) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -132,7 +132,7 @@ function AeroPanel({ title, icon, value, unit, verdict, category, groqLabel, sou
             fontWeight: 500,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'rgba(231,197,138,0.6)',
+            color: 'rgba(13,216,192,0.6)',
             lineHeight: 1.4,
             maxWidth: '140px',
           }}
@@ -167,7 +167,7 @@ function AeroPanel({ title, icon, value, unit, verdict, category, groqLabel, sou
           style={{
             fontSize: '14px',
             fontWeight: 300,
-            color: 'rgba(231,197,138,0.55)',
+            color: 'rgba(13,216,192,0.55)',
             paddingBottom: '8px',
             letterSpacing: '0.06em',
           }}
@@ -247,7 +247,7 @@ export default function AeroSonicCard({ noise, aqi }) {
             fontWeight: 500,
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(231,197,138,0.55)',
+            color: 'rgba(13,216,192,0.55)',
             marginBottom: '5px',
           }}
         >

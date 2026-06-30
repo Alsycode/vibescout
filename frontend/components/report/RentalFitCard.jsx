@@ -9,22 +9,22 @@ import { VerdictBadge } from './VerdictBadge';
 function KeyIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="6.5" cy="7" r="3.5" stroke="rgba(231,197,138,0.65)" strokeWidth="1.5" />
+      <circle cx="6.5" cy="7" r="3.5" stroke="rgba(13,216,192,0.65)" strokeWidth="1.5" />
       <path
         d="M9.5 9.5l5.5 5.5"
-        stroke="rgba(231,197,138,0.5)"
+        stroke="rgba(13,216,192,0.5)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M12.5 12.5l1.5 1.5"
-        stroke="rgba(231,197,138,0.4)"
+        stroke="rgba(13,216,192,0.4)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
       <path
         d="M14 14l1.5 1.5"
-        stroke="rgba(231,197,138,0.3)"
+        stroke="rgba(13,216,192,0.3)"
         strokeWidth="1.5"
         strokeLinecap="round"
       />
@@ -83,7 +83,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
           right: 0,
           height: '1px',
           background:
-            'linear-gradient(90deg, transparent 0%, rgba(231,197,138,0.5) 50%, transparent 100%)',
+            'linear-gradient(90deg, transparent 0%, rgba(13,216,192,0.5) 50%, transparent 100%)',
         }}
       />
 
@@ -103,7 +103,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.55)',
+              color: 'rgba(13,216,192,0.55)',
               marginBottom: '5px',
             }}
           >
@@ -127,7 +127,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
         style={{
           padding: '18px 20px',
           background: 'rgba(11,11,11,0.6)',
-          border: '1px solid rgba(231,197,138,0.08)',
+          border: '1px solid rgba(13,216,192,0.08)',
           borderRadius: '14px',
           marginBottom: '12px',
           position: 'relative',
@@ -143,7 +143,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
             width: '80px',
             height: '80px',
             background:
-              'radial-gradient(circle at top right, rgba(231,197,138,0.06) 0%, transparent 70%)',
+              'radial-gradient(circle at top right, rgba(13,216,192,0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
@@ -154,7 +154,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
             fontWeight: 500,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'rgba(231,197,138,0.42)',
+            color: 'rgba(13,216,192,0.42)',
             marginBottom: '8px',
           }}
         >
@@ -212,7 +212,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                 minWidth: '130px',
                 padding: '14px 16px',
                 background: 'rgba(11,11,11,0.55)',
-                border: '1px solid rgba(231,197,138,0.07)',
+                border: '1px solid rgba(13,216,192,0.07)',
                 borderRadius: '12px',
               }}
             >
@@ -222,7 +222,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                   fontWeight: 500,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: 'rgba(231,197,138,0.45)',
+                  color: 'rgba(13,216,192,0.45)',
                   marginBottom: '6px',
                 }}
               >
@@ -267,7 +267,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                 minWidth: '130px',
                 padding: '14px 16px',
                 background: 'rgba(11,11,11,0.55)',
-                border: '1px solid rgba(231,197,138,0.07)',
+                border: '1px solid rgba(13,216,192,0.07)',
                 borderRadius: '12px',
               }}
             >
@@ -277,7 +277,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                   fontWeight: 500,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: 'rgba(231,197,138,0.45)',
+                  color: 'rgba(13,216,192,0.45)',
                   marginBottom: '6px',
                 }}
               >
@@ -314,7 +314,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
           style={{
             padding: '16px 18px',
             background: 'rgba(11,11,11,0.5)',
-            border: '1px solid rgba(231,197,138,0.07)',
+            border: '1px solid rgba(13,216,192,0.07)',
             borderRadius: '12px',
             marginBottom: '12px',
           }}
@@ -325,7 +325,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
               fontWeight: 500,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.42)',
+              color: 'rgba(13,216,192,0.42)',
               marginBottom: '12px',
             }}
           >
@@ -340,7 +340,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.35)',
+                    color: 'rgba(13,216,192,0.35)',
                     marginBottom: '3px',
                   }}
                 >
@@ -365,7 +365,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.35)',
+                    color: 'rgba(13,216,192,0.35)',
                     marginBottom: '3px',
                   }}
                 >
@@ -390,7 +390,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.35)',
+                    color: 'rgba(13,216,192,0.35)',
                     marginBottom: '3px',
                   }}
                 >
@@ -415,7 +415,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
                     fontWeight: 500,
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
-                    color: 'rgba(231,197,138,0.35)',
+                    color: 'rgba(13,216,192,0.35)',
                     marginBottom: '3px',
                   }}
                 >
@@ -440,7 +440,7 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
       {financialNote && (
         <div
           style={{
-            borderTop: '1px solid rgba(231,197,138,0.07)',
+            borderTop: '1px solid rgba(13,216,192,0.07)',
             paddingTop: '14px',
           }}
         >

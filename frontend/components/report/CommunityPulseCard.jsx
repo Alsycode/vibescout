@@ -6,21 +6,21 @@
 import { VerdictBadge } from './VerdictBadge';
 
 const CHARACTER_COLOR = {
-  'Family-friendly': 'rgba(231,197,138,0.75)',
+  'Family-friendly': 'rgba(13,216,192,0.75)',
   'Young & Social':  'rgba(138,197,231,0.75)',
   'Quiet & Private': 'rgba(180,180,180,0.65)',
   'Mixed':           'rgba(180,231,138,0.65)',
 };
 
 const CHARACTER_BG = {
-  'Family-friendly': 'rgba(231,197,138,0.08)',
+  'Family-friendly': 'rgba(13,216,192,0.08)',
   'Young & Social':  'rgba(138,197,231,0.08)',
   'Quiet & Private': 'rgba(180,180,180,0.07)',
   'Mixed':           'rgba(180,231,138,0.07)',
 };
 
 const CHARACTER_BORDER = {
-  'Family-friendly': 'rgba(231,197,138,0.2)',
+  'Family-friendly': 'rgba(13,216,192,0.2)',
   'Young & Social':  'rgba(138,197,231,0.2)',
   'Quiet & Private': 'rgba(180,180,180,0.18)',
   'Mixed':           'rgba(180,231,138,0.18)',
@@ -29,18 +29,18 @@ const CHARACTER_BORDER = {
 function GridIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="1.5" y="1.5" width="6" height="6" rx="1.5" stroke="rgba(231,197,138,0.55)" strokeWidth="1.5" />
-      <rect x="10.5" y="1.5" width="6" height="6" rx="1.5" stroke="rgba(231,197,138,0.45)" strokeWidth="1.5" />
-      <rect x="1.5" y="10.5" width="6" height="6" rx="1.5" stroke="rgba(231,197,138,0.45)" strokeWidth="1.5" />
-      <rect x="10.5" y="10.5" width="6" height="6" rx="1.5" stroke="rgba(231,197,138,0.25)" strokeWidth="1.5" />
+      <rect x="1.5" y="1.5" width="6" height="6" rx="1.5" stroke="rgba(13,216,192,0.55)" strokeWidth="1.5" />
+      <rect x="10.5" y="1.5" width="6" height="6" rx="1.5" stroke="rgba(13,216,192,0.45)" strokeWidth="1.5" />
+      <rect x="1.5" y="10.5" width="6" height="6" rx="1.5" stroke="rgba(13,216,192,0.45)" strokeWidth="1.5" />
+      <rect x="10.5" y="10.5" width="6" height="6" rx="1.5" stroke="rgba(13,216,192,0.25)" strokeWidth="1.5" />
     </svg>
   );
 }
 
 function CharacterChip({ label, value }) {
-  const color  = CHARACTER_COLOR[value]  ?? 'rgba(231,197,138,0.75)';
-  const bg     = CHARACTER_BG[value]     ?? 'rgba(231,197,138,0.08)';
-  const border = CHARACTER_BORDER[value] ?? 'rgba(231,197,138,0.2)';
+  const color  = CHARACTER_COLOR[value]  ?? 'rgba(13,216,192,0.75)';
+  const bg     = CHARACTER_BG[value]     ?? 'rgba(13,216,192,0.08)';
+  const border = CHARACTER_BORDER[value] ?? 'rgba(13,216,192,0.2)';
   return (
     <div
       style={{
@@ -132,7 +132,7 @@ export default function CommunityPulseCard({ community }) {
               fontWeight:    500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color:         'rgba(231,197,138,0.55)',
+              color:         'rgba(13,216,192,0.55)',
               marginBottom:  '5px',
             }}
           >
@@ -158,8 +158,8 @@ export default function CommunityPulseCard({ community }) {
         style={{
           padding:      '16px',
           background:   'rgba(11,11,11,0.55)',
-          border:       '1px solid rgba(231,197,138,0.07)',
-          borderLeft:   '2px solid rgba(231,197,138,0.2)',
+          border:       '1px solid rgba(13,216,192,0.07)',
+          borderLeft:   '2px solid rgba(13,216,192,0.2)',
           borderRadius: '0 12px 12px 0',
           marginBottom: '14px',
         }}

@@ -258,7 +258,7 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
                   fontFamily: "'Geist Mono', monospace",
                   fontSize: 9, fontWeight: 500,
                   letterSpacing: '0.16em', textTransform: 'uppercase',
-                  color: 'rgba(232,160,48,0.70)', margin: '0 0 6px',
+                  color: 'rgba(13,216,192,0.70)', margin: '0 0 6px',
                 }}>
                   VIBESCOUT INTELLIGENCE
                 </p>
@@ -451,16 +451,16 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
       }}>
         {/* Section label above button */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
-          <div style={{ width: 14, height: 1, background: 'rgba(232,160,48,0.45)' }} />
+          <div style={{ width: 14, height: 1, background: 'rgba(13,216,192,0.45)' }} />
           <span style={{
             fontFamily: "'Geist Mono', monospace",
             fontSize: 9, fontWeight: 600,
             letterSpacing: '0.15em', textTransform: 'uppercase',
-            color: 'rgba(232,160,48,0.55)',
+            color: 'rgba(13,216,192,0.55)',
           }}>
             UNLOCK FULL INTELLIGENCE
           </span>
-          <div style={{ width: 14, height: 1, background: 'rgba(232,160,48,0.45)' }} />
+          <div style={{ width: 14, height: 1, background: 'rgba(13,216,192,0.45)' }} />
         </div>
 
         {error && (

@@ -120,7 +120,7 @@ function DonutChart({ value, size = 88 }) {
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       <circle cx={c} cy={c} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth={7} />
-      <circle cx={c} cy={c} r={r} fill="none" stroke="#E8A030" strokeWidth={7}
+      <circle cx={c} cy={c} r={r} fill="none" stroke="#0DD8C0" strokeWidth={7}
         strokeDasharray={`${filled} ${circ - filled}`}
         strokeDashoffset={circ * 0.25}
         strokeLinecap="round"
@@ -141,8 +141,8 @@ function StarRating({ count, total = 5 }) {
         <svg key={i} width={20} height={20} viewBox="0 0 20 20">
           <polygon
             points="10,2 12.4,7.2 18,7.6 13.8,11.4 15.2,17 10,14 4.8,17 6.2,11.4 2,7.6 7.6,7.2"
-            fill={i < count ? '#E8A030' : 'rgba(255,255,255,0.1)'}
-            stroke={i < count ? 'rgba(232,160,48,0.4)' : 'none'}
+            fill={i < count ? '#0DD8C0' : 'rgba(255,255,255,0.1)'}
+            stroke={i < count ? 'rgba(13,216,192,0.4)' : 'none'}
             strokeWidth="0.5"
           />
         </svg>
@@ -154,14 +154,14 @@ function StarRating({ count, total = 5 }) {
 function SectionLabel({ text }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 18 }}>
-      <div style={{ flex: 1, height: 1, background: 'rgba(232,160,48,0.15)' }} />
+      <div style={{ flex: 1, height: 1, background: 'rgba(13,216,192,0.15)' }} />
       <p style={{
         fontSize: 10, fontWeight: 600, letterSpacing: '0.22em', textTransform: 'uppercase',
-        color: 'rgba(232,160,48,0.55)', whiteSpace: 'nowrap',
+        color: 'rgba(13,216,192,0.55)', whiteSpace: 'nowrap',
       }}>
         {text}
       </p>
-      <div style={{ flex: 1, height: 1, background: 'rgba(232,160,48,0.15)' }} />
+      <div style={{ flex: 1, height: 1, background: 'rgba(13,216,192,0.15)' }} />
     </div>
   );
 }
@@ -220,11 +220,11 @@ function ReportHeader({ report }) {
     <div className="rv-card-pad" style={{
       maxWidth: 860, width: '100%', margin: '0 auto 16px',
       background: 'rgba(8,12,28,0.9)',
-      border: '1px solid rgba(232,160,48,0.12)',
+      border: '1px solid rgba(13,216,192,0.12)',
       borderRadius: 16,
       position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(232,160,48,0.5),transparent)' }} />
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'linear-gradient(90deg,transparent,rgba(13,216,192,0.5),transparent)' }} />
 
       <div className="rv-header-flex">
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -308,9 +308,9 @@ function HighlightCards({ report }) {
         <div style={{ flexShrink: 0 }}>
           <svg width={44} height={44} viewBox="0 0 44 44">
             <circle cx={22} cy={22} r={21} fill="rgba(110,203,122,0.08)" stroke="rgba(110,203,122,0.15)" strokeWidth={1} />
-            <circle cx={22} cy={11} r={3} fill="rgba(232,160,48,0.8)" />
+            <circle cx={22} cy={11} r={3} fill="rgba(13,216,192,0.8)" />
             <path d="M22,14 L19,22 L22,28 M22,14 L25,22 L22,28 M19,18 L25,18 M19,22 L16,30 M25,22 L28,30"
-              stroke="rgba(232,160,48,0.75)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
+              stroke="rgba(13,216,192,0.75)" strokeWidth="1.5" strokeLinecap="round" fill="none" />
           </svg>
         </div>
         <div>
@@ -326,19 +326,19 @@ function HighlightCards({ report }) {
       <div className="rv-inner-pad" style={{
         flex: 1,
         background: 'rgba(8,12,28,0.85)',
-        border: `1px solid ${budgetVerdict === 'pass' ? 'rgba(232,160,48,0.15)' : 'rgba(212,100,90,0.15)'}`,
+        border: `1px solid ${budgetVerdict === 'pass' ? 'rgba(13,216,192,0.15)' : 'rgba(212,100,90,0.15)'}`,
         borderRadius: 14, display: 'flex', alignItems: 'center', gap: 18,
       }}>
         <div style={{ flexShrink: 0 }}>
           <svg width={44} height={44} viewBox="0 0 44 44">
-            <circle cx={22} cy={22} r={21} fill="rgba(232,160,48,0.08)" stroke="rgba(232,160,48,0.15)" strokeWidth={1} />
-            <rect x={10} y={15} width={24} height={16} rx={3} fill="none" stroke="rgba(232,160,48,0.75)" strokeWidth="1.5" />
-            <line x1={10} y1={21} x2={34} y2={21} stroke="rgba(232,160,48,0.5)" strokeWidth="1.5" />
-            <circle cx={22} cy={26} r={2.5} fill="rgba(232,160,48,0.7)" />
+            <circle cx={22} cy={22} r={21} fill="rgba(13,216,192,0.08)" stroke="rgba(13,216,192,0.15)" strokeWidth={1} />
+            <rect x={10} y={15} width={24} height={16} rx={3} fill="none" stroke="rgba(13,216,192,0.75)" strokeWidth="1.5" />
+            <line x1={10} y1={21} x2={34} y2={21} stroke="rgba(13,216,192,0.5)" strokeWidth="1.5" />
+            <circle cx={22} cy={26} r={2.5} fill="rgba(13,216,192,0.7)" />
           </svg>
         </div>
         <div>
-          <p className="rv-hlabel" style={{ color: '#E8A030' }}>
+          <p className="rv-hlabel" style={{ color: '#0DD8C0' }}>
             {budgetLabel}
           </p>
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', fontWeight: 300, marginTop: 4 }}>
@@ -717,18 +717,18 @@ function NearbyPlaces({ amenities, priorities = [] }) {
               key={key}
               style={{
                 background: 'rgba(8,12,28,0.85)',
-                border: `1px solid ${isPriority ? 'rgba(232,160,48,0.18)' : 'rgba(255,255,255,0.07)'}`,
-                borderTop: `2px solid ${isPriority ? 'rgba(232,160,48,0.35)' : 'rgba(255,255,255,0.08)'}`,
+                border: `1px solid ${isPriority ? 'rgba(13,216,192,0.18)' : 'rgba(255,255,255,0.07)'}`,
+                borderTop: `2px solid ${isPriority ? 'rgba(13,216,192,0.35)' : 'rgba(255,255,255,0.08)'}`,
                 borderRadius: 12, padding: '14px 13px',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
                 <span style={{ fontSize: 14 }}>{icon}</span>
-                <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: isPriority ? 'rgba(232,160,48,0.7)' : 'rgba(255,255,255,0.3)' }}>
+                <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: isPriority ? 'rgba(13,216,192,0.7)' : 'rgba(255,255,255,0.3)' }}>
                   {label}
                 </p>
                 {isPriority && (
-                  <span style={{ fontSize: 8, fontWeight: 600, color: 'rgba(232,160,48,0.55)', background: 'rgba(232,160,48,0.08)', border: '1px solid rgba(232,160,48,0.2)', borderRadius: 9999, padding: '1px 5px', marginLeft: 'auto', whiteSpace: 'nowrap' }}>
+                  <span style={{ fontSize: 8, fontWeight: 600, color: 'rgba(13,216,192,0.55)', background: 'rgba(13,216,192,0.08)', border: '1px solid rgba(13,216,192,0.2)', borderRadius: 9999, padding: '1px 5px', marginLeft: 'auto', whiteSpace: 'nowrap' }}>
                     priority
                   </span>
                 )}
@@ -824,7 +824,7 @@ function LocalIntelligence({ localNews }) {
             background: 'rgba(8,12,28,0.5)', border: '1px solid rgba(255,255,255,0.05)',
             borderRadius: 12, flexDirection: 'column', gap: 4, minHeight: 160,
           }}>
-            <p style={{ fontSize: 22, fontWeight: 700, color: 'rgba(232,160,48,0.7)' }}>+{headlines.length - 6}</p>
+            <p style={{ fontSize: 22, fontWeight: 700, color: 'rgba(13,216,192,0.7)' }}>+{headlines.length - 6}</p>
             <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.25)', textAlign: 'center', lineHeight: 1.4 }}>more signals</p>
             <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.15)', marginTop: 2 }}>Via Google News</p>
           </div>
@@ -857,8 +857,8 @@ function RentalSection({ report, shareToken, readonly, financial }) {
           {/* Sale price */}
           <div style={{ ...sharedCardStyle, flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-              <span style={{ fontSize: 15, color: 'rgba(232,160,48,0.7)', fontWeight: 700, lineHeight: 1 }}>₹</span>
-              <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.5)' }}>Sale Price Bracket</p>
+              <span style={{ fontSize: 15, color: 'rgba(13,216,192,0.7)', fontWeight: 700, lineHeight: 1 }}>₹</span>
+              <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)' }}>Sale Price Bracket</p>
             </div>
             <p style={{ fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>{budget?.bracket ?? '—'}</p>
             <VerdictPill verdict={budget?.verdict} />
@@ -870,7 +870,7 @@ function RentalSection({ report, shareToken, readonly, financial }) {
           {/* EMI donut */}
           {financial?.affordabilityRatio != null && (
             <div style={{ ...sharedCardStyle, alignItems: 'center', justifyContent: 'center', padding: '20px 28px' }}>
-              <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.5)', marginBottom: 12 }}>EMI-to-Income</p>
+              <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)', marginBottom: 12 }}>EMI-to-Income</p>
               <DonutChart value={financial.affordabilityRatio} />
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>Of monthly income</p>
             </div>
@@ -903,8 +903,8 @@ function RentalSection({ report, shareToken, readonly, financial }) {
         {/* Rental fit */}
         <div style={{ ...sharedCardStyle, flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-            <span style={{ fontSize: 15, color: 'rgba(232,160,48,0.7)', fontWeight: 700, lineHeight: 1 }}>₹</span>
-            <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.5)' }}>Rental Fit Assessment</p>
+            <span style={{ fontSize: 15, color: 'rgba(13,216,192,0.7)', fontWeight: 700, lineHeight: 1 }}>₹</span>
+            <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)' }}>Rental Fit Assessment</p>
           </div>
           <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4 }}>Monthly Rent Bracket</p>
           <p style={{ fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.9)', marginBottom: 8 }}>{budget?.bracket ?? '—'}</p>
@@ -917,7 +917,7 @@ function RentalSection({ report, shareToken, readonly, financial }) {
         {/* Rent-to-income donut */}
         {financial?.rentToIncomeRatio != null && (
           <div style={{ ...sharedCardStyle, alignItems: 'center', justifyContent: 'center', padding: '20px 28px' }}>
-            <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.5)', marginBottom: 12 }}>Rent-to-Income</p>
+            <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)', marginBottom: 12 }}>Rent-to-Income</p>
             <DonutChart value={financial.rentToIncomeRatio} />
             <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>Of monthly income</p>
           </div>
@@ -929,11 +929,11 @@ function RentalSection({ report, shareToken, readonly, financial }) {
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                 <svg width={14} height={14} viewBox="0 0 14 14" fill="none">
-                  <rect x="1.5" y="5" width="11" height="7.5" rx="1.2" stroke="rgba(232,160,48,0.6)" strokeWidth="1.1"/>
-                  <path d="M4.5 5V3.5C4.5 2.7 5.1 2 6 2H8C8.9 2 9.5 2.7 9.5 3.5V5" stroke="rgba(232,160,48,0.6)" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M1.5 8.5H12.5" stroke="rgba(232,160,48,0.4)" strokeWidth="1" strokeLinecap="round"/>
+                  <rect x="1.5" y="5" width="11" height="7.5" rx="1.2" stroke="rgba(13,216,192,0.6)" strokeWidth="1.1"/>
+                  <path d="M4.5 5V3.5C4.5 2.7 5.1 2 6 2H8C8.9 2 9.5 2.7 9.5 3.5V5" stroke="rgba(13,216,192,0.6)" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M1.5 8.5H12.5" stroke="rgba(13,216,192,0.4)" strokeWidth="1" strokeLinecap="round"/>
                 </svg>
-                <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(232,160,48,0.5)' }}>Annual Rent Burden</p>
+                <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)' }}>Annual Rent Burden</p>
               </div>
               <p style={{ fontSize: 20, fontWeight: 700, color: 'rgba(255,255,255,0.9)' }}>{financial.annualRentBurden}</p>
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', marginTop: 2 }}>Estimated yearly</p>
@@ -1035,7 +1035,7 @@ export default function ReportViewer({ report, shareToken, readonly, preferences
     return (
       <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center' }}>
-          <div className="animate-glow-pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(231,197,138,0.6)', boxShadow: '0 0 16px rgba(231,197,138,0.4)', margin: '0 auto 16px' }} />
+          <div className="animate-glow-pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: 'rgba(13,216,192,0.6)', boxShadow: '0 0 16px rgba(13,216,192,0.4)', margin: '0 auto 16px' }} />
           <p style={{ fontSize: 13, fontWeight: 300, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.08em' }}>Preparing report...</p>
         </div>
       </div>

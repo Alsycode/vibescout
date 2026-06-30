@@ -67,7 +67,7 @@ function AmenityPlace({ place, thresholds, lat, lng }) {
           style={{
             fontSize: 11,
             fontWeight: 400,
-            color: 'rgba(232,160,48,0.8)',
+            color: 'rgba(13,216,192,0.8)',
             textDecoration: 'none',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -75,8 +75,8 @@ function AmenityPlace({ place, thresholds, lat, lng }) {
             display: 'block',
             transition: 'color 0.2s',
           }}
-          onMouseEnter={(e) => e.target.style.color = 'rgba(232,160,48,1)'}
-          onMouseLeave={(e) => e.target.style.color = 'rgba(232,160,48,0.8)'}
+          onMouseEnter={(e) => e.target.style.color = 'rgba(13,216,192,1)'}
+          onMouseLeave={(e) => e.target.style.color = 'rgba(13,216,192,0.8)'}
         >
           {placeName}
         </a>
@@ -126,7 +126,7 @@ export default function AmenitySummaryCard({ amenities, lat, lng, priorities = [
             fontWeight: 500,
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'rgba(231,197,138,0.55)',
+            color: 'rgba(13,216,192,0.55)',
             marginBottom: '5px',
           }}
         >
@@ -160,7 +160,7 @@ export default function AmenitySummaryCard({ amenities, lat, lng, priorities = [
               style={{
                 padding: '16px',
                 background: 'rgba(11,11,11,0.6)',
-                border: `1px solid ${isPriority ? 'rgba(231,197,138,0.12)' : 'rgba(255,255,255,0.05)'}`,
+                border: `1px solid ${isPriority ? 'rgba(13,216,192,0.12)' : 'rgba(255,255,255,0.05)'}`,
                 borderRadius: '12px',
                 position: 'relative',
                 overflow: 'hidden',
@@ -179,7 +179,7 @@ export default function AmenitySummaryCard({ amenities, lat, lng, priorities = [
                   fontWeight: 600,
                   letterSpacing: '0.08em',
                   textTransform: 'uppercase',
-                  color: isPriority ? 'rgba(231,197,138,0.75)' : 'rgba(255,255,255,0.45)',
+                  color: isPriority ? 'rgba(13,216,192,0.75)' : 'rgba(255,255,255,0.45)',
                   flex: 1,
                 }}>
                   {label}
@@ -188,9 +188,9 @@ export default function AmenitySummaryCard({ amenities, lat, lng, priorities = [
                   <span style={{
                     fontSize: '7px',
                     fontWeight: 600,
-                    color: 'rgba(231,197,138,0.65)',
-                    background: 'rgba(231,197,138,0.1)',
-                    border: '1px solid rgba(231,197,138,0.25)',
+                    color: 'rgba(13,216,192,0.65)',
+                    background: 'rgba(13,216,192,0.1)',
+                    border: '1px solid rgba(13,216,192,0.25)',
                     borderRadius: '4px',
                     padding: '2px 5px',
                     whiteSpace: 'nowrap',

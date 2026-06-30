@@ -10,13 +10,13 @@ import { GlowCard } from '@/components/ui/spotlight-card';
 function ScanIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="11" cy="11" r="9.25" stroke="rgba(232,160,48,0.35)" strokeWidth="1" />
-      <circle cx="11" cy="11" r="6" stroke="rgba(232,160,48,0.2)" strokeWidth="1" />
-      <circle cx="11" cy="11" r="2.5" fill="rgba(232,160,48,0.55)" />
-      <line x1="11" y1="1.5" x2="11" y2="5.5" stroke="rgba(232,160,48,0.4)" strokeWidth="1" />
-      <line x1="11" y1="16.5" x2="11" y2="20.5" stroke="rgba(232,160,48,0.4)" strokeWidth="1" />
-      <line x1="1.5" y1="11" x2="5.5" y2="11" stroke="rgba(232,160,48,0.4)" strokeWidth="1" />
-      <line x1="16.5" y1="11" x2="20.5" y2="11" stroke="rgba(232,160,48,0.4)" strokeWidth="1" />
+      <circle cx="11" cy="11" r="9.25" stroke="rgba(13,216,192,0.35)" strokeWidth="1" />
+      <circle cx="11" cy="11" r="6" stroke="rgba(13,216,192,0.2)" strokeWidth="1" />
+      <circle cx="11" cy="11" r="2.5" fill="rgba(13,216,192,0.55)" />
+      <line x1="11" y1="1.5" x2="11" y2="5.5" stroke="rgba(13,216,192,0.4)" strokeWidth="1" />
+      <line x1="11" y1="16.5" x2="11" y2="20.5" stroke="rgba(13,216,192,0.4)" strokeWidth="1" />
+      <line x1="1.5" y1="11" x2="5.5" y2="11" stroke="rgba(13,216,192,0.4)" strokeWidth="1" />
+      <line x1="16.5" y1="11" x2="20.5" y2="11" stroke="rgba(13,216,192,0.4)" strokeWidth="1" />
     </svg>
   );
 }
@@ -31,7 +31,7 @@ function FlagBlock({ label, count, dotColor, glowColor }) {
         gap: '10px',
         padding: '10px 16px',
         background: 'rgba(11,11,11,0.6)',
-        border: '1px solid rgba(232,160,48,0.07)',
+        border: '1px solid rgba(13,216,192,0.07)',
         borderRadius: '10px',
       }}
     >
@@ -94,7 +94,7 @@ export default function VibeSummaryCard({ report }) {
         borderRadius: '1rem',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0 0 0 1px rgba(232,160,48,0.20), 0 0 40px rgba(232,160,48,0.08)';
+        e.currentTarget.style.boxShadow = '0 0 0 1px rgba(13,216,192,0.20), 0 0 40px rgba(13,216,192,0.08)';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
@@ -111,7 +111,7 @@ export default function VibeSummaryCard({ report }) {
           right: 0,
           height: '1px',
           background:
-            'linear-gradient(90deg, transparent 0%, rgba(232,160,48,0.55) 50%, transparent 100%)',
+            'linear-gradient(90deg, transparent 0%, rgba(13,216,192,0.55) 50%, transparent 100%)',
         }}
       />
 
@@ -124,7 +124,7 @@ export default function VibeSummaryCard({ report }) {
           width: '180px',
           height: '180px',
           background:
-            'radial-gradient(circle at top right, rgba(232,160,48,0.06) 0%, transparent 70%)',
+            'radial-gradient(circle at top right, rgba(13,216,192,0.06) 0%, transparent 70%)',
           pointerEvents: 'none',
         }}
       />
@@ -145,7 +145,7 @@ export default function VibeSummaryCard({ report }) {
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(232,160,48,0.65)',
+              color: 'rgba(13,216,192,0.65)',
               marginBottom: '5px',
             }}
           >
@@ -205,9 +205,9 @@ export default function VibeSummaryCard({ report }) {
                 fontSize: '11px',
                 fontWeight: 400,
                 letterSpacing: '0.04em',
-                color: 'rgba(232,160,48,0.85)',
-                background: 'rgba(232,160,48,0.08)',
-                border: '1px solid rgba(232,160,48,0.22)',
+                color: 'rgba(13,216,192,0.85)',
+                background: 'rgba(13,216,192,0.08)',
+                border: '1px solid rgba(13,216,192,0.22)',
                 borderRadius: '9999px',
                 whiteSpace: 'nowrap',
               }}
@@ -224,8 +224,8 @@ export default function VibeSummaryCard({ report }) {
           style={{
             padding: '14px 16px',
             background: 'rgba(11,11,11,0.55)',
-            border: '1px solid rgba(232,160,48,0.08)',
-            borderLeft: '2px solid rgba(232,160,48,0.35)',
+            border: '1px solid rgba(13,216,192,0.08)',
+            borderLeft: '2px solid rgba(13,216,192,0.35)',
             borderRadius: '0 10px 10px 0',
             marginBottom: '28px',
           }}
@@ -246,7 +246,7 @@ export default function VibeSummaryCard({ report }) {
       {/* Flag scan results */}
       <div
         style={{
-          borderTop: '1px solid rgba(232,160,48,0.08)',
+          borderTop: '1px solid rgba(13,216,192,0.08)',
           paddingTop: '20px',
         }}
       >
@@ -256,7 +256,7 @@ export default function VibeSummaryCard({ report }) {
             fontWeight: 500,
             letterSpacing: '0.16em',
             textTransform: 'uppercase',
-            color: 'rgba(232,160,48,0.4)',
+            color: 'rgba(13,216,192,0.4)',
             marginBottom: '12px',
           }}
         >
@@ -315,9 +315,9 @@ export default function VibeSummaryCard({ report }) {
               textTransform: 'uppercase',
               padding: '3px 11px',
               borderRadius: '9999px',
-              background: 'rgba(232,160,48,0.08)',
-              border: '1px solid rgba(232,160,48,0.2)',
-              color: 'rgba(232,160,48,0.7)',
+              background: 'rgba(13,216,192,0.08)',
+              border: '1px solid rgba(13,216,192,0.2)',
+              color: 'rgba(13,216,192,0.7)',
             }}
           >
             {report.listingType === 'sale' ? 'For Sale' : 'For Rent'}

@@ -11,12 +11,12 @@ function ChartIcon() {
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M2 14L6 9l3 3 4-5 3 3"
-        stroke="rgba(231,197,138,0.65)"
+        stroke="rgba(13,216,192,0.65)"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <line x1="2" y1="16" x2="16" y2="16" stroke="rgba(231,197,138,0.3)" strokeWidth="1" strokeLinecap="round" />
+      <line x1="2" y1="16" x2="16" y2="16" stroke="rgba(13,216,192,0.3)" strokeWidth="1" strokeLinecap="round" />
     </svg>
   );
 }
@@ -30,7 +30,7 @@ function MetricBlock({ label, value, unit, sublabel }) {
         minWidth: '130px',
         padding: '14px 16px',
         background: 'rgba(11,11,11,0.55)',
-        border: '1px solid rgba(231,197,138,0.07)',
+        border: '1px solid rgba(13,216,192,0.07)',
         borderRadius: '12px',
       }}
     >
@@ -40,7 +40,7 @@ function MetricBlock({ label, value, unit, sublabel }) {
           fontWeight: 500,
           letterSpacing: '0.12em',
           textTransform: 'uppercase',
-          color: 'rgba(231,197,138,0.45)',
+          color: 'rgba(13,216,192,0.45)',
           marginBottom: '6px',
         }}
       >
@@ -110,7 +110,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
           right: 0,
           height: '1px',
           background:
-            'linear-gradient(90deg, transparent 0%, rgba(231,197,138,0.5) 50%, transparent 100%)',
+            'linear-gradient(90deg, transparent 0%, rgba(13,216,192,0.5) 50%, transparent 100%)',
         }}
       />
 
@@ -130,7 +130,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
               fontWeight: 500,
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
-              color: 'rgba(231,197,138,0.55)',
+              color: 'rgba(13,216,192,0.55)',
               marginBottom: '5px',
             }}
           >
@@ -154,7 +154,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
         style={{
           padding: '18px 20px',
           background: 'rgba(11,11,11,0.6)',
-          border: '1px solid rgba(231,197,138,0.08)',
+          border: '1px solid rgba(13,216,192,0.08)',
           borderRadius: '14px',
           marginBottom: '12px',
           position: 'relative',
@@ -170,7 +170,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
             width: '80px',
             height: '80px',
             background:
-              'radial-gradient(circle at top right, rgba(231,197,138,0.06) 0%, transparent 70%)',
+              'radial-gradient(circle at top right, rgba(13,216,192,0.06) 0%, transparent 70%)',
             pointerEvents: 'none',
           }}
         />
@@ -181,7 +181,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
             fontWeight: 500,
             letterSpacing: '0.12em',
             textTransform: 'uppercase',
-            color: 'rgba(231,197,138,0.42)',
+            color: 'rgba(13,216,192,0.42)',
             marginBottom: '8px',
           }}
         >
@@ -254,7 +254,7 @@ export default function FinancialCard({ budget, financial, financialNote }) {
       {financialNote && (
         <div
           style={{
-            borderTop: '1px solid rgba(231,197,138,0.07)',
+            borderTop: '1px solid rgba(13,216,192,0.07)',
             paddingTop: '14px',
           }}
         >

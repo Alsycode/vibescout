@@ -25,6 +25,12 @@ import postsRoutes from './src/routes/posts.routes.js';
 
 import './src/jobs/cronJobs.js';
 
+// Dev-only route — only imported + mounted when DEV_UNLOCK=true
+let devTestRoutes = null;
+if (process.env.DEV_UNLOCK === 'true') {
+  devTestRoutes = (await import('./src/routes/devTest.routes.js')).default;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -53,6 +59,11 @@ app.use('/admin/clusters', clustersAdminRoutes);
 app.use('/admin/blog', blogAdminRoutes);
 app.use('/admin/analytics', analyticsAdminRoutes);
 app.use('/posts', postsRoutes);
+
+if (devTestRoutes) {
+  app.use('/dev', devTestRoutes);
+  console.log('[Server] Dev test routes mounted at /dev');
+}
 
 app.use(errorHandler);
 

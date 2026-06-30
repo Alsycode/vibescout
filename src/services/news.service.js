@@ -1,5 +1,6 @@
 // FILE: src/services/news.service.js
 // PURPOSE: News waterfall — GNews → NewsAPI → Google RSS → empty fallback; cluster-level Redis cache EX 86400
+//          Queries are tuned for home buyers (civic, infrastructure, safety) not investors or corporates.
 
 import fetch from 'node-fetch';
 import { redisGet, redisSet } from '../lib/redis.js';
@@ -17,18 +18,54 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 6000) {
   }
 }
 
-const IRRELEVANT_KEYWORDS = [
+// ── Relevance filters ─────────────────────────────────────────────────────────
+
+// Financial / market noise — never useful to a home buyer
+const FINANCIAL_NOISE = [
   'sensex', 'nifty', 'bse', 'nse', 'stock market', 'share market',
   'mutual fund', 'equity', 'ipo', 'rbi rate', 'repo rate', 'inflation rate',
   'gdp', 'forex', 'cryptocurrency', 'bitcoin', 'crypto',
 ];
 
+// Corporate / investor real-estate news — not relevant to someone looking for a home
+const CORPORATE_NOISE = [
+  'lakh sq ft', 'sq ft office', 'office lease', 'office space', 'commercial lease',
+  'it park', 'sez ', 'special economic zone', 'rental yield', 'capital appreciation',
+  'nri investment', 'luxury villa', 'realty stocks', 'crore deal',
+  'co-working', 'coworking', 'data centre', 'warehouse lease',
+  'private equity', 'institutional investor', 'reit',
+];
+
+const ALL_NOISE = [...FINANCIAL_NOISE, ...CORPORATE_NOISE];
+
 function isRelevantArticle(title = '', snippet = '') {
   const text = `${title} ${snippet}`.toLowerCase();
-  return !IRRELEVANT_KEYWORDS.some(kw => text.includes(kw));
+  return !ALL_NOISE.some(kw => text.includes(kw));
 }
 
-// Parses Google News RSS XML without external dependencies
+// Returns true if the article mentions the location name in title or snippet.
+// Accepts alternate spellings (Bengaluru / Bangalore).
+function mentionsLocation(title = '', snippet = '', locationName = '') {
+  const text = `${title} ${snippet}`.toLowerCase();
+  const loc  = locationName.toLowerCase();
+  if (text.includes(loc)) return true;
+  // Handle common Bengaluru ↔ Bangalore equivalence
+  if (loc === 'bengaluru' && text.includes('bangalore')) return true;
+  if (loc === 'bangalore' && text.includes('bengaluru')) return true;
+  return false;
+}
+
+// Home-buyer query terms — things that affect daily life in a neighbourhood
+const HOME_BUYER_TERMS = [
+  'residents', 'flooding', 'waterlogging', 'metro', 'road', 'flyover',
+  'water supply', 'bwssb', 'bescom', 'power cut', 'civic', 'bbmp',
+  'school', 'hospital', 'safety', 'crime', 'traffic', 'infrastructure',
+  'apartments', 'neighbourhood', 'locality', 'connectivity', 'drainage',
+  'garbage', 'park', 'footpath', 'signal', 'pothole',
+].join(' OR ');
+
+// ── RSS parser ────────────────────────────────────────────────────────────────
+
 function parseRSSItems(xml) {
   const items = [];
   const itemRegex = /<item>([\s\S]*?)<\/item>/gi;
@@ -55,53 +92,57 @@ function parseRSSItems(xml) {
     const title = stripTags(titleMatch?.[1] ?? '');
     if (!title) continue;
 
-    const url = (linkMatch?.[1] ?? '').trim();
-    const pubDate = pubDateMatch?.[1]?.trim() ?? '';
-    const rawDesc = (descMatch?.[1] ?? '').substring(0, 600);
+    const url         = (linkMatch?.[1] ?? '').trim();
+    const pubDate     = pubDateMatch?.[1]?.trim() ?? '';
+    const rawDesc     = (descMatch?.[1] ?? '').substring(0, 600);
     const description = stripTags(rawDesc).substring(0, 200);
-    const sourceName = stripTags(sourceMatch?.[1] ?? 'Google News');
+    const sourceName  = stripTags(sourceMatch?.[1] ?? 'Google News');
 
     items.push({
       title,
       url,
-      source: sourceName,
+      source:      sourceName,
       publishedAt: pubDate ? new Date(pubDate) : new Date(),
-      snippet: description,
+      snippet:     description,
     });
   }
   return items;
 }
 
-// Level 1: GNews.io
-async function fetchFromGNews(cityName) {
-  if (!process.env.GNEWS_API_KEY || !cityName) return null;
+// ── Fetch helpers ─────────────────────────────────────────────────────────────
+
+// Level 1: GNews.io — home-buyer query, location-enforced
+async function fetchFromGNews(locationName) {
+  if (!process.env.GNEWS_API_KEY || !locationName) return null;
   try {
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split('T')[0];
-    const q = encodeURIComponent(`${cityName} real estate`);
+      .toISOString().split('T')[0];
+    const q = encodeURIComponent(
+      `"${locationName}" (residents OR flooding OR metro OR road OR water supply OR civic OR school OR safety OR infrastructure OR apartments)`
+    );
     const url =
       `https://gnews.io/api/v4/search` +
       `?q=${q}&lang=en&country=in&max=10&from=${sevenDaysAgo}`;
     const res = await fetchWithTimeout(
       url,
       { headers: { 'X-API-Key': process.env.GNEWS_API_KEY } },
-      6000
+      6000,
     );
     if (!res.ok) return null;
-    const data = await res.json();
+    const data     = await res.json();
     const articles = data?.articles ?? [];
     if (!articles.length) return null;
 
     const headlines = articles
       .map((a) => ({
-        title: a.title ?? '',
-        url: a.url ?? '',
-        source: a.source?.name ?? 'GNews',
+        title:       a.title ?? '',
+        url:         a.url ?? '',
+        source:      a.source?.name ?? 'GNews',
         publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
-        snippet: (a.description ?? '').substring(0, 200),
+        snippet:     (a.description ?? '').substring(0, 200),
       }))
-      .filter(h => isRelevantArticle(h.title, h.snippet));
+      .filter(h => isRelevantArticle(h.title, h.snippet))
+      .filter(h => mentionsLocation(h.title, h.snippet, locationName));
 
     if (!headlines.length) return null;
     return { headlines, source: 'gnews' };
@@ -110,33 +151,36 @@ async function fetchFromGNews(cityName) {
   }
 }
 
-// Level 2: NewsAPI.org
-async function fetchFromNewsAPI(cityName) {
-  if (!process.env.NEWSAPI_API_KEY || !cityName) return null;
+// Level 2: NewsAPI.org — home-buyer query, location-enforced
+async function fetchFromNewsAPI(locationName) {
+  if (!process.env.NEWSAPI_API_KEY || !locationName) return null;
   try {
-    const q = encodeURIComponent(`${cityName} property`);
+    const q = encodeURIComponent(
+      `"${locationName}" (residents OR flooding OR metro OR road OR water OR civic OR school OR safety OR infrastructure OR apartments)`
+    );
     const url =
       `https://newsapi.org/v2/everything` +
       `?q=${q}&language=en&sortBy=publishedAt&pageSize=10`;
     const res = await fetchWithTimeout(
       url,
       { headers: { 'X-Api-Key': process.env.NEWSAPI_API_KEY } },
-      6000
+      6000,
     );
     if (!res.ok) return null;
-    const data = await res.json();
+    const data     = await res.json();
     const articles = data?.articles ?? [];
     if (!articles.length) return null;
 
     const headlines = articles
       .map((a) => ({
-        title: a.title ?? '',
-        url: a.url ?? '',
-        source: a.source?.name ?? 'NewsAPI',
+        title:       a.title ?? '',
+        url:         a.url ?? '',
+        source:      a.source?.name ?? 'NewsAPI',
         publishedAt: a.publishedAt ? new Date(a.publishedAt) : new Date(),
-        snippet: (a.description ?? '').substring(0, 200),
+        snippet:     (a.description ?? '').substring(0, 200),
       }))
-      .filter(h => isRelevantArticle(h.title, h.snippet));
+      .filter(h => isRelevantArticle(h.title, h.snippet))
+      .filter(h => mentionsLocation(h.title, h.snippet, locationName));
 
     if (!headlines.length) return null;
     return { headlines, source: 'newsapi' };
@@ -145,17 +189,20 @@ async function fetchFromNewsAPI(cityName) {
   }
 }
 
-// Level 3: Google News RSS
-async function fetchFromGoogleRSS(cityName) {
-  if (!cityName) return null;
+// Level 3: Google News RSS — home-buyer query, location-enforced
+async function fetchFromGoogleRSS(locationName) {
+  if (!locationName) return null;
   try {
-    const q = encodeURIComponent(`"${cityName}" real estate OR property OR neighbourhood OR locality`);
+    const q = encodeURIComponent(
+      `"${locationName}" (residents OR flooding OR metro OR road OR water supply OR civic OR BBMP OR school OR safety OR infrastructure OR apartments OR neighbourhood OR pothole OR drainage)`
+    );
     const url = `https://news.google.com/rss/search?q=${q}&hl=en-IN&gl=IN&ceid=IN:en`;
     const res = await fetchWithTimeout(url, {}, 6000);
     if (!res.ok) return null;
     const xml = await res.text();
     const headlines = parseRSSItems(xml)
       .filter(item => isRelevantArticle(item.title, item.snippet))
+      .filter(item => mentionsLocation(item.title, item.snippet, locationName))
       .slice(0, 10)
       .map((item) => ({ ...item, source: 'google-rss' }));
     if (!headlines.length) return null;
@@ -165,16 +212,17 @@ async function fetchFromGoogleRSS(cityName) {
   }
 }
 
-// News waterfall with location cascade — never throws, always returns { headlines, source }
-// Tries each location name most-specific → broadest (e.g. ["Vyttila", "Kochi", "Ernakulam"]).
-// For each location: GNews → NewsAPI → Google RSS. Stops at first non-empty result.
+// ── Main waterfall ────────────────────────────────────────────────────────────
+// Tries each location most-specific → broadest (e.g. ["Koramangala", "Bengaluru", "Bangalore Urban"]).
+// For each location: GNews → NewsAPI → Google RSS, all with home-buyer queries + location enforcement.
+// Stops at the first level that returns location-relevant results.
 // Cluster-level Redis cache: cluster:{clusterId}:news EX 86400
+
 export async function fetchNewsWithFallback(clusterId, locationNames) {
   const locations = Array.isArray(locationNames)
     ? locationNames.filter(Boolean)
     : [locationNames].filter(Boolean);
 
-  // Check cluster Redis cache first
   if (clusterId) {
     try {
       const cached = await redisGet(`cluster:${clusterId}:news`);
@@ -200,6 +248,5 @@ export async function fetchNewsWithFallback(clusterId, locationNames) {
     }
   }
 
-  // All locations exhausted — empty fallback
   return { headlines: [], source: 'fallback' };
 }

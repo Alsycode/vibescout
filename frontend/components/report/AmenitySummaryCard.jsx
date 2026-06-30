@@ -113,7 +113,7 @@ export default function AmenitySummaryCard({ amenities, lat, lng, priorities = [
       className="glass-cyber-card reveal"
       style={{
         padding: '24px',
-        maxWidth: '672px',
+        maxWidth: '860px',
         width: '100%',
         margin: '0 auto',
       }}

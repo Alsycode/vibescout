@@ -1168,7 +1168,7 @@ tr:hover {
 /* ── Signal cards grid — responsive on desktop ───────────────── */
 .signal-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
   gap: 10px;
 }
 @media (max-width: 680px) {

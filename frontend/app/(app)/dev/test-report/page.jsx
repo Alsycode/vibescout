@@ -228,7 +228,7 @@ export default function DevTestReportPage() {
             )}
 
             <a
-              href={`/report?sessionId=${result.sessionId}`}
+              href={`/report/${result.sessionId}`}
               style={{
                 display: 'block', textAlign: 'center',
                 padding: '12px 20px',

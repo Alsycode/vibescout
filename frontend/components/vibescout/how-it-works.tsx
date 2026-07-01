@@ -59,7 +59,7 @@ const STEPS = [
     num:   '01',
     title: 'Tell us where',
     desc:  'Enter any address in India. No account needed to get started — just type and go.',
-    note:  'Geocoded via OpenStreetMap',
+    note:  'Works for any street, colony, or landmark',
     color: '#34D399',
     rgb:   '52,211,153',
     Icon:  PinIcon,

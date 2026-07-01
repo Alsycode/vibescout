@@ -12,34 +12,34 @@ import { motion, useInView } from 'framer-motion';
 const LAYERS = [
   {
     tag:     'LAYER 1',
-    role:    'Deterministic · No AI',
-    name:    'Verdict Engine',
-    file:    'verdictEngine.service.js',
+    role:    'Rules-based · No AI',
+    name:    'Score Engine',
+    file:    'Scores every signal, no exceptions',
     color:   '#34D399',
     rgb:     '52,211,153',
     icon:    'code',
     points: [
-      'Pure JavaScript — zero AI involvement',
-      'Hard thresholds per signal type (e.g. AQI > 100 = red flag)',
-      'Runs entirely offline — no external calls',
-      'Output: structured verdict object per signal',
-      'Verdict CANNOT be modified by any downstream process',
+      'Checks each signal against fixed cutoffs — e.g. AQI above 100 triggers a warning',
+      'No AI involved at this step — purely live data and rules',
+      'Assigns a pass, caution, or red flag to each signal',
+      'Your verdict is locked the moment it\'s calculated',
+      'Nothing else in the system can change it after this point',
     ],
   },
   {
     tag:     'LAYER 2',
-    role:    'llama-3.1-8b-instant · Labels Only',
-    name:    'Groq Label Writer',
-    file:    'groq.service.js',
+    role:    'AI-assisted · Words Only',
+    name:    'Plain-English Writer',
+    file:    'Turns your score into a sentence you can read',
     color:   '#E8A030',
     rgb:     '232,160,48',
     icon:    'chat',
     points: [
-      'Receives verdict object from Layer 1 as read-only input',
-      'Writes human-readable context labels (e.g. "Moderate congestion on Outer Ring Road")',
-      'Output is validated by groqValidator.service.js before use',
-      'Cannot change, override, or soften the Layer 1 verdict',
-      'Hallucination guard: rejected outputs default to safe fallback labels',
+      'Receives the verdict from Step 1 — never sees the raw data',
+      'Writes a plain sentence for each signal (e.g. "Moderate congestion on Outer Ring Road")',
+      'Every output is automatically checked before it reaches your report',
+      'Cannot change, weaken, or override the Step 1 verdict',
+      'If the output fails the check, a safe backup phrase is used instead',
     ],
   },
 ];
@@ -442,9 +442,9 @@ export default function IntelligenceEngine() {
             maxWidth:   '620px',
             margin:     0,
           }}>
-            Every verdict is calculated by a pure JavaScript engine with hard
-            thresholds. Groq only writes the human-readable label — it cannot
-            see, modify, or override what Layer 1 decided.
+            Your pass, caution, or red flag is set by live data and fixed rules
+            — no AI involved. AI only writes the sentence you read. It cannot
+            see the raw numbers, change the score, or soften the result.
           </p>
         </motion.div>
 
@@ -499,12 +499,12 @@ export default function IntelligenceEngine() {
             margin:     0,
           }}>
             <strong style={{ color: '#22D3EE', fontWeight: 600 }}>
-              Anti-hallucination guarantee:{' '}
+              Why you can trust the verdict:{' '}
             </strong>
-            The Layer 1 verdict for any signal is a pure function of the raw API
-            number. Groq never receives the raw data — only the verdict key
-            (proceed / caution / red_flag). Labels that fail schema validation
-            are replaced by safe fallbacks. Your verdict is always deterministic.
+            Your pass / caution / red flag is decided by data and fixed rules
+            before AI is involved. The AI only receives the result — never the
+            raw numbers — so it cannot spin or soften what the data says. If its
+            output looks wrong, a safe backup phrase is used automatically.
           </p>
         </motion.div>
       </div>

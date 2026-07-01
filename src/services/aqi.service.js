@@ -83,7 +83,21 @@ async function reverseGeocodeState(lat, lng) {
   }
 }
 
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLng = ((lng2 - lng1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 // Level 1: WAQI — aggregates real CPCB ground-station data, coordinate-based, returns AQI directly
+// Guard: reject if returned station is >75 km from query point — WAQI silently falls back to
+// distant stations when no local CPCB monitor exists (e.g. returns Delhi data for Bengaluru suburbs).
 async function fetchFromWAQI(lat, lng) {
   if (!process.env.WAQI_API_KEY) return null;
   try {
@@ -94,29 +108,59 @@ async function fetchFromWAQI(lat, lng) {
     if (data.status !== 'ok') return null;
     const aqi = data?.data?.aqi;
     if (!aqi || aqi <= 0) return null;
+
+    const stationGeo = data?.data?.city?.geo;
+    if (Array.isArray(stationGeo) && stationGeo.length === 2) {
+      const distKm = haversineKm(lat, lng, stationGeo[0], stationGeo[1]);
+      if (distKm > 75) return null;
+    }
+
     return { value: aqi, category: aqiCategory(aqi), source: 'live' };
   } catch {
     return null;
   }
 }
 
-// Level 2: OpenWeather Air Pollution API — CAMS satellite model, fallback only
-// Note: chronically underestimates PM2.5 in India; kept as last-resort live source
-async function fetchFromOpenWeather(lat, lng) {
-  if (!process.env.OPENWEATHER_API_KEY) return null;
+// Level 2: Open-Meteo Air Quality API — CAMS Copernicus, coordinate-precise, no API key, free
+// Better than OpenWeather for India: higher spatial resolution, no station proximity issues,
+// returns current-hour PM2.5/PM10 averaged over latest 3 hours to smooth spikes.
+async function fetchFromOpenMeteo(lat, lng) {
   try {
-    const url = `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lng}&appid=${process.env.OPENWEATHER_API_KEY}`;
-    const res = await fetchWithTimeout(url, {}, 6000);
+    const url =
+      `https://air-quality-api.open-meteo.com/v1/air-quality` +
+      `?latitude=${lat}&longitude=${lng}` +
+      `&hourly=pm2_5,pm10&timezone=Asia%2FKolkata&forecast_days=1`;
+    const res = await fetchWithTimeout(url, {}, 7000);
     if (!res.ok) return null;
     const data = await res.json();
-    const components = data?.list?.[0]?.components;
-    if (!components) return null;
+
+    const times = data?.hourly?.time ?? [];
+    const pm25s = data?.hourly?.pm2_5 ?? [];
+    const pm10s = data?.hourly?.pm10 ?? [];
+    if (!times.length) return null;
+
+    // Find the index of the current hour
+    const nowHour = new Date().toISOString().slice(0, 13); // "2026-06-30T14"
+    // Open-Meteo returns local-time strings like "2026-06-30T14:00"
+    const nowLocal = new Date(Date.now() + 5.5 * 3600 * 1000)
+      .toISOString()
+      .slice(0, 13);
+    let idx = times.findIndex((t) => t.startsWith(nowLocal));
+    if (idx < 0) idx = times.length - 1;
+
+    // Average over ±1 hour window to smooth noise
+    const window = [idx - 1, idx, idx + 1].filter((i) => i >= 0 && i < times.length);
+
+    const pm25Vals = window.map((i) => pm25s[i]).filter((v) => v != null && v > 0);
+    const pm10Vals = window.map((i) => pm10s[i]).filter((v) => v != null && v > 0);
 
     let aqiValue = null;
-    if (components.pm2_5 > 0) {
-      aqiValue = pm25ToAQI(components.pm2_5);
-    } else if (components.pm10 > 0) {
-      aqiValue = pm10ToAQI(components.pm10);
+    if (pm25Vals.length) {
+      const avg = pm25Vals.reduce((a, b) => a + b, 0) / pm25Vals.length;
+      aqiValue = pm25ToAQI(avg);
+    } else if (pm10Vals.length) {
+      const avg = pm10Vals.reduce((a, b) => a + b, 0) / pm10Vals.length;
+      aqiValue = pm10ToAQI(avg);
     }
     if (aqiValue === null) return null;
     return { value: aqiValue, category: aqiCategory(aqiValue), source: 'live' };
@@ -260,9 +304,9 @@ export async function fetchAQI(lat, lng, clusterId, cityName) {
   const waqiLive = await fetchFromWAQI(lat, lng);
   if (waqiLive) return waqiLive;
 
-  // Level 2: OpenWeather Air Pollution — CAMS satellite model, fallback only
-  const owLive = await fetchFromOpenWeather(lat, lng);
-  if (owLive) return owLive;
+  // Level 2: Open-Meteo Air Quality — CAMS Copernicus, coordinate-precise, free, no key needed
+  const omLive = await fetchFromOpenMeteo(lat, lng);
+  if (omLive) return omLive;
 
   // Level 3: OpenAQ v3 — station-based fallback (may be stale in India)
   const live = await fetchFromOpenAQ(lat, lng);

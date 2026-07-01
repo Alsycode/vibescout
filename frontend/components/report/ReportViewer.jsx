@@ -834,6 +834,209 @@ function LocalIntelligence({ localNews }) {
   );
 }
 
+// ─── Section 6b: Derived Intelligence ────────────────────────────────────────
+
+const RISK_COLORS = {
+  Low:          '#6ECB7A',
+  'Low-Moderate': '#A8D87A',
+  Moderate:     '#D4A853',
+  High:         '#D4645A',
+  'Very High':  '#C0392B',
+};
+
+function LivabilityCard({ data }) {
+  if (!data) return null;
+  const gradeColor = data.score >= 75 ? '#6ECB7A' : data.score >= 55 ? '#D4A853' : '#D4645A';
+  const bd = data.breakdown ?? {};
+  const bars = [
+    { label: 'Air Quality',  value: bd.aqi?.score   ?? 0, weight: 30 },
+    { label: 'Quiet',        value: bd.noise?.score  ?? 0, weight: 30 },
+    { label: 'Green Space',  value: bd.parks?.score  ?? 0, weight: 20 },
+    { label: 'Sunlight',     value: bd.solar?.score  ?? 0, weight: 20 },
+  ];
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: '2px solid rgba(13,216,192,0.3)', borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(13,216,192,0.5)', marginBottom: 10 }}>Livability Index</p>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, marginBottom: 14 }}>
+        <p style={{ fontSize: 40, fontWeight: 700, color: gradeColor, lineHeight: 1, letterSpacing: '-0.02em' }}>{data.grade}</p>
+        <div>
+          <p style={{ fontSize: 20, fontWeight: 700, color: 'rgba(255,255,255,0.85)', lineHeight: 1 }}>{data.score}</p>
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>out of 100</p>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {bars.map(b => (
+          <div key={b.label}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.38)', fontWeight: 300 }}>{b.label}</span>
+              <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontVariantNumeric: 'tabular-nums' }}>{b.weight}%</span>
+            </div>
+            <div style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: `${b.value}%`, background: gradeColor, borderRadius: 2, transition: 'width 0.6s ease' }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MaturityCard({ data }) {
+  if (!data) return null;
+  const bandColor = data.band === 'Mature' ? '#6ECB7A' : data.band === 'Established' ? '#0DD8C0' : data.band === 'Developing' ? '#D4A853' : '#D4645A';
+  const cats = [
+    { label: 'Schools',     key: 'schools'     },
+    { label: 'Hospitals',   key: 'hospitals'   },
+    { label: 'Cafes',       key: 'cafes'       },
+    { label: 'Parks',       key: 'parks'       },
+    { label: 'Gyms',        key: 'gyms'        },
+    { label: 'Restaurants', key: 'restaurants' },
+    { label: 'Worship',     key: 'worship'     },
+  ];
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: `2px solid ${bandColor}50`, borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>Neighbourhood Maturity</p>
+      <p style={{ fontSize: 22, fontWeight: 700, color: bandColor, marginBottom: 2, lineHeight: 1 }}>{data.band}</p>
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>Density score: {data.score}/100</p>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px 8px' }}>
+        {cats.map(c => {
+          const n = data.counts?.[c.key] ?? 0;
+          return (
+            <div key={c.key} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: n > 0 ? bandColor : 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
+              <span style={{ fontSize: 9, color: n > 0 ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.22)', whiteSpace: 'nowrap' }}>
+                {c.label} ({n})
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SolarSavingsCard({ data }) {
+  if (!data) return null;
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: '2px solid rgba(212,168,83,0.4)', borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(212,168,83,0.6)', marginBottom: 10 }}>Solar Savings Estimate</p>
+      <p style={{ fontSize: 28, fontWeight: 700, color: '#D4A853', lineHeight: 1, letterSpacing: '-0.02em', marginBottom: 2 }}>{data.displayText}</p>
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>estimated solar savings</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        {[
+          [`${data.panelKw}kW rooftop system`, true],
+          [`${data.dailyKwh} kWh generated/day`, true],
+          [`${data.annualKwh.toLocaleString('en-IN')} kWh/year`, true],
+          ['At ₹8/unit electricity rate', false],
+        ].map(([text, highlight], i) => (
+          <p key={i} style={{ fontSize: 9.5, color: highlight ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.22)', fontWeight: 300 }}>
+            {text}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function InfraCard({ data }) {
+  if (!data) return null;
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: `2px solid ${data.hasSignals ? 'rgba(13,216,192,0.4)' : 'rgba(255,255,255,0.08)'}`,
+      borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: data.hasSignals ? 'rgba(13,216,192,0.5)' : 'rgba(255,255,255,0.25)', marginBottom: 10 }}>Infrastructure Momentum</p>
+      {data.hasSignals ? (
+        <>
+          <p style={{ fontSize: 22, fontWeight: 700, color: '#0DD8C0', lineHeight: 1, marginBottom: 2 }}>{data.count}</p>
+          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>development signal{data.count !== 1 ? 's' : ''} detected</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {data.signals.slice(0, 3).map((s, i) => (
+              <div key={i}>
+                <p style={{ fontSize: 10, fontWeight: 500, color: 'rgba(255,255,255,0.7)', lineHeight: 1.4, marginBottom: 3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                  {s.title}
+                </p>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {s.matchedKeywords.slice(0, 3).map(kw => (
+                    <span key={kw} style={{ fontSize: 8, fontWeight: 600, color: 'rgba(13,216,192,0.7)', background: 'rgba(13,216,192,0.08)', border: '1px solid rgba(13,216,192,0.2)', borderRadius: 9999, padding: '1px 6px' }}>
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div>
+          <p style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.45)', marginBottom: 6 }}>No active signals</p>
+          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.25)', lineHeight: 1.5 }}>No infrastructure projects announced in local news. Area appears stable — no major developments currently planned.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LandHistoryCard({ data }) {
+  if (!data) return null;
+  const riskColor = RISK_COLORS[data.floodRisk] ?? '#D4A853';
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: `2px solid ${riskColor}50`, borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>Land History · Flood Risk</p>
+      <p style={{ fontSize: 22, fontWeight: 700, color: riskColor, lineHeight: 1, marginBottom: 2 }}>{data.floodRisk}</p>
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 14 }}>Flood vulnerability level</p>
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, marginBottom: 10 }}>{data.reason}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        {data.waterOccurrence != null && (
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 300 }}>
+            Historical water occurrence: {data.waterOccurrence}% (Landsat 1984–2024)
+          </p>
+        )}
+        {data.nearestWaterBodyM != null && (
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 300 }}>
+            Nearest water body: {data.nearestWaterBodyM < 1000 ? `${data.nearestWaterBodyM}m` : `${(data.nearestWaterBodyM / 1000).toFixed(1)}km`} away
+          </p>
+        )}
+        <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.18)', marginTop: 4, fontWeight: 300 }}>
+          Source: {data.source === 'jrc+osm' ? 'JRC Landsat + OSM' : data.source === 'osm' ? 'OpenStreetMap' : 'Estimated'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function DerivedIntelligence({ derivedSignals }) {
+  if (!derivedSignals) return null;
+  const { livabilityIndex, maturityScore, solarSavings, infrastructureMomentum, landHistory } = derivedSignals;
+  if (!livabilityIndex && !maturityScore && !solarSavings && !infrastructureMomentum && !landHistory) return null;
+
+  return (
+    <div style={{ maxWidth: 860, width: '100%', margin: '0 auto 16px' }}>
+      <SectionLabel text="Location Intelligence" />
+      <div className="signal-grid">
+        <LivabilityCard data={livabilityIndex} />
+        <MaturityCard data={maturityScore} />
+        <SolarSavingsCard data={solarSavings} />
+        <InfraCard data={infrastructureMomentum} />
+        <LandHistoryCard data={landHistory} />
+      </div>
+    </div>
+  );
+}
+
 // ─── Section 7: Rental / Financial ───────────────────────────────────────────
 
 function RentalSection({ report, shareToken, readonly, financial }) {
@@ -1064,6 +1267,7 @@ export default function ReportViewer({ report, shareToken, readonly, preferences
         priorities={preferences?.step5?.amenityPriorities ?? []}
       />
       <LocalIntelligence localNews={signals.localNews} />
+      <DerivedIntelligence derivedSignals={signals.derivedSignals} />
       <RentalSection
         report={report}
         shareToken={shareToken}

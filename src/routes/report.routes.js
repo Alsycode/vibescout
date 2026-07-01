@@ -302,6 +302,13 @@ router.get('/generate', requireAuth, async (req, res, next) => {
           label:            groqLabels.communityLabel,
           counts:           verdictObject.communityAmenityCounts,
         },
+        derivedSignals: {
+          livabilityIndex:        sp.intelligence.livabilityIndex        ?? null,
+          maturityScore:          sp.intelligence.maturityScore          ?? null,
+          solarSavings:           sp.intelligence.solarSavings           ?? null,
+          infrastructureMomentum: sp.intelligence.infrastructureMomentum ?? null,
+          landHistory:            sp.intelligence.landHistory            ?? null,
+        },
       },
       financial: financialScores,
       financialNote: sp.userProvidedSpecs.listingType === 'sale'

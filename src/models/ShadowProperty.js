@@ -86,6 +86,44 @@ const ShadowPropertySchema = new mongoose.Schema({
       source: { type: String, enum: ['gnews', 'newsapi', 'google-rss', 'fallback'] },
       updatedAt: Date,
     },
+    // ─── Derived signals (computed post-fetch, no extra API cost) ───────────
+    livabilityIndex: {
+      score: Number,
+      grade: String,
+      breakdown: mongoose.Schema.Types.Mixed,
+    },
+    maturityScore: {
+      score: Number,
+      band:  String,
+      counts: mongoose.Schema.Types.Mixed,
+    },
+    solarSavings: {
+      annualSavingsRs: Number,
+      annualKwh:       Number,
+      dailyKwh:        Number,
+      panelKw:         Number,
+      displayText:     String,
+    },
+    infrastructureMomentum: {
+      signals: [{
+        title:           String,
+        url:             String,
+        source:          String,
+        publishedAt:     Date,
+        matchedKeywords: [String],
+      }],
+      hasSignals: Boolean,
+      count:      Number,
+    },
+    landHistory: {
+      floodRisk:         String,
+      floodRiskScore:    Number,
+      waterOccurrence:   Number,
+      nearestWaterBodyM: Number,
+      reason:            String,
+      hasHistoricalWater: Boolean,
+      source:            String,
+    },
   },
   dataSource: {
     aqi: String,

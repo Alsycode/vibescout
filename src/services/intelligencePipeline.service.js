@@ -12,6 +12,11 @@ import { fetchAmenities } from './places.service.js';
 import { fetchNewsWithFallback } from './news.service.js';
 import { getSeasonalAQI, CITY_AQI_AVERAGES } from '../data/cityAQIAverages.js';
 import { getSeasonalWeather } from '../data/cityWeatherAverages.js';
+import { computeLivabilityIndex } from './livability.service.js';
+import { computeMaturityScore } from './maturity.service.js';
+import { computeSolarSavings } from './solarSavings.service.js';
+import { extractInfraSignals } from './infrastructureMomentum.service.js';
+import { fetchLandHistory } from './jrc.service.js';
 
 // ─── Part 9a — Waterfall helpers ────────────────────────────────────
 
@@ -216,13 +221,30 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
       .catch(err => { console.warn('[Pipeline] LocalNews timeout:', err.message); return newsFallback; }),
   ]);
 
+  // ─── Derived signals — computed from already-fetched data (no extra API cost for 4 of 5) ───
+  const livabilityIndex        = computeLivabilityIndex(aqi, noise, amenities, solar);
+  const maturityScore          = computeMaturityScore(amenities);
+  const solarSavings           = computeSolarSavings(solar?.peakSunHours);
+  const infrastructureMomentum = extractInfraSignals(localNews?.headlines ?? []);
+
+  let landHistory = null;
+  try {
+    landHistory = await withTimeout(fetchLandHistory(lat, lng), 12000);
+  } catch (err) {
+    console.warn('[Pipeline] Land history fetch failed:', err.message);
+  }
+
   // SF-02: Removed dead Redis write — session:{sessionId}:intelligence was never read
   // Intelligence is persisted to MongoDB (ShadowProperty) and read from there by report generation
 
   // RACE-01: Wrap finalization in try/catch — set status:'failed' if writes fail
   try {
     await ShadowProperty.findByIdAndUpdate(shadowPropertyId, {
-      intelligence: { aqi, noise, solar, weather, amenities, localNews },
+      intelligence: {
+        aqi, noise, solar, weather, amenities, localNews,
+        livabilityIndex, maturityScore, solarSavings,
+        infrastructureMomentum, landHistory,
+      },
       dataSource: {
         aqi:       aqi.source,
         noise:     noise.source,

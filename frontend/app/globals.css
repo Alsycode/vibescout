@@ -1423,6 +1423,93 @@ tr:hover {
   .context-fields-grid { grid-template-columns: 1fr; }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PRINT / PDF EXPORT
+   window.print() → browser Save as PDF.
+   Keeps the dark theme exactly as rendered on screen.
+   File size: ~300KB–1.5MB vs 107MB html2canvas approach.
+═══════════════════════════════════════════════════════════════ */
+@media print {
+  /* Force all backgrounds, colours, and shadows to print exactly as on screen */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* A4 page with narrow margins */
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+
+  /* Remove top padding reserved for fixed navbar */
+  body,
+  html {
+    background: #080812 !important;
+  }
+
+  /* Hide everything that isn't the report */
+  nav,
+  header,
+  footer,
+  .noise-overlay,
+  .scan-line,
+  .no-print {
+    display: none !important;
+  }
+
+  /* Reset container padding (the 56px navbar offset is gone in print) */
+  .rv-container {
+    padding-top: 0 !important;
+  }
+
+  /* Keep cards from splitting across pages */
+  .rv-card-pad,
+  .rv-inner-pad,
+  .rv-final-card,
+  .rv-why-panels,
+  .rv-pair,
+  .rv-trio,
+  .rv-quartet,
+  .signal-grid > *,
+  .place-grid > *,
+  .news-grid > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Section labels always stay with the content below them */
+  .signal-grid,
+  .place-grid,
+  .news-grid {
+    break-before: avoid;
+    page-break-before: avoid;
+  }
+
+  /* Prevent horizontal scroll containers from clipping in print */
+  .signal-grid,
+  .place-grid,
+  .news-grid {
+    display: grid !important;
+    overflow: visible !important;
+  }
+
+  /* Kill all animations */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Leaflet map — hide in print (can't render canvas reliably) */
+  .leaflet-container {
+    display: none !important;
+  }
+}
+
 /* Mobile stepper — hidden on desktop, shown on mobile */
 .mobile-stepper { display: none; }
 

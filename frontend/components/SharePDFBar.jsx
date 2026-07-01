@@ -10,7 +10,6 @@ import { useState, useCallback } from 'react';
 
 export default function SharePDFBar({ sessionId, shareToken, readonly, compact }) {
   const [copied, setCopied] = useState(false);
-  const [exporting, setExporting] = useState(false);
 
   const handleCopyLink = useCallback(async () => {
     if (!shareToken || !sessionId) return;
@@ -35,55 +34,16 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
     }
   }, [sessionId, shareToken]);
 
-  const handleExportPDF = useCallback(async () => {
-    setExporting(true);
-    try {
-      const html2canvas = (await import('html2canvas')).default;
-      const jsPDF = (await import('jspdf')).default;
-
-      const reportEl = document.getElementById('report-content');
-      if (!reportEl) { setExporting(false); return; }
-
-      const canvas = await html2canvas(reportEl, {
-        backgroundColor: '#050505',
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const imgWidth = 210;
-      const pageHeight = 297;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
-
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`vibescout-report-${sessionId}.pdf`);
-    } catch (err) {
-      console.error('[PDF Export]', err);
-    } finally {
-      setExporting(false);
-    }
-  }, [sessionId]);
+  const handleExportPDF = useCallback(() => {
+    window.print();
+  }, []);
 
   if (readonly) return null;
 
   // ── Compact: vertical stack inside Rental Intelligence column ──
   if (compact) {
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+      <div className="no-print" style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
         <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginBottom: '4px' }}>
           Share or save this report
         </p>
@@ -128,10 +88,9 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
           )}
         </button>
 
-        {/* Export PDF */}
+        {/* Save as PDF */}
         <button
           onClick={handleExportPDF}
-          disabled={exporting}
           style={{
             display:        'flex',
             alignItems:     'center',
@@ -142,28 +101,25 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
             background:     'transparent',
             border:         '1px solid rgba(255,255,255,0.10)',
             borderRadius:   '8px',
-            color:          exporting ? 'rgba(255,255,255,0.30)' : 'rgba(255,255,255,0.55)',
+            color:          'rgba(255,255,255,0.55)',
             fontFamily:     "'Inter', sans-serif",
             fontSize:       '12px',
             fontWeight:     400,
-            cursor:         exporting ? 'wait' : 'pointer',
+            cursor:         'pointer',
             transition:     'all 200ms ease',
             letterSpacing:  '-0.01em',
           }}
-          onMouseEnter={(e) => { if (!exporting) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = 'rgba(255,255,255,0.80)'; } }}
-          onMouseLeave={(e) => { if (!exporting) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; } }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.20)'; e.currentTarget.style.color = 'rgba(255,255,255,0.80)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.55)'; }}
         >
-          {exporting ? (
-            <span style={{ opacity: 0.5 }}>Exporting…</span>
-          ) : (
-            <>
+          <>
               <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1.5V8M3.5 5.5L6 8L8.5 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M1.5 10H10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                <rect x="1.5" y="3" width="9" height="6.5" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M4 3V1.5H8V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 7.5H8M4 6H6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
               </svg>
-              <span>Export PDF</span>
+              <span>Save as PDF</span>
             </>
-          )}
         </button>
       </div>
     );
@@ -171,7 +127,7 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
 
   // ── Full-width bar ──
   return (
-    <div style={{
+    <div className="no-print" style={{
       maxWidth:     '860px',
       width:        '100%',
       margin:       '0 auto 16px',
@@ -237,10 +193,9 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
           )}
         </button>
 
-        {/* Export PDF */}
+        {/* Save as PDF */}
         <button
           onClick={handleExportPDF}
-          disabled={exporting}
           style={{
             display:        'inline-flex',
             alignItems:     'center',
@@ -249,29 +204,26 @@ export default function SharePDFBar({ sessionId, shareToken, readonly, compact }
             background:     'transparent',
             border:         '1px solid rgba(255,255,255,0.10)',
             borderRadius:   '8px',
-            color:          exporting ? 'rgba(255,255,255,0.30)' : 'rgba(255,255,255,0.60)',
+            color:          'rgba(255,255,255,0.60)',
             fontFamily:     "'Inter', sans-serif",
             fontSize:       '13px',
             fontWeight:     400,
-            cursor:         exporting ? 'wait' : 'pointer',
+            cursor:         'pointer',
             transition:     'all 200ms ease',
             letterSpacing:  '-0.01em',
             whiteSpace:     'nowrap',
           }}
-          onMouseEnter={(e) => { if (!exporting) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; } }}
-          onMouseLeave={(e) => { if (!exporting) { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.60)'; } }}
+          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)'; e.currentTarget.style.color = 'rgba(255,255,255,0.85)'; }}
+          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.color = 'rgba(255,255,255,0.60)'; }}
         >
-          {exporting ? (
-            <span style={{ opacity: 0.5 }}>Exporting…</span>
-          ) : (
-            <>
+          <>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                <path d="M6 1.5V8M3.5 5.5L6 8L8.5 5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M1.5 10H10.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                <rect x="1.5" y="3" width="9" height="6.5" rx="1" stroke="currentColor" strokeWidth="1.2"/>
+                <path d="M4 3V1.5H8V3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M4 7.5H8M4 6H6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/>
               </svg>
-              Export PDF
+              Save as PDF
             </>
-          )}
         </button>
       </div>
     </div>

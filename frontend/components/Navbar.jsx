@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ShinyButton } from '@/components/ui/shiny-button';
+import Cookies from 'js-cookie';
 
 const NAV_LINKS = [
   { href: '/#how-it-works', label: 'HOW IT WORKS'  },
@@ -30,6 +31,7 @@ export default function Navbar() {
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    Cookies.remove('vb_token');
     setAuthed(false);
     setOpen(false);
     setDropOpen(false);

@@ -19,8 +19,8 @@ const AMENITY_THRESHOLDS = {
   cafes:     { pass: 500,  caution: 2000 },
 };
 
-const VASTU_RED_FLAG_DIRECTIONS = new Set(['S']);
-const VASTU_CAUTION_DIRECTIONS  = new Set(['SW', 'SE', 'W', 'NW']);
+const VASTU_RED_FLAG_DIRECTIONS = new Set(['South']);
+const VASTU_CAUTION_DIRECTIONS  = new Set(['West']);
 
 // Pairs where user preference and derived character are clear opposites → red_flag
 const COMMUNITY_RED_FLAG_PAIRS = new Set([
@@ -87,7 +87,7 @@ function mapToRentBracket(amount) {
 }
 
 export function vastuVerdict(facingDirection, vastuPreference) {
-  if (!vastuPreference || vastuPreference === "Doesn't Matter" || vastuPreference === 'No') {
+  if (!vastuPreference || vastuPreference === 'No preference' || vastuPreference === 'No') {
     return 'pass';
   }
   if (VASTU_RED_FLAG_DIRECTIONS.has(facingDirection)) return 'red_flag';

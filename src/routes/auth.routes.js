@@ -121,6 +121,11 @@ router.post('/logout', (req, res) => {
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     path:     '/',
   });
+  res.clearCookie('vb_token', {
+    secure:   process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path:     '/',
+  });
   return res.json({ ok: true });
 });
 

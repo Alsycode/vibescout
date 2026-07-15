@@ -1,5 +1,5 @@
 // FILE: src/services/aqi.service.js
-// PURPOSE: AQI waterfall — OpenAQ → cluster cache → CPCB city average → seasonal fallback
+// PURPOSE: AQI waterfall — Google Air Quality → Open-Meteo → WAQI → OpenAQ → cluster cache → CPCB city average → seasonal fallback
 
 import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
@@ -95,7 +95,35 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-// Level 1: WAQI — aggregates real CPCB ground-station data, coordinate-based, returns AQI directly
+// Level 1: Google Air Quality API — CPCB-calibrated NAQI (ind_cpcb), coordinate-precise, covers all of India
+async function fetchFromGoogleAQ(lat, lng) {
+  if (!process.env.GOOGLE_PLACES_API_KEY) return null;
+  try {
+    const url = `https://airquality.googleapis.com/v1/currentConditions:lookup?key=${process.env.GOOGLE_PLACES_API_KEY}`;
+    const res = await fetchWithTimeout(
+      url,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          location: { latitude: lat, longitude: lng },
+          extraComputations: ['LOCAL_AQI'],
+          languageCode: 'en',
+        }),
+      },
+      7000
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const naqi = (data.indexes ?? []).find((i) => i.code === 'ind_cpcb');
+    if (!naqi || !naqi.aqi || naqi.aqi <= 0) return null;
+    return { value: naqi.aqi, category: naqi.category, source: 'live' };
+  } catch {
+    return null;
+  }
+}
+
+// Level 2: WAQI — aggregates real CPCB ground-station data, coordinate-based, returns AQI directly
 // Guard: reject if returned station is >75 km from query point — WAQI silently falls back to
 // distant stations when no local CPCB monitor exists (e.g. returns Delhi data for Bengaluru suburbs).
 async function fetchFromWAQI(lat, lng) {
@@ -112,7 +140,7 @@ async function fetchFromWAQI(lat, lng) {
     const stationGeo = data?.data?.city?.geo;
     if (Array.isArray(stationGeo) && stationGeo.length === 2) {
       const distKm = haversineKm(lat, lng, stationGeo[0], stationGeo[1]);
-      if (distKm > 75) return null;
+      if (distKm > 20) return null;
     }
 
     return { value: aqi, category: aqiCategory(aqi), source: 'live' };
@@ -300,25 +328,29 @@ async function fetchFromCPCB(cityName) {
 
 // Full 5-level AQI waterfall — never returns null
 export async function fetchAQI(lat, lng, clusterId, cityName) {
-  // Level 1: WAQI — real CPCB ground-station data, most accurate for India
-  const waqiLive = await fetchFromWAQI(lat, lng);
-  if (waqiLive) return waqiLive;
+  // Level 1: Google Air Quality API — ind_cpcb NAQI, ML-calibrated, covers all of India.
+  const googleLive = await fetchFromGoogleAQ(lat, lng);
+  if (googleLive) return googleLive;
 
-  // Level 2: Open-Meteo Air Quality — CAMS Copernicus, coordinate-precise, free, no key needed
+  // Level 2: Open-Meteo Air Quality — CAMS Copernicus gridded model, coordinate-precise, free.
   const omLive = await fetchFromOpenMeteo(lat, lng);
   if (omLive) return omLive;
 
-  // Level 3: OpenAQ v3 — station-based fallback (may be stale in India)
+  // Level 3: WAQI — real CPCB ground-station data, only trusted when station is very close.
+  const waqiLive = await fetchFromWAQI(lat, lng);
+  if (waqiLive) return waqiLive;
+
+  // Level 4: OpenAQ v3 — station-based fallback (may be stale in India)
   const live = await fetchFromOpenAQ(lat, lng);
   if (live) return live;
 
-  // Level 4: Cluster MongoDB cache
+  // Level 5: Cluster MongoDB cache
   if (clusterId) {
     const cached = await fetchFromClusterCache(clusterId);
     if (cached) return cached;
   }
 
-  // Level 5: CPCB city average (use cityName or reverse geocode to find it)
+  // Level 6: CPCB city average (use cityName or reverse geocode to find it)
   let resolvedCity = cityName;
   let resolvedState = null;
 
@@ -332,7 +364,7 @@ export async function fetchAQI(lat, lng, clusterId, cityName) {
   const cpcb = await fetchFromCPCB(resolvedCity);
   if (cpcb) return cpcb;
 
-  // Level 6: State-wise seasonal average — always returns a value
+  // Level 7: State-wise seasonal average — always returns a value
   // SF-06: Nominatim called lazily — only when CPCB fails and state is still unknown
   if (resolvedState === null) {
     const geo = await reverseGeocodeState(lat, lng);

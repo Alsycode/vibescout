@@ -116,8 +116,8 @@ router.post('/analytics', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'sessionId, step, and action are required' });
     }
 
-    if (!['enter', 'exit', 'error'].includes(action)) {
-      return res.status(400).json({ error: 'action must be enter, exit, or error' });
+    if (!['enter', 'exit', 'error', 'abandon'].includes(action)) {
+      return res.status(400).json({ error: 'action must be enter, exit, error, or abandon' });
     }
 
     await logFunnelEvent(

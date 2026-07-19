@@ -121,6 +121,18 @@ router.post('/dev-unlock', requireAuth, async (req, res, next) => {
       $addToSet: { unlockedReports: sessionId },
     });
     log('dev-unlock', 'Report unlocked WITHOUT payment (dev only)', { sessionId, userId: req.user.userId });
+
+    ShadowProperty.findOne({ sessionId }).then(sp => {
+      if (sp) {
+        trackReportUnlocked(req.user.userId, sessionId, {
+          listingType:  sp.userProvidedSpecs?.listingType  ?? null,
+          budgetBracket: sp.userProvidedSpecs?.budgetBracket ?? null,
+          bhk:          sp.userProvidedSpecs?.bhk           ?? null,
+          location: { suburb: sp.name ?? null, city: null, lat: sp.coordinates?.lat ?? null, lng: sp.coordinates?.lng ?? null },
+        });
+      }
+    }).catch(() => {});
+
     res.json({ success: true });
   } catch (err) {
     next(err);

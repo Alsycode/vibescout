@@ -9,7 +9,7 @@ const FunnelAnalyticsSchema = new mongoose.Schema({
   step: { type: Number, required: true, min: 0, max: 9 }, // 0=context, 1-8=steps
   action: {
     type: String,
-    enum: ['enter', 'exit', 'error'],
+    enum: ['enter', 'exit', 'error', 'abandon'],
     required: true,
   },
   timestamp: { type: Date, default: Date.now, index: true },

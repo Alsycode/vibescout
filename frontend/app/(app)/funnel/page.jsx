@@ -16,7 +16,7 @@ import { CoreSpinLoader } from '../../../components/ui/core-spin-loader';
 // Analytics tracking helper
 async function logAnalyticsEvent(sessionId, step, action, timeSpentMs = null, errorMessage = null) {
   try {
-    await fetch('/funnel/analytics', {
+    await fetch('/api/funnel/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -650,6 +650,22 @@ export default function FunnelPage() {
       stepEntryTimeRef.current = Date.now();
       logAnalyticsEvent(sessionId, 0, 'enter');
     }
+  }, [sessionId]);
+
+  // Track abandonment — fires when user closes tab or navigates away mid-funnel
+  useEffect(() => {
+    if (!sessionId) return;
+    const handleUnload = () => {
+      const currentStep = lastTrackedStepRef.current ?? 0;
+      const timeSpentMs = stepEntryTimeRef.current ? Date.now() - stepEntryTimeRef.current : null;
+      // sendBeacon is fire-and-forget, survives page unload unlike fetch
+      navigator.sendBeacon(
+        '/api/funnel/analytics',
+        JSON.stringify({ sessionId, step: currentStep, action: 'abandon', timeSpentMs, deviceType: window.innerWidth < 768 ? 'mobile' : 'desktop' }),
+      );
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => window.removeEventListener('beforeunload', handleUnload);
   }, [sessionId]);
 
   const handleContextComplete = useCallback(

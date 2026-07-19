@@ -10,7 +10,8 @@ import { motion } from 'framer-motion';
 import {
   ArrowLeft, Search, Bell, Plus, Calendar, Tag, Flag,
   Globe, User, Clock, FileText, Shield, MapPin, Car,
-  Leaf, DollarSign, Heart, Zap,
+  Leaf, DollarSign, Heart, Zap, Home, Briefcase,
+  Wind, Volume2, Building2, Users, Navigation, CheckCircle2, XCircle,
 } from 'lucide-react';
 import VerdictBadge from '../../../../../components/report/VerdictBadge';
 import DataSourceLabel from '../../../../../components/report/DataSourceLabel';
@@ -256,6 +257,230 @@ function SectionLabel({ children }) {
     }}>
       {children}
     </p>
+  );
+}
+
+/* ─── Buyer profile helpers ──────────────────────────────── */
+const COMMUTE_MODE_LABEL = {
+  walking:          'Walking',
+  two_wheeler:      'Two-wheeler',
+  auto_rickshaw:    'Auto-rickshaw',
+  car:              'Car',
+  public_transport: 'Public transport',
+};
+
+const LIFESTYLE_LABEL = {
+  remote:       'Remote worker',
+  family:       'Family',
+  student:      'Student',
+  professional: 'Professional',
+  retired:      'Retired',
+};
+
+function ProfileRow({ icon: Icon, label, value, dim = false }) {
+  if (value == null || value === '' || value === '—') return null;
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+      gap: '12px', padding: '9px 0',
+      borderBottom: '1px solid rgba(255,255,255,0.04)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+        {Icon && <Icon size={12} color="rgba(255,255,255,0.25)" />}
+        <span style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.35)', whiteSpace: 'nowrap' }}>
+          {label}
+        </span>
+      </div>
+      <span style={{
+        fontSize: '13px', fontWeight: 400, textAlign: 'right',
+        color: dim ? 'rgba(255,255,255,0.40)' : 'rgba(255,255,255,0.82)',
+        lineHeight: 1.4,
+      }}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function ProfileCol({ title, icon: TitleIcon, children, last = false }) {
+  return (
+    <div style={{
+      flex: 1, minWidth: '200px',
+      padding: '20px 24px',
+      borderRight: last ? 'none' : '1px solid rgba(255,255,255,0.05)',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '16px' }}>
+        {TitleIcon && (
+          <div style={{
+            width: '24px', height: '24px', borderRadius: '6px',
+            background: 'rgba(13,216,192,0.08)', border: '1px solid rgba(13,216,192,0.14)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+          }}>
+            <TitleIcon size={12} color={TEAL} />
+          </div>
+        )}
+        <span style={{
+          fontSize: '10px', fontWeight: 600, letterSpacing: '0.10em',
+          textTransform: 'uppercase', color: 'rgba(255,255,255,0.28)',
+        }}>
+          {title}
+        </span>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function LoanBadge({ approved }) {
+  const yes = approved === true;
+  const no  = approved === false;
+  if (approved == null) return <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.22)' }}>—</span>;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginTop: '4px' }}>
+      {yes
+        ? <CheckCircle2 size={16} color="#34D399" />
+        : <XCircle size={16} color="#E63946" />}
+      <span style={{
+        fontSize: '14px', fontWeight: 700, letterSpacing: '-0.01em',
+        color: yes ? '#34D399' : '#E63946',
+      }}>
+        {yes ? 'Pre-approved' : 'Not approved'}
+      </span>
+    </div>
+  );
+}
+
+function AmenityPills({ priorities }) {
+  if (!priorities?.length) return <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.22)' }}>—</span>;
+  const labels = { schools: 'Schools', hospitals: 'Hospitals', parks: 'Parks', gyms: 'Gyms', cafes: 'Cafes' };
+  return (
+    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginTop: '2px' }}>
+      {priorities.map((p, i) => (
+        <span key={p} style={{
+          fontSize: '11px', fontWeight: 500,
+          padding: '3px 9px', borderRadius: '20px',
+          background: i === 0 ? 'rgba(13,216,192,0.10)' : 'rgba(255,255,255,0.05)',
+          border: `1px solid ${i === 0 ? 'rgba(13,216,192,0.25)' : 'rgba(255,255,255,0.08)'}`,
+          color: i === 0 ? TEAL : 'rgba(255,255,255,0.50)',
+        }}>
+          #{i + 1} {labels[p] ?? p}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function BuyerProfileCard({ lead, prefs }) {
+  const isSale   = lead.listingType === 'sale';
+  const s1       = prefs?.step1 ?? {};
+  const s2       = prefs?.step2 ?? {};
+  const s3       = prefs?.step3 ?? {};
+  const s4       = prefs?.step4 ?? {};
+  const s5       = prefs?.step5 ?? {};
+  const s6       = prefs?.step6 ?? {};
+  const s7       = prefs?.step7 ?? {};
+  const specs    = lead.userProvidedSpecs ?? {};
+
+  const wfhLabel = s1.wfhStatus === 'full-time' ? 'Full-time WFH'
+    : s1.wfhStatus === 'hybrid' ? 'Hybrid'
+    : s1.wfhStatus === 'no'     ? 'Office-based'
+    : null;
+
+  const commuteDetail = s1.wfhStatus !== 'full-time' && s1.commuteMode
+    ? `${COMMUTE_MODE_LABEL[s1.commuteMode] ?? s1.commuteMode}${s1.maxCommuteMinutes ? ` · max ${s1.maxCommuteMinutes} min` : ''}`
+    : null;
+
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.02)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      borderTop: '1px solid rgba(13,216,192,0.18)',
+      borderRadius: '16px',
+      overflow: 'hidden',
+      marginBottom: '20px',
+    }}>
+      {/* Card header */}
+      <div style={{
+        padding: '16px 24px',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <p style={{
+            fontSize: '11px', fontWeight: 600, letterSpacing: '0.10em',
+            textTransform: 'uppercase', color: TEAL, opacity: 0.9,
+          }}>
+            Buyer Profile
+          </p>
+          <span style={{
+            fontSize: '10px', fontWeight: 400, color: 'rgba(255,255,255,0.22)',
+            background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '20px', padding: '2px 9px', letterSpacing: '0.04em',
+          }}>
+            Self-reported · funnel data
+          </span>
+        </div>
+        <span style={{
+          fontSize: '11px', fontWeight: 500, padding: '3px 10px',
+          borderRadius: '20px',
+          background: isSale ? 'rgba(13,216,192,0.08)' : 'rgba(245,158,11,0.08)',
+          border: `1px solid ${isSale ? 'rgba(13,216,192,0.22)' : 'rgba(245,158,11,0.22)'}`,
+          color: isSale ? TEAL : '#F59E0B',
+          letterSpacing: '0.04em',
+          textTransform: 'capitalize',
+        }}>
+          {lead.listingType ?? '—'}
+        </span>
+      </div>
+
+      {/* 3-column body */}
+      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+
+        {/* ── Col 1: Property Intent ── */}
+        <ProfileCol title="Property Intent" icon={Home}>
+          <ProfileRow icon={Building2} label="BHK"     value={specs.bhk ?? '—'} />
+          <ProfileRow icon={DollarSign} label="Budget"  value={specs.budgetBracket ?? '—'} />
+          <ProfileRow icon={Navigation} label="Facing"  value={s4.facingDirection ?? '—'} />
+          <ProfileRow icon={Shield}     label="Vastu"   value={s4.vastuPreference ?? '—'} />
+        </ProfileCol>
+
+        {/* ── Col 2: Financial Readiness ── */}
+        <ProfileCol title="Financial Readiness" icon={DollarSign}>
+          <ProfileRow icon={Briefcase} label="Monthly income"  value={s7.monthlyHouseholdIncome ?? '—'} />
+          {isSale && (
+            <>
+              <ProfileRow icon={DollarSign} label="Down payment"    value={s7.downPaymentBracket ?? '—'} />
+              <ProfileRow icon={Heart}      label="Intent"           value={s7.investmentIntent ?? '—'} />
+              <div style={{ padding: '10px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                <span style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '6px' }}>
+                  Loan status
+                </span>
+                <LoanBadge approved={s7.loanPreApproved} />
+              </div>
+            </>
+          )}
+        </ProfileCol>
+
+        {/* ── Col 3: Lifestyle & Fit ── */}
+        <ProfileCol title="Lifestyle & Fit" icon={Users} last>
+          <ProfileRow icon={Users}    label="Lifestyle"   value={LIFESTYLE_LABEL[s2.lifestyleType] ?? s2.lifestyleType ?? '—'} />
+          <ProfileRow icon={Globe}    label="Community"   value={s6.communityPreference ?? '—'} />
+          <ProfileRow icon={Car}      label="Work"        value={wfhLabel} />
+          {commuteDetail && (
+            <ProfileRow icon={MapPin} label="Commute"     value={commuteDetail} />
+          )}
+          <ProfileRow icon={Wind}     label="AQI"         value={s3.aqiSensitivity ? `${s3.aqiSensitivity} sensitivity` : '—'} />
+          <ProfileRow icon={Volume2}  label="Noise"       value={s3.noiseSensitivity ? `${s3.noiseSensitivity} sensitivity` : '—'} />
+          <div style={{ padding: '9px 0' }}>
+            <span style={{ fontSize: '12px', fontWeight: 300, color: 'rgba(255,255,255,0.35)', display: 'block', marginBottom: '7px' }}>
+              Amenity priorities
+            </span>
+            <AmenityPills priorities={s5.amenityPriorities} />
+          </div>
+        </ProfileCol>
+
+      </div>
+    </div>
   );
 }
 
@@ -521,6 +746,11 @@ export default function LeadDetail({ params }) {
           )}
         </motion.div>
 
+        {/* ── Buyer profile ─────────────────────────────────── */}
+        <motion.div variants={item}>
+          <BuyerProfileCard lead={lead} prefs={prefs} />
+        </motion.div>
+
         {/* ── Bottom two cards ───────────────────────────────── */}
         <div className="admin-two-col-grid" style={{ marginBottom: '20px' }}>
 
@@ -555,9 +785,9 @@ export default function LeadDetail({ params }) {
                 value={lead.stage ? lead.stage.charAt(0).toUpperCase() + lead.stage.slice(1) : 'New'}
               />
               <InfoRow icon={<Globe size={14} />} label="Source" value="Website" />
-              <InfoRow icon={<User size={14} />} label="Assigned To" value="—" />
+              {/* <InfoRow icon={<User size={14} />} label="Assigned To" value="—" /> */}
               <InfoRow icon={<Clock size={14} />} label="Last Updated" value={formatDate(updatedDate)} />
-              <InfoRow icon={<FileText size={14} />} label="Notes" value="—" />
+              {/* <InfoRow icon={<FileText size={14} />} label="Notes" value="—" /> */}
             </div>
           </motion.div>
         </div>
@@ -648,7 +878,7 @@ export default function LeadDetail({ params }) {
         )}
 
         {/* ── Data sources ───────────────────────────────────── */}
-        {Object.keys(ds).length > 0 && (
+        {/* {Object.keys(ds).length > 0 && (
           <motion.div variants={item} className="vs-card" style={{
             background: 'rgba(255,255,255,0.025)',
             border: '1px solid rgba(255,255,255,0.08)',
@@ -669,7 +899,7 @@ export default function LeadDetail({ params }) {
               </div>
             ))}
           </motion.div>
-        )}
+        )} */}
       </motion.div>
     </>
   );

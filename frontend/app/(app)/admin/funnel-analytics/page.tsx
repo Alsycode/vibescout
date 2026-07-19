@@ -60,34 +60,66 @@ interface AnalyticsData {
   recentEvents: Event[];
 }
 
+type TabKey = 'completion' | 'timing' | 'errors' | 'devices' | 'events';
+
+const TABS: { key: TabKey; label: string }[] = [
+  { key: 'completion', label: 'Completion' },
+  { key: 'timing',     label: 'Timing' },
+  { key: 'errors',     label: 'Errors' },
+  { key: 'devices',    label: 'Devices' },
+  { key: 'events',     label: 'Events' },
+];
+
+const DAYS_OPTIONS = [7, 14, 30] as const;
+
 function formatSeconds(secs: number) {
   if (secs < 60) return `${secs}s`;
   const mins = Math.floor(secs / 60);
-  const sec = secs % 60;
+  const sec  = secs % 60;
   return `${mins}m ${sec}s`;
 }
 
+const TH_STYLE: React.CSSProperties = {
+  padding: '10px 16px',
+  textAlign: 'left',
+  fontSize: '10px',
+  fontWeight: 600,
+  color: 'rgba(255,255,255,0.30)',
+  letterSpacing: '0.08em',
+  textTransform: 'uppercase',
+  background: 'rgba(255,255,255,0.015)',
+  whiteSpace: 'nowrap',
+};
+
+const TD_STYLE: React.CSSProperties = {
+  padding: '12px 16px',
+  fontSize: '13px',
+  color: 'rgba(255,255,255,0.65)',
+  borderBottom: '1px solid rgba(255,255,255,0.04)',
+};
+
+const PROGRESS_TRACK: React.CSSProperties = {
+  width: '90px', height: '5px',
+  background: 'rgba(255,255,255,0.08)',
+  borderRadius: '3px',
+  overflow: 'hidden',
+};
+
 export default function FunnelAnalyticsDashboard() {
   const router = useRouter();
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [data, setData]         = useState<AnalyticsData | null>(null);
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState<string | null>(null);
   const [daysBack, setDaysBack] = useState(7);
-  const [activeTab, setActiveTab] = useState<'completion' | 'timing' | 'errors' | 'devices' | 'events'>('completion');
+  const [activeTab, setActiveTab] = useState<TabKey>('completion');
 
   useEffect(() => {
     async function fetchAnalytics() {
       try {
         setLoading(true);
         const res = await fetch(`/api/admin/analytics/funnel?daysBack=${daysBack}`, { credentials: 'include' });
-        if (res.status === 401) {
-          router.push('/login');
-          return;
-        }
-        if (res.status === 403) {
-          setError('Admin access required');
-          return;
-        }
+        if (res.status === 401) { router.push('/login'); return; }
+        if (res.status === 403) { setError('Admin access required'); return; }
         if (!res.ok) throw new Error('Failed to fetch analytics');
         const json = await res.json();
         setData(json);
@@ -104,285 +136,264 @@ export default function FunnelAnalyticsDashboard() {
   if (error === 'Admin access required') {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-        <p style={{ fontSize: '16px', color: '#D4645A' }}>Admin access required</p>
+        <p style={{ fontSize: '14px', color: '#E63946' }}>Admin access required.</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '1100px' }}>
+
+      {/* Page header */}
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginBottom: '8px' }}>
+        <p style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--color-text-gold)', marginBottom: '8px' }}>
+          Admin · Analytics
+        </p>
+        <h1 style={{ fontSize: '24px', fontWeight: 600, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
           Funnel Analytics
         </h1>
-        <p style={{ fontSize: '14px', color: 'rgba(255,255,255,0.4)' }}>
-          Track user progression, drop-off rates, and time per step
+        <p style={{ fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
+          Track user progression, drop-off rates, and time per step.
         </p>
       </div>
 
-      {/* Time range selector */}
-      <div style={{ marginBottom: '24px', display: 'flex', gap: '12px' }}>
-        {[7, 14, 30].map(days => (
+      {/* Time range + tab filters row */}
+      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '24px', flexWrap: 'wrap' }}>
+        {DAYS_OPTIONS.map((d) => (
           <button
-            key={days}
-            onClick={() => setDaysBack(days)}
-            style={{
-              padding: '8px 16px',
-              fontSize: '12px',
-              fontWeight: days === daysBack ? 600 : 400,
-              color: days === daysBack ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.5)',
-              background: days === daysBack ? 'rgba(13,216,192,0.2)' : 'rgba(255,255,255,0.05)',
-              border: `1px solid ${days === daysBack ? 'rgba(13,216,192,0.4)' : 'rgba(255,255,255,0.1)'}`,
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
+            key={d}
+            onClick={() => setDaysBack(d)}
+            className={`admin-filter-pill${daysBack === d ? ' active' : ''}`}
           >
-            Last {days} days
+            Last {d} days
+          </button>
+        ))}
+        <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.08)', margin: '0 4px' }} />
+        {TABS.map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setActiveTab(t.key)}
+            className={`admin-filter-pill${activeTab === t.key ? ' active' : ''}`}
+          >
+            {t.label}
           </button>
         ))}
       </div>
 
-      {/* Tab navigation */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.08)', overflowX: 'auto' }}>
-        {['completion', 'timing', 'errors', 'devices', 'events'].map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab as any)}
-            style={{
-              padding: '12px 16px',
-              fontSize: '13px',
-              fontWeight: activeTab === tab ? 600 : 400,
-              color: activeTab === tab ? 'rgba(13,216,192,0.9)' : 'rgba(255,255,255,0.4)',
-              background: 'transparent',
-              border: 'none',
-              borderBottom: activeTab === tab ? '2px solid rgba(13,216,192,0.6)' : 'none',
-              cursor: 'pointer',
-              textTransform: 'capitalize',
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
+      {/* Loading */}
       {loading && (
-        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-          <p style={{ color: 'rgba(255,255,255,0.4)' }}>Loading analytics...</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="skeleton" style={{ height: '48px', borderRadius: 'var(--radius-md)' }} />
+          ))}
         </div>
       )}
 
-      {error && (
-        <div style={{ padding: '16px', background: 'rgba(212,100,90,0.1)', border: '1px solid rgba(212,100,90,0.3)', borderRadius: '8px' }}>
-          <p style={{ color: '#D4645A', margin: 0 }}>{error}</p>
+      {/* Error */}
+      {error && !loading && (
+        <div style={{
+          padding: '14px 18px', borderRadius: 'var(--radius-md)',
+          background: 'rgba(230,57,70,0.07)', border: '1px solid rgba(230,57,70,0.20)',
+        }}>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#E63946', margin: 0 }}>{error}</p>
         </div>
       )}
 
       {data && !loading && (
-        <>
-          {/* COMPLETION RATES TAB */}
+        <div className="glass-card" style={{ borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+          {/* ── COMPLETION ─────────────────────────────────────────── */}
           {activeTab === 'completion' && (
-            <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Funnel Completion Rates</h2>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Step</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Users Reached</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Completion Rate</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Drop-off</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.completionRates.map(row => (
-                      <tr key={row.step} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>
-                          <span style={{ fontWeight: 500 }}>{row.label}</span> <span style={{ color: 'rgba(255,255,255,0.3)' }}>Step {row.step}</span>
-                        </td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.usersReached}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '100px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: `${row.completionRate}%`, height: '100%', background: 'rgba(110,203,122,0.8)' }} />
-                            </div>
-                            <span style={{ color: 'rgba(110,203,122,0.8)', fontWeight: 500 }}>{row.completionRate}%</span>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th style={TH_STYLE}>Step</th>
+                    <th style={TH_STYLE}>Users Reached</th>
+                    <th style={TH_STYLE}>Completion Rate</th>
+                    <th style={TH_STYLE}>Drop-off</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.completionRates.map((row) => (
+                    <tr key={row.step}>
+                      <td style={TD_STYLE}>
+                        <span style={{ fontWeight: 500, color: 'rgba(255,255,255,0.82)' }}>{row.label}</span>
+                        <span style={{ marginLeft: '8px', fontSize: '11px', color: 'rgba(255,255,255,0.22)' }}>Step {row.step}</span>
+                      </td>
+                      <td style={TD_STYLE}>{row.usersReached.toLocaleString()}</td>
+                      <td style={TD_STYLE}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div style={PROGRESS_TRACK}>
+                            <div style={{ width: `${row.completionRate}%`, height: '100%', background: 'rgba(52,211,153,0.75)' }} />
                           </div>
-                        </td>
-                        <td style={{ padding: '12px', fontSize: '13px', color: row.dropoffPercent > 20 ? '#D4645A' : row.dropoffPercent > 10 ? '#D4A853' : 'rgba(255,255,255,0.5)' }}>
-                          {row.dropoffPercent}%
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* TIMING TAB */}
-          {activeTab === 'timing' && (
-            <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Time Spent per Step</h2>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Step</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Avg Time</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Median</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>P95</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Max</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Sample Size</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.avgTimePerStep.map(row => (
-                      <tr key={row.step} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>
-                          <span style={{ fontWeight: 500 }}>{row.label}</span>
-                        </td>
-                        <td style={{ padding: '12px', fontSize: '13px', color: row.avgSeconds > 300 ? '#D4A853' : 'rgba(255,255,255,0.7)' }}>
-                          {formatSeconds(row.avgSeconds)}
-                        </td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{formatSeconds(row.medianSeconds)}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{formatSeconds(row.p95Seconds)}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{formatSeconds(row.maxSeconds)}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.sampleSize}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* ERRORS TAB */}
-          {activeTab === 'errors' && (
-            <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Error Rates by Step</h2>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Step</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Error Count</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Total Attempts</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Error Rate</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Top Errors</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.errorRates.map(row => (
-                      <tr key={row.step} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.label}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.errorCount}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.totalAttempts}</td>
-                        <td style={{ padding: '12px', fontSize: '13px', color: row.errorRate > 20 ? '#D4645A' : row.errorRate > 10 ? '#D4A853' : 'rgba(255,255,255,0.5)' }}>
-                          {row.errorRate}%
-                        </td>
-                        <td style={{ padding: '12px', fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>
-                          {row.topErrors.slice(0, 2).map((e, i) => (
-                            <div key={i}>{e}</div>
-                          ))}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* DEVICE COMPARISON TAB */}
-          {activeTab === 'devices' && (
-            <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Device Comparison</h2>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Device Type</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Total Sessions</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Completions</th>
-                      <th style={{ padding: '12px', textAlign: 'left', fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Completion Rate</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.deviceComparison.map(row => (
-                      <tr key={row.deviceType} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '12px', fontSize: '13px', textTransform: 'capitalize', fontWeight: 500 }}>{row.deviceType}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.totalSessions}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>{row.completions}</td>
-                        <td style={{ padding: '12px', fontSize: '13px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '100px', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '3px', overflow: 'hidden' }}>
-                              <div style={{ width: `${row.completionRate}%`, height: '100%', background: 'rgba(110,203,122,0.8)' }} />
-                            </div>
-                            <span style={{ color: 'rgba(110,203,122,0.8)', fontWeight: 500 }}>{row.completionRate}%</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {/* RECENT EVENTS TAB */}
-          {activeTab === 'events' && (
-            <div>
-              <h2 style={{ fontSize: '16px', fontWeight: 600, marginBottom: '16px' }}>Recent Events</h2>
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>User</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Step</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Action</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Time</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Duration</th>
-                      <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>Device</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.recentEvents.slice(0, 50).map((e, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                        <td style={{ padding: '8px', fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>
-                          <div>{e.userName || 'Unknown'}</div>
-                          <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)' }}>{e.userEmail}</div>
-                        </td>
-                        <td style={{ padding: '8px' }}>{e.stepLabel}</td>
-                        <td style={{ padding: '8px' }}>
-                          <span style={{
-                            padding: '2px 6px',
-                            borderRadius: '3px',
-                            background: e.action === 'error' ? 'rgba(212,100,90,0.2)' : e.action === 'exit' ? 'rgba(110,203,122,0.2)' : 'rgba(232,160,48,0.2)',
-                            color: e.action === 'error' ? '#D4645A' : e.action === 'exit' ? '#6ECB7A' : '#E8A030',
-                            fontSize: '10px',
-                            fontWeight: 500,
-                          }}>
-                            {e.action}
+                          <span style={{ color: '#34D399', fontWeight: 500, fontSize: '13px', fontVariantNumeric: 'tabular-nums' }}>
+                            {row.completionRate}%
                           </span>
-                        </td>
-                        <td style={{ padding: '8px', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>
-                          {new Date(e.timestamp).toLocaleTimeString()}
-                        </td>
-                        <td style={{ padding: '8px', fontSize: '11px' }}>
-                          {e.timeSpentSeconds ? formatSeconds(e.timeSpentSeconds) : '—'}
-                        </td>
-                        <td style={{ padding: '8px', fontSize: '11px', textTransform: 'capitalize' }}>
-                          {e.deviceType}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </td>
+                      <td style={{
+                        ...TD_STYLE,
+                        color: row.dropoffPercent > 20 ? '#E63946' : row.dropoffPercent > 10 ? '#F59E0B' : 'rgba(255,255,255,0.35)',
+                        fontWeight: row.dropoffPercent > 20 ? 500 : 300,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        {row.dropoffPercent}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
-        </>
+
+          {/* ── TIMING ─────────────────────────────────────────────── */}
+          {activeTab === 'timing' && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Step', 'Avg Time', 'Median', 'P95', 'Max', 'Samples'].map((h) => (
+                      <th key={h} style={TH_STYLE}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.avgTimePerStep.map((row) => (
+                    <tr key={row.step}>
+                      <td style={{ ...TD_STYLE, fontWeight: 500, color: 'rgba(255,255,255,0.82)' }}>{row.label}</td>
+                      <td style={{ ...TD_STYLE, color: row.avgSeconds > 300 ? '#F59E0B' : 'rgba(255,255,255,0.65)' }}>
+                        {formatSeconds(row.avgSeconds)}
+                      </td>
+                      <td style={TD_STYLE}>{formatSeconds(row.medianSeconds)}</td>
+                      <td style={TD_STYLE}>{formatSeconds(row.p95Seconds)}</td>
+                      <td style={TD_STYLE}>{formatSeconds(row.maxSeconds)}</td>
+                      <td style={{ ...TD_STYLE, color: 'rgba(255,255,255,0.35)', fontVariantNumeric: 'tabular-nums' }}>
+                        {row.sampleSize.toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── ERRORS ─────────────────────────────────────────────── */}
+          {activeTab === 'errors' && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Step', 'Error Count', 'Total Attempts', 'Error Rate', 'Top Errors'].map((h) => (
+                      <th key={h} style={TH_STYLE}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.errorRates.map((row) => (
+                    <tr key={row.step}>
+                      <td style={{ ...TD_STYLE, fontWeight: 500, color: 'rgba(255,255,255,0.82)' }}>{row.label}</td>
+                      <td style={TD_STYLE}>{row.errorCount.toLocaleString()}</td>
+                      <td style={TD_STYLE}>{row.totalAttempts.toLocaleString()}</td>
+                      <td style={{
+                        ...TD_STYLE,
+                        color: row.errorRate > 20 ? '#E63946' : row.errorRate > 10 ? '#F59E0B' : 'rgba(255,255,255,0.35)',
+                        fontWeight: row.errorRate > 20 ? 500 : 300,
+                        fontVariantNumeric: 'tabular-nums',
+                      }}>
+                        {row.errorRate}%
+                      </td>
+                      <td style={{ ...TD_STYLE, fontSize: '11px', color: 'rgba(255,255,255,0.30)' }}>
+                        {row.topErrors.slice(0, 2).map((e, i) => (
+                          <div key={i}>{e}</div>
+                        ))}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── DEVICES ────────────────────────────────────────────── */}
+          {activeTab === 'devices' && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Device', 'Total Sessions', 'Completions', 'Completion Rate'].map((h) => (
+                      <th key={h} style={TH_STYLE}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.deviceComparison.map((row) => (
+                    <tr key={row.deviceType}>
+                      <td style={{ ...TD_STYLE, fontWeight: 500, color: 'rgba(255,255,255,0.82)', textTransform: 'capitalize' }}>{row.deviceType}</td>
+                      <td style={TD_STYLE}>{row.totalSessions.toLocaleString()}</td>
+                      <td style={TD_STYLE}>{row.completions.toLocaleString()}</td>
+                      <td style={TD_STYLE}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <div style={PROGRESS_TRACK}>
+                            <div style={{ width: `${row.completionRate}%`, height: '100%', background: 'rgba(52,211,153,0.75)' }} />
+                          </div>
+                          <span style={{ color: '#34D399', fontWeight: 500, fontVariantNumeric: 'tabular-nums' }}>
+                            {row.completionRate}%
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* ── EVENTS ─────────────────────────────────────────────── */}
+          {activeTab === 'events' && (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['User', 'Step', 'Action', 'Time', 'Duration', 'Device'].map((h) => (
+                      <th key={h} style={TH_STYLE}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.recentEvents.slice(0, 50).map((e, i) => (
+                    <tr key={i}>
+                      <td style={{ ...TD_STYLE, fontSize: '12px' }}>
+                        <p style={{ margin: 0, fontWeight: 400, color: 'rgba(255,255,255,0.65)' }}>{e.userName || 'Unknown'}</p>
+                        <p style={{ margin: 0, fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.25)', marginTop: '2px' }}>{e.userEmail}</p>
+                      </td>
+                      <td style={{ ...TD_STYLE, fontSize: '12px' }}>{e.stepLabel}</td>
+                      <td style={TD_STYLE}>
+                        <span style={{
+                          padding: '2px 8px', borderRadius: '4px',
+                          fontSize: '10px', fontWeight: 600, letterSpacing: '0.05em',
+                          background: e.action === 'error' ? 'rgba(230,57,70,0.12)' : e.action === 'exit' ? 'rgba(52,211,153,0.10)' : 'rgba(245,158,11,0.10)',
+                          color:      e.action === 'error' ? '#E63946'              : e.action === 'exit' ? '#34D399'               : '#F59E0B',
+                          border:     `1px solid ${e.action === 'error' ? 'rgba(230,57,70,0.20)' : e.action === 'exit' ? 'rgba(52,211,153,0.20)' : 'rgba(245,158,11,0.20)'}`,
+                        }}>
+                          {e.action}
+                        </span>
+                      </td>
+                      <td style={{ ...TD_STYLE, fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.30)', fontVariantNumeric: 'tabular-nums' }}>
+                        {new Date(e.timestamp).toLocaleTimeString()}
+                      </td>
+                      <td style={{ ...TD_STYLE, fontSize: '12px', fontVariantNumeric: 'tabular-nums' }}>
+                        {e.timeSpentSeconds ? formatSeconds(e.timeSpentSeconds) : '—'}
+                      </td>
+                      <td style={{ ...TD_STYLE, fontSize: '12px', textTransform: 'capitalize', color: 'rgba(255,255,255,0.35)' }}>
+                        {e.deviceType}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
       )}
     </div>
   );

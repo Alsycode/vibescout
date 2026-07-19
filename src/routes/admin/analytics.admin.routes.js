@@ -6,7 +6,7 @@ import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
 import AnalyticsEvent from '../../models/AnalyticsEvent.js';
 import User from '../../models/User.js';
 import ShadowProperty from '../../models/ShadowProperty.js';
-import { getStepCompletionRates, getAvgTimePerStep, getErrorRateByStep, getDeviceComparison } from '../../services/funnelAnalytics.service.js';
+import { getStepCompletionRates, getAvgTimePerStep, getErrorRateByStep, getDeviceComparison, getRecentEvents } from '../../services/funnelAnalytics.service.js';
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -20,13 +20,14 @@ function sinceDate(daysBack) {
 router.get('/funnel', async (req, res, next) => {
   try {
     const daysBack = parseInt(req.query.daysBack ?? '7', 10);
-    const [completionRates, avgTime, errorRates, deviceSplit] = await Promise.all([
+    const [completionRates, avgTime, errorRates, deviceSplit, recentEvents] = await Promise.all([
       getStepCompletionRates(daysBack),
       getAvgTimePerStep(daysBack),
       getErrorRateByStep(daysBack),
       getDeviceComparison(daysBack),
+      getRecentEvents(daysBack, 50),
     ]);
-    res.json({ daysBack, completionRates, avgTimePerStep: avgTime, errorRates, deviceComparison: deviceSplit });
+    res.json({ daysBack, completionRates, avgTimePerStep: avgTime, errorRates, deviceComparison: deviceSplit, recentEvents });
   } catch (err) {
     next(err);
   }

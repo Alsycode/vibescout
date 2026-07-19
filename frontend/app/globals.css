@@ -1513,6 +1513,127 @@ tr:hover {
 /* Mobile stepper — hidden on desktop, shown on mobile */
 .mobile-stepper { display: none; }
 
+/* ═══════════════════════════════════════════════════════════════
+   ADMIN PANEL UTILITIES — 2026 redesign
+   Prefixed admin- to prevent leakage to other layouts.
+   Scoped to .teal-layout context in admin.
+═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --color-env:    #5D748A;
+  --color-nature: #34D399;
+}
+
+@keyframes adminSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Filter pill toggle buttons */
+.admin-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  color: rgba(255,255,255,0.38);
+  cursor: pointer;
+  transition: all 120ms ease;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0.01em;
+  user-select: none;
+}
+.admin-filter-pill:hover {
+  border-color: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.68);
+  background: rgba(255,255,255,0.03);
+}
+.admin-filter-pill.active {
+  border-color: var(--color-accent-35);
+  background: var(--color-accent-08);
+  color: var(--color-accent-90);
+  font-weight: 500;
+}
+
+/* Stat card surface */
+.admin-stat-card {
+  padding: 20px 22px;
+  border-radius: var(--radius-lg);
+  background: #10101E;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-left: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 4px 32px rgba(0,0,0,0.50);
+  flex: 1;
+  min-width: 180px;
+  position: relative;
+  overflow: hidden;
+  transition: border-top-color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+}
+.admin-stat-card:hover {
+  border-top-color: rgba(255,255,255,0.16);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.60);
+}
+
+/* Sidebar section label */
+.admin-section-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.20);
+  padding: 0 20px;
+  margin: 16px 0 4px;
+  display: block;
+}
+
+/* Primary CTA button for admin (teal variant) */
+.admin-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-accent);
+  color: #080812;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 18px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  font-family: 'Inter', sans-serif;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+.admin-btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 0 20px var(--color-accent-15);
+  transform: translateY(-1px);
+}
+.admin-btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Table empty state */
+.admin-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 52px 24px;
+  text-align: center;
+}
+
 @media (max-width: 900px) {
   .funnel-layout { flex-direction: column; }
 

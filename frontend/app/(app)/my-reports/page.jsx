@@ -5,6 +5,94 @@ import Link from 'next/link';
 import Navbar from '../../../components/Navbar';
 import api from '../../../lib/api';
 
+const STEP_LABELS = {
+  0: 'Context', 1: 'Commute', 2: 'Lifestyle', 3: 'Environment',
+  4: 'Home Usage', 5: 'Amenities', 6: 'Community', 7: 'Financial', 8: 'Review',
+};
+const LS_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function findActiveFunnelSession() {
+  try {
+    let best = null;
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key?.startsWith('vs_funnel_')) continue;
+      const raw = localStorage.getItem(key);
+      if (!raw) continue;
+      const parsed = JSON.parse(raw);
+      if (Date.now() - parsed.ts > LS_TTL_MS) { localStorage.removeItem(key); continue; }
+      if (parsed.step < 2) continue; // not meaningful enough to prompt
+      if (!best || parsed.ts > best.ts) {
+        best = { ...parsed, sessionId: key.replace('vs_funnel_', ''), key };
+      }
+    }
+    return best;
+  } catch { return null; }
+}
+
+function ResumeBanner({ session, onDismiss }) {
+  const stepLabel = STEP_LABELS[session.step] ?? `Step ${session.step}`;
+  const savedAgo  = Math.round((Date.now() - session.ts) / 60000);
+  const agoText   = savedAgo < 60
+    ? `${savedAgo}m ago`
+    : savedAgo < 1440
+      ? `${Math.round(savedAgo / 60)}h ago`
+      : `${Math.round(savedAgo / 1440)}d ago`;
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px',
+      padding: '14px 20px',
+      borderRadius: '12px',
+      background: 'rgba(13,216,192,0.05)',
+      border: '1px solid rgba(13,216,192,0.18)',
+      marginBottom: '32px',
+      flexWrap: 'wrap',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{
+          width: '8px', height: '8px', borderRadius: '50%',
+          background: '#0DD8C0', boxShadow: '0 0 8px rgba(13,216,192,0.6)', flexShrink: 0,
+        }} />
+        <div>
+          <p style={{ margin: 0, fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.82)' }}>
+            Unfinished analysis — paused at <span style={{ color: '#0DD8C0' }}>{stepLabel}</span>
+          </p>
+          <p style={{ margin: '3px 0 0', fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.30)' }}>
+            Last saved {agoText} · {session.listingType ?? 'sale'} property
+          </p>
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
+        <Link
+          href={`/funnel?sessionId=${session.sessionId}`}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: '5px',
+            padding: '7px 14px', borderRadius: '8px',
+            background: 'rgba(13,216,192,0.12)', border: '1px solid rgba(13,216,192,0.30)',
+            fontSize: '11px', fontWeight: 600, color: '#0DD8C0',
+            textDecoration: 'none', letterSpacing: '0.04em',
+            transition: 'background 150ms ease',
+          }}
+        >
+          Continue →
+        </Link>
+        <button
+          onClick={onDismiss}
+          style={{
+            padding: '7px 12px', borderRadius: '8px',
+            background: 'transparent', border: '1px solid rgba(255,255,255,0.08)',
+            fontSize: '11px', fontWeight: 400, color: 'rgba(255,255,255,0.30)',
+            cursor: 'pointer', fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          Dismiss
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function formatDate(iso) {
   if (!iso) return '—';
   return new Date(iso).toLocaleDateString('en-IN', {
@@ -226,16 +314,24 @@ function ReportCard({ report }) {
 }
 
 export default function MyReportsPage() {
-  const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [reports, setReports]           = useState([]);
+  const [loading, setLoading]           = useState(true);
+  const [error, setError]               = useState(null);
+  const [activeSession, setActiveSession] = useState(null);
 
   useEffect(() => {
     api.get('/report')
       .then(({ data }) => setReports(data.reports ?? []))
       .catch(() => setError('Could not load reports. Please try again.'))
       .finally(() => setLoading(false));
+
+    setActiveSession(findActiveFunnelSession());
   }, []);
+
+  function handleDismiss() {
+    if (activeSession?.key) localStorage.removeItem(activeSession.key);
+    setActiveSession(null);
+  }
 
   return (
     <div style={{ background: '#080812', minHeight: '100vh' }}>
@@ -246,6 +342,11 @@ export default function MyReportsPage() {
         margin:     '0 auto',
         padding:    '100px 24px 80px',
       }}>
+        {/* Resume banner */}
+        {activeSession && (
+          <ResumeBanner session={activeSession} onDismiss={handleDismiss} />
+        )}
+
         {/* Page header */}
         <div style={{ marginBottom: '40px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>

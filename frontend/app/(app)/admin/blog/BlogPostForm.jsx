@@ -15,29 +15,58 @@ function slugify(str) {
     .replace(/^-+|-+$/g, '');
 }
 
-const inputStyle = {
-  width: '100%',
-  background: 'rgba(255,255,255,0.04)',
-  border: '1px solid rgba(255,255,255,0.10)',
-  borderRadius: 'var(--radius-md)',
-  padding: '10px 14px',
-  fontSize: '14px',
-  fontWeight: 300,
-  color: 'var(--color-text-primary)',
-  outline: 'none',
-  boxSizing: 'border-box',
-  fontFamily: 'inherit',
-};
-
-const labelStyle = {
+const LABEL_STYLE = {
   display: 'block',
-  fontSize: '11px',
-  fontWeight: 400,
-  letterSpacing: '0.06em',
+  fontSize: '10px',
+  fontWeight: 600,
+  letterSpacing: '0.08em',
   textTransform: 'uppercase',
-  color: 'var(--color-text-muted)',
+  color: 'rgba(255,255,255,0.30)',
   marginBottom: '6px',
 };
+
+const SECTION_LABEL_STYLE = {
+  fontSize: '10px',
+  fontWeight: 600,
+  letterSpacing: '0.10em',
+  textTransform: 'uppercase',
+  color: 'rgba(255,255,255,0.18)',
+  marginBottom: '16px',
+  paddingBottom: '10px',
+  borderBottom: '1px solid rgba(255,255,255,0.05)',
+};
+
+function Field({ label, required, children }) {
+  return (
+    <div>
+      <label style={LABEL_STYLE}>
+        {label}{required && <span style={{ color: 'var(--color-accent)', marginLeft: '3px' }}>*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function useInput(field, focused, setFocused) {
+  return {
+    onFocus: () => setFocused(field),
+    onBlur:  () => setFocused(null),
+    style: {
+      width: '100%',
+      background: '#0C0C18',
+      border: `1px solid ${focused === field ? 'rgba(13,216,192,0.45)' : 'rgba(255,255,255,0.08)'}`,
+      borderRadius: 'var(--radius-md)',
+      padding: '10px 14px',
+      fontSize: '14px',
+      fontWeight: 300,
+      color: 'rgba(255,255,255,0.88)',
+      outline: 'none',
+      boxSizing: 'border-box',
+      fontFamily: 'Inter, sans-serif',
+      transition: 'border-color 150ms ease',
+    },
+  };
+}
 
 export default function BlogPostForm({ initial, postId }) {
   const router = useRouter();
@@ -55,10 +84,11 @@ export default function BlogPostForm({ initial, postId }) {
     coverImage: initial?.coverImage ?? '',
     published:  initial?.published  ?? true,
   });
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
+  const [saving, setSaving]         = useState(false);
+  const [error, setError]           = useState(null);
   const [imgUploading, setImgUploading] = useState(false);
-  const [imgError, setImgError] = useState('');
+  const [imgError, setImgError]     = useState('');
+  const [focused, setFocused]       = useState(null);
 
   function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -96,13 +126,11 @@ export default function BlogPostForm({ initial, postId }) {
     e.preventDefault();
     setError(null);
     setSaving(true);
-
     const payload = {
       ...form,
       tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
       readTime: Number(form.readTime),
     };
-
     try {
       if (isEdit) {
         await api.put(`/admin/blog/${postId}`, payload);
@@ -117,38 +145,18 @@ export default function BlogPostForm({ initial, postId }) {
     }
   }
 
+  const inp = (field) => useInput(field, focused, setFocused);
+
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: '900px' }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'flex-end',
-          justifyContent: 'space-between',
-          marginBottom: 'var(--space-2xl)',
-        }}
-      >
+
+      {/* Page header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '36px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <p
-            style={{
-              fontSize: '11px',
-              fontWeight: 400,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-gold)',
-              marginBottom: '6px',
-            }}
-          >
-            ADMIN · BLOG · {isEdit ? 'EDIT' : 'NEW POST'}
+          <p style={{ fontSize: '11px', fontWeight: 500, letterSpacing: '0.10em', textTransform: 'uppercase', color: 'var(--color-text-gold)', marginBottom: '8px' }}>
+            Admin · Blog · {isEdit ? 'Edit' : 'New Post'}
           </p>
-          <h1
-            style={{
-              fontSize: '22px',
-              fontWeight: 500,
-              color: 'var(--color-text-primary)',
-              lineHeight: 1.2,
-            }}
-          >
+          <h1 style={{ fontSize: '24px', fontWeight: 600, color: 'rgba(255,255,255,0.92)', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
             {isEdit ? 'Edit Post' : 'New Post'}
           </h1>
         </div>
@@ -156,30 +164,18 @@ export default function BlogPostForm({ initial, postId }) {
           <button
             type="button"
             onClick={() => router.push('/admin/blog')}
-            style={{
-              fontSize: '13px',
-              fontWeight: 400,
-              color: 'var(--color-text-muted)',
-              background: 'transparent',
-              border: '1px solid rgba(255,255,255,0.10)',
-              borderRadius: 'var(--radius-md)',
-              padding: '10px 20px',
-              cursor: 'pointer',
-            }}
+            className="btn-secondary"
+            style={{ fontSize: '13px', padding: '10px 20px' }}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
+            className="admin-btn-primary"
             style={{
-              fontSize: '13px',
-              fontWeight: 500,
-              color: '#080812',
-              background: saving ? 'rgba(232,160,48,0.5)' : 'var(--color-accent)',
-              border: 'none',
-              borderRadius: 'var(--radius-md)',
               padding: '10px 24px',
+              opacity: saving ? 0.5 : 1,
               cursor: saving ? 'not-allowed' : 'pointer',
             }}
           >
@@ -188,128 +184,125 @@ export default function BlogPostForm({ initial, postId }) {
         </div>
       </div>
 
+      {/* Error banner */}
       {error && (
-        <div
-          className="glass-card"
-          style={{
-            padding: 'var(--space-md)',
-            borderRadius: 'var(--radius-md)',
-            marginBottom: 'var(--space-lg)',
-            borderColor: 'rgba(255,80,80,0.25)',
-          }}
-        >
-          <p style={{ fontSize: '13px', color: 'var(--color-danger)', margin: 0 }}>{error}</p>
+        <div style={{
+          padding: '11px 16px', borderRadius: 'var(--radius-md)', marginBottom: '24px',
+          background: 'rgba(230,57,70,0.07)', border: '1px solid rgba(230,57,70,0.20)',
+        }}>
+          <p style={{ fontSize: '13px', fontWeight: 300, color: '#E63946', margin: 0 }}>{error}</p>
         </div>
       )}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
-        {/* Title + Slug row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-lg)' }}>
-          <div>
-            <label style={labelStyle}>Title *</label>
-            <input
-              style={inputStyle}
-              value={form.title}
-              onChange={handleTitleChange}
-              placeholder="Post title"
-              required
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Slug *</label>
-            <input
-              style={{ ...inputStyle, fontFamily: 'monospace' }}
-              value={form.slug}
-              onChange={(e) => set('slug', e.target.value)}
-              placeholder="url-friendly-slug"
-              required
-            />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
+        {/* — Meta section ——————————————————————————————————————— */}
+        <div>
+          <p style={SECTION_LABEL_STYLE}>Post Identity</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <Field label="Title" required>
+              <input
+                value={form.title}
+                onChange={handleTitleChange}
+                placeholder="Post title"
+                required
+                {...inp('title')}
+              />
+            </Field>
+            <Field label="Slug" required>
+              <input
+                value={form.slug}
+                onChange={(e) => set('slug', e.target.value)}
+                placeholder="url-friendly-slug"
+                required
+                {...inp('slug')}
+                style={{ ...inp('slug').style, fontFamily: 'var(--font-mono)', fontSize: '13px' }}
+              />
+            </Field>
           </div>
         </div>
 
-        {/* Excerpt */}
-        <div>
-          <label style={labelStyle}>Excerpt *</label>
+        {/* — Excerpt ————————————————————————————————————————————— */}
+        <Field label="Excerpt" required>
           <textarea
-            style={{ ...inputStyle, minHeight: '80px', resize: 'vertical', lineHeight: 1.6 }}
             value={form.excerpt}
             onChange={(e) => set('excerpt', e.target.value)}
             placeholder="Short summary shown in the listing"
             required
+            {...inp('excerpt')}
+            style={{ ...inp('excerpt').style, minHeight: '80px', resize: 'vertical', lineHeight: 1.6 }}
           />
+        </Field>
+
+        {/* — Classification ————————————————————————————————————— */}
+        <div>
+          <p style={SECTION_LABEL_STYLE}>Classification</p>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 160px 120px', gap: '16px' }}>
+            <Field label="Category" required>
+              <select
+                value={form.category}
+                onChange={(e) => set('category', e.target.value)}
+                required
+                {...inp('category')}
+                style={{ ...inp('category').style, cursor: 'pointer', appearance: 'none' }}
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c} style={{ background: '#0C0C18' }}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Tags (comma-separated)">
+              <input
+                value={form.tags}
+                onChange={(e) => set('tags', e.target.value)}
+                placeholder="AQI, Bengaluru, Property"
+                {...inp('tags')}
+              />
+            </Field>
+            <Field label="Date" required>
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) => set('date', e.target.value)}
+                required
+                {...inp('date')}
+                style={{ ...inp('date').style, colorScheme: 'dark' }}
+              />
+            </Field>
+            <Field label="Read Time (min)" required>
+              <input
+                type="number"
+                min={1}
+                max={60}
+                value={form.readTime}
+                onChange={(e) => set('readTime', e.target.value)}
+                required
+                {...inp('readTime')}
+              />
+            </Field>
+          </div>
         </div>
 
-        {/* Category, Tags, Date, ReadTime row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 160px 120px', gap: 'var(--space-lg)' }}>
-          <div>
-            <label style={labelStyle}>Category *</label>
-            <select
-              style={{ ...inputStyle, cursor: 'pointer' }}
-              value={form.category}
-              onChange={(e) => set('category', e.target.value)}
-              required
-            >
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c} style={{ background: '#0C0C18' }}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label style={labelStyle}>Tags (comma-separated)</label>
-            <input
-              style={inputStyle}
-              value={form.tags}
-              onChange={(e) => set('tags', e.target.value)}
-              placeholder="AQI, Bengaluru, Property"
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Date *</label>
-            <input
-              type="date"
-              style={{ ...inputStyle, colorScheme: 'dark' }}
-              value={form.date}
-              onChange={(e) => set('date', e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label style={labelStyle}>Read Time (min) *</label>
-            <input
-              type="number"
-              min={1}
-              max={60}
-              style={inputStyle}
-              value={form.readTime}
-              onChange={(e) => set('readTime', e.target.value)}
-              required
-            />
-          </div>
-        </div>
-
-        {/* Published toggle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* — Published toggle ——————————————————————————————————— */}
+        <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', width: 'fit-content' }}>
           <input
             type="checkbox"
             id="published"
             checked={form.published}
             onChange={(e) => set('published', e.target.checked)}
-            style={{ width: '16px', height: '16px', cursor: 'pointer', accentColor: 'var(--color-accent)' }}
+            style={{ width: '15px', height: '15px', cursor: 'pointer', accentColor: '#0DD8C0' }}
           />
-          <label
-            htmlFor="published"
-            style={{ fontSize: '13px', fontWeight: 400, color: 'var(--color-text-secondary)', cursor: 'pointer' }}
-          >
+          <span style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.50)' }}>
             Published (visible on site)
-          </label>
-        </div>
+          </span>
+        </label>
 
-        {/* Cover Image */}
+        {/* — Cover Image ————————————————————————————————————————— */}
         <div>
-          <label style={labelStyle}>Cover Image</label>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+          <p style={SECTION_LABEL_STYLE}>Cover Image</p>
+          <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
             {form.coverImage && (
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <img
@@ -323,27 +316,22 @@ export default function BlogPostForm({ initial, postId }) {
                   style={{
                     position: 'absolute', top: '4px', right: '4px',
                     width: '20px', height: '20px', borderRadius: '50%',
-                    background: 'rgba(0,0,0,0.7)', border: 'none',
+                    background: 'rgba(0,0,0,0.75)', border: 'none',
                     color: '#fff', fontSize: '11px', cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
                 >×</button>
               </div>
             )}
-            <div style={{ flex: 1 }}>
-              <label
-                style={{
-                  display: 'inline-block',
-                  padding: '10px 16px',
-                  fontSize: '13px',
-                  fontWeight: 400,
-                  color: imgUploading ? 'var(--color-text-muted)' : 'var(--color-accent)',
-                  background: 'var(--color-accent-08)',
-                  border: '1px solid var(--color-accent-20)',
-                  borderRadius: 'var(--radius-md)',
-                  cursor: imgUploading ? 'not-allowed' : 'pointer',
-                }}
-              >
+            <div>
+              <label style={{
+                display: 'inline-flex', alignItems: 'center', gap: '7px',
+                padding: '9px 16px', fontSize: '12px', fontWeight: 500,
+                color: imgUploading ? 'rgba(255,255,255,0.30)' : 'rgba(13,216,192,0.85)',
+                background: 'rgba(13,216,192,0.08)', border: '1px solid rgba(13,216,192,0.25)',
+                borderRadius: 'var(--radius-md)', cursor: imgUploading ? 'not-allowed' : 'pointer',
+                transition: 'all 120ms ease',
+              }}>
                 {imgUploading ? 'Uploading…' : form.coverImage ? 'Replace Image' : 'Upload Image'}
                 <input
                   type="file"
@@ -354,10 +342,10 @@ export default function BlogPostForm({ initial, postId }) {
                 />
               </label>
               {imgError && (
-                <p style={{ fontSize: '12px', color: 'var(--color-danger)', marginTop: '6px' }}>{imgError}</p>
+                <p style={{ fontSize: '12px', fontWeight: 300, color: '#E63946', marginTop: '6px' }}>{imgError}</p>
               )}
-              {form.coverImage && (
-                <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '6px', wordBreak: 'break-all' }}>
+              {form.coverImage && !imgError && (
+                <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.25)', marginTop: '6px', wordBreak: 'break-all', maxWidth: '300px' }}>
                   {form.coverImage}
                 </p>
               )}
@@ -365,26 +353,29 @@ export default function BlogPostForm({ initial, postId }) {
           </div>
         </div>
 
-        {/* Content */}
+        {/* — Content ————————————————————————————————————————————— */}
         <div>
-          <label style={labelStyle}>Content (HTML) *</label>
-          <textarea
-            style={{
-              ...inputStyle,
-              minHeight: '420px',
-              resize: 'vertical',
-              fontFamily: "'Geist Mono', 'Courier New', monospace",
-              fontSize: '13px',
-              lineHeight: 1.6,
-            }}
-            value={form.content}
-            onChange={(e) => set('content', e.target.value)}
-            placeholder="<p>Article content as HTML...</p>"
-            required
-          />
-          <p style={{ fontSize: '11px', color: 'var(--color-text-muted)', marginTop: '6px' }}>
-            Supported tags: p, h2, h3, ul, ol, li, strong, em, code, table, th, td, a
-          </p>
+          <p style={SECTION_LABEL_STYLE}>Content</p>
+          <Field label="HTML Content" required>
+            <textarea
+              value={form.content}
+              onChange={(e) => set('content', e.target.value)}
+              placeholder="<p>Article content as HTML...</p>"
+              required
+              {...inp('content')}
+              style={{
+                ...inp('content').style,
+                minHeight: '420px',
+                resize: 'vertical',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '13px',
+                lineHeight: 1.6,
+              }}
+            />
+            <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.22)', marginTop: '7px', letterSpacing: '0.02em' }}>
+              Supported: p, h2, h3, ul, ol, li, strong, em, code, table, th, td, a
+            </p>
+          </Field>
         </div>
       </div>
     </form>

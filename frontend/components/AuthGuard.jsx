@@ -24,7 +24,14 @@ export default function AuthGuard({ children }) {
     }
     api.get('/auth/me')
       .then(() => setChecked(true))
-      .catch(() => router.replace('/login'));
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          router.replace('/login');
+        } else {
+          // Non-401 (network error, 500, etc.) — don't log user out, just show content
+          setChecked(true);
+        }
+      });
   }, [pathname, isPublic, router]);
 
   if (!checked && !isPublic) {

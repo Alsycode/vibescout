@@ -1,14 +1,42 @@
-// FILE: app/(app)/admin/page.jsx
-// PURPOSE: Admin dashboard — 4 StatCards (Total Audits, Leads by tier,
-//          Active Brokers, Cluster Health). Data from GET /admin/leads/stats.
-//          Admin panel glass rules: blur cap 16px, minimal glow, no gradients.
-
 'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Building2, Flame, UserCheck, Network, BookOpen, TrendingUp, BarChart2, ArrowRight } from 'lucide-react';
 import StatCard from '../../../components/admin/StatCard';
 import api from '../../../lib/api';
+
+const QUICK_LINKS = [
+  // { href: '/admin/shadow-properties', label: 'Audited Properties', icon: Building2,  metaKey: 'totalShadowProperties' },
+  { href: '/admin/leads',             label: 'All Leads',          icon: Flame,       metaKey: 'totalLeads' },
+  // { href: '/admin/brokers',           label: 'Brokers',            icon: UserCheck,   metaKey: 'totalBrokers' },
+  // { href: '/admin/clusters',          label: 'Clusters',           icon: Network,     metaKey: 'totalClusters' },
+  { href: '/admin/blog',              label: 'Blog',               icon: BookOpen,    metaFixed: 'Manage posts' },
+  { href: '/admin/funnel-analytics',  label: 'Funnel Analytics',   icon: TrendingUp,  metaFixed: 'Step completion rates' },
+  { href: '/admin/conversion',        label: 'Conversion',         icon: BarChart2,   metaFixed: 'Unlock funnel' },
+];
+
+const TIER_CONFIG = [
+  { key: 'hot',      label: 'Hot',      color: '#E63946', href: '/admin/leads?tier=hot' },
+  { key: 'warm',     label: 'Warm',     color: '#F59E0B', href: '/admin/leads?tier=warm' },
+  { key: 'lukewarm', label: 'Lukewarm', color: '#0DD8C0', href: '/admin/leads?tier=lukewarm' },
+  { key: 'cold',     label: 'Cold',     color: 'rgba(255,255,255,0.28)', href: '/admin/leads?tier=cold' },
+];
+
+function SectionLabel({ children }) {
+  return (
+    <p style={{
+      fontSize: '10px',
+      fontWeight: 600,
+      letterSpacing: '0.10em',
+      textTransform: 'uppercase',
+      color: 'rgba(255,255,255,0.22)',
+      marginBottom: '14px',
+    }}>
+      {children}
+    </p>
+  );
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -23,263 +51,190 @@ export default function AdminDashboard() {
       .finally(() => setLoading(false));
   }, []);
 
-  const hot = stats?.byTier?.hot ?? 0;
-  const warm = stats?.byTier?.warm ?? 0;
-  const lukewarm = stats?.byTier?.lukewarm ?? 0;
-  const cold = stats?.byTier?.cold ?? 0;
-  const totalLeads = hot + warm + lukewarm + cold;
-  const freshClusters = stats?.clusterHealth?.fresh ?? 0;
-  const totalClusters = stats?.clusterHealth?.total ?? 0;
+  const hot       = stats?.byTier?.hot       ?? 0;
+  const warm      = stats?.byTier?.warm      ?? 0;
+  const lukewarm  = stats?.byTier?.lukewarm  ?? 0;
+  const cold      = stats?.byTier?.cold      ?? 0;
+  const totalLeads        = hot + warm + lukewarm + cold;
+  const freshClusters     = stats?.clusterHealth?.fresh ?? 0;
+  const totalClusters     = stats?.clusterHealth?.total ?? 0;
+
+  const metaMap = {
+    totalShadowProperties: stats?.totalShadowProperties,
+    totalLeads:            totalLeads || undefined,
+    totalBrokers:          stats?.totalBrokers,
+    totalClusters:         totalClusters || undefined,
+  };
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
-      {/* Page header */}
-      <div style={{ marginBottom: 'var(--space-2xl)' }}>
-        <p
-          style={{
-            fontSize: '11px',
-            fontWeight: 400,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-gold)',
-            marginBottom: '6px',
-          }}
-        >
-          ADMIN
+    <div style={{ maxWidth: '1100px' }}>
+
+      {/* ── Page header ──────────────────────────────────────── */}
+      <div style={{ marginBottom: '36px' }}>
+        <p style={{
+          fontSize: '11px', fontWeight: 500, letterSpacing: '0.10em',
+          textTransform: 'uppercase', color: 'var(--color-text-gold)',
+          marginBottom: '8px',
+        }}>
+          Admin
         </p>
-        <h1
-          style={{
-            fontSize: '22px',
-            fontWeight: 500,
-            color: 'var(--color-text-primary)',
-            lineHeight: 1.2,
-          }}
-        >
+        <h1 style={{
+          fontSize: '24px', fontWeight: 600, color: 'rgba(255,255,255,0.92)',
+          letterSpacing: '-0.02em', lineHeight: 1.15,
+        }}>
           Overview
         </h1>
+        <p style={{ fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
+          Platform health at a glance.
+        </p>
       </div>
 
-      {/* 4 StatCards */}
-      {loading ? (
-        <div style={{ display: 'flex', gap: 'var(--space-lg)', flexWrap: 'wrap', marginBottom: 'var(--space-2xl)' }}>
-          {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="skeleton"
-              style={{
-                flex: 1,
-                minWidth: '180px',
-                height: '96px',
-                borderRadius: 'var(--radius-lg)',
-              }}
-            />
-          ))}
-        </div>
-      ) : error ? (
-        <div
-          className="glass-card"
-          style={{
-            padding: 'var(--space-lg)',
+      {/* ── Stat cards ───────────────────────────────────────── */}
+      <div style={{ marginBottom: '40px' }}>
+        {loading ? (
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            {[1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                className="skeleton"
+                style={{ flex: 1, minWidth: '180px', height: '108px', borderRadius: 'var(--radius-lg)' }}
+              />
+            ))}
+          </div>
+        ) : error ? (
+          <div style={{
+            padding: '16px 20px',
             borderRadius: 'var(--radius-lg)',
-            marginBottom: 'var(--space-2xl)',
-          }}
-        >
-          <p style={{ fontSize: '13px', fontWeight: 300, color: 'var(--color-danger)' }}>
-            Failed to load stats — {error}
-          </p>
-        </div>
-      ) : (
-        <div
-          style={{
-            display: 'flex',
-            gap: 'var(--space-lg)',
-            flexWrap: 'wrap',
-            marginBottom: 'var(--space-2xl)',
-          }}
-        >
-          <StatCard
-            label="Total Audits"
-            value={stats?.totalShadowProperties ?? '—'}
-            sublabel="All time"
-            accentColor="var(--color-accent)"
-          />
-          <StatCard
-            label="Hot Leads"
-            value={hot}
-            sublabel={`${totalLeads} total leads`}
-            accentColor="var(--color-danger)"
-          />
-          <StatCard
-            label="Active Brokers"
-            value={stats?.activeBrokers ?? '—'}
-            sublabel="Phase 2 ready"
-            accentColor="var(--color-env)"
-          />
-          <StatCard
-            label="Cluster Health"
-            value={totalClusters > 0 ? `${freshClusters}/${totalClusters}` : '—'}
-            sublabel="Fresh / total"
-            accentColor="var(--color-nature)"
-          />
-        </div>
-      )}
+            background: 'rgba(230,57,70,0.06)',
+            border: '1px solid rgba(230,57,70,0.18)',
+          }}>
+            <p style={{ fontSize: '13px', fontWeight: 300, color: 'var(--color-danger)' }}>
+              Failed to load stats — {error}
+            </p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            {/* <StatCard
+              label="Total Audits"
+              value={stats?.totalShadowProperties ?? '—'}
+              sublabel="All time"
+              accentColor="var(--color-accent)"
+              icon={Building2}
+            /> */}
+            <StatCard
+              label="Hot Leads"
+              value={hot}
+              sublabel={`${totalLeads} total leads`}
+              accentColor="#E63946"
+              icon={Flame}
+            />
+            {/* <StatCard
+              label="Active Brokers"
+              value={stats?.activeBrokers ?? '—'}
+              sublabel="Phase 2 ready"
+              accentColor="var(--color-env)"
+              icon={UserCheck}
+            /> */}
+            {/* <StatCard
+              label="Cluster Health"
+              value={totalClusters > 0 ? `${freshClusters}/${totalClusters}` : '—'}
+              sublabel="Fresh / total"
+              accentColor="var(--color-nature)"
+              icon={Network}
+            /> */}
+          </div>
+        )}
+      </div>
 
-      {/* Leads tier breakdown */}
+      {/* ── Lead tier breakdown ───────────────────────────────── */}
       {!loading && !error && stats && (
-        <div style={{ marginBottom: 'var(--space-2xl)' }}>
-          <p
-            style={{
-              fontSize: '11px',
-              fontWeight: 400,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-gold)',
-              marginBottom: 'var(--space-md)',
-            }}
-          >
-            LEADS BY TIER
-          </p>
-          <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-            {[
-              { label: 'Hot', count: hot, color: 'var(--color-danger)', href: '/admin/leads?tier=hot' },
-              { label: 'Warm', count: warm, color: 'var(--color-warning)', href: '/admin/leads?tier=warm' },
-              { label: 'Lukewarm', count: lukewarm, color: 'var(--color-accent)', href: '/admin/leads?tier=lukewarm' },
-              { label: 'Cold', count: cold, color: 'var(--color-text-muted)', href: '/admin/leads?tier=cold' },
-            ].map(({ label, count, color, href }) => (
-              <Link
-                key={label}
-                href={href}
-                style={{ textDecoration: 'none' }}
-              >
-                <div
-                  className="glass-subtle"
-                  style={{
-                    padding: 'var(--space-sm) var(--space-md)',
-                    borderRadius: 'var(--radius-md)',
+        <div style={{ marginBottom: '40px' }}>
+          <SectionLabel>Leads by Tier</SectionLabel>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {TIER_CONFIG.map(({ key, label, color, href }) => {
+              const count = stats?.byTier?.[key] ?? 0;
+              return (
+                <Link key={key} href={href} style={{ textDecoration: 'none' }}>
+                  <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 'var(--space-sm)',
+                    gap: '10px',
+                    padding: '10px 16px',
+                    borderRadius: 'var(--radius-md)',
+                    background: '#10101E',
+                    border: '1px solid rgba(255,255,255,0.07)',
                     cursor: 'pointer',
-                    transition: 'background var(--duration-fast) ease',
-                  }}
-                >
-                  <span
-                    style={{
-                      width: '8px',
-                      height: '8px',
+                    transition: 'border-color 150ms ease, background 150ms ease',
+                    minWidth: '120px',
+                  }}>
+                    <span style={{
+                      width: '7px',
+                      height: '7px',
                       borderRadius: '50%',
                       background: color,
                       flexShrink: 0,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontSize: '13px',
-                      fontWeight: 400,
-                      color: 'var(--color-text-secondary)',
-                    }}
-                  >
-                    {label}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '15px',
-                      fontWeight: 500,
-                      color: color,
-                      marginLeft: '4px',
-                    }}
-                  >
-                    {count}
-                  </span>
-                </div>
-              </Link>
-            ))}
+                      boxShadow: `0 0 6px ${color}60`,
+                    }} />
+                    <span style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>
+                      {label}
+                    </span>
+                    <span style={{ fontSize: '18px', fontWeight: 700, color, letterSpacing: '-0.02em', marginLeft: 'auto', fontVariantNumeric: 'tabular-nums' }}>
+                      {count}
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Quick access links */}
+      {/* ── Quick access ──────────────────────────────────────── */}
       <div>
-        <p
-          style={{
-            fontSize: '11px',
-            fontWeight: 400,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-gold)',
-            marginBottom: 'var(--space-md)',
-          }}
-        >
-          QUICK ACCESS
-        </p>
-        <div style={{ display: 'flex', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-          {[
-            {
-              href: '/admin/shadow-properties',
-              label: 'Audited Properties',
-              meta: stats?.totalShadowProperties != null ? `${stats.totalShadowProperties} records` : null,
-            },
-            {
-              href: '/admin/leads',
-              label: 'All Leads',
-              meta: totalLeads > 0 ? `${totalLeads} records` : null,
-            },
-            {
-              href: '/admin/brokers',
-              label: 'Brokers',
-              meta: stats?.totalBrokers != null ? `${stats.totalBrokers} records` : null,
-            },
-            {
-              href: '/admin/clusters',
-              label: 'Clusters',
-              meta: totalClusters > 0 ? `${totalClusters} clusters` : null,
-            },
-            {
-              href: '/admin/blog',
-              label: 'Blog',
-              meta: 'Manage posts',
-            },
-          ].map(({ href, label, meta }) => (
-            <Link
-              key={href}
-              href={href}
-              style={{ textDecoration: 'none', flex: '1', minWidth: '160px' }}
-            >
-              <div
-                className="glass-card"
-                style={{
-                  padding: 'var(--space-md) var(--space-lg)',
-                  borderRadius: 'var(--radius-md)',
+        <SectionLabel>Quick Access</SectionLabel>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
+          {QUICK_LINKS.map(({ href, label, icon: Icon, metaKey, metaFixed }) => {
+            const meta = metaFixed ?? (metaKey && metaMap[metaKey] != null ? `${metaMap[metaKey]} records` : null);
+            return (
+              <Link key={href} href={href} style={{ textDecoration: 'none' }}>
+                <div style={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: '4px',
-                  transition: 'border-color var(--duration-normal) ease, transform var(--duration-normal) var(--ease-smooth)',
-                  height: '100%',
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: '14px',
-                    fontWeight: 400,
-                    color: 'var(--color-text-primary)',
-                  }}
-                >
-                  {label}
-                </span>
-                {meta && (
-                  <span
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: 300,
-                      color: 'var(--color-text-muted)',
-                    }}
-                  >
-                    {meta}
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
+                  alignItems: 'center',
+                  gap: '14px',
+                  padding: '16px 18px',
+                  borderRadius: 'var(--radius-md)',
+                  background: '#10101E',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  borderTop: '1px solid rgba(255,255,255,0.09)',
+                  cursor: 'pointer',
+                  transition: 'border-color 150ms ease, transform 150ms ease, background 150ms ease',
+                  position: 'relative',
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '9px',
+                    background: 'rgba(13,216,192,0.08)',
+                    border: '1px solid rgba(13,216,192,0.15)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    flexShrink: 0,
+                  }}>
+                    <Icon size={15} color="var(--color-accent)" strokeWidth={1.75} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.82)', lineHeight: 1, marginBottom: '4px' }}>
+                      {label}
+                    </p>
+                    {meta && (
+                      <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.28)' }}>
+                        {meta}
+                      </p>
+                    )}
+                  </div>
+                  <ArrowRight size={14} color="rgba(255,255,255,0.18)" style={{ flexShrink: 0 }} />
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

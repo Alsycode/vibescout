@@ -53,7 +53,13 @@ export default function AnalyzePage() {
   useEffect(() => {
     api.get('/auth/me')
       .then(() => setAuthChecked(true))
-      .catch(() => router.replace('/login'));
+      .catch((err) => {
+        if (err?.response?.status === 401) {
+          router.replace('/login');
+        } else {
+          setAuthChecked(true);
+        }
+      });
   }, [router]);
 
   if (!authChecked) {

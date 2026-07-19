@@ -17,7 +17,8 @@ api.interceptors.response.use(
   (error) => {
     const url = error?.config?.url ?? '';
     const isPaymentRoute = url.includes('/payment/');
-    if (typeof window !== 'undefined' && error?.response?.status === 401 && !isPaymentRoute) {
+    const isAuthCheck = url.includes('/auth/me');
+    if (typeof window !== 'undefined' && error?.response?.status === 401 && !isPaymentRoute && !isAuthCheck) {
       window.location.href = '/login';
     }
     return Promise.reject(error);

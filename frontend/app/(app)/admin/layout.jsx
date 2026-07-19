@@ -1,7 +1,3 @@
-// FILE: app/(app)/admin/layout.jsx
-// PURPOSE: Admin layout — requireAdmin check server-side, AdminSidebar + main content area.
-//          Admin panel uses glass system with blur cap 16px, minimal glow, no gradients.
-
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -29,29 +25,41 @@ export default function AdminLayout({ children }) {
   if (!authorized) {
     return (
       <div
+        className="teal-layout"
         style={{
           minHeight: '100vh',
           background: 'var(--color-bg)',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: '14px',
         }}
       >
-        <div
-          className="animate-glow-pulse"
-          style={{
-            width: '8px',
-            height: '8px',
-            borderRadius: '50%',
-            background: 'var(--color-accent)',
-          }}
-        />
+        <div style={{
+          width: '34px',
+          height: '34px',
+          borderRadius: '50%',
+          border: '2px solid rgba(13,216,192,0.10)',
+          borderTopColor: '#0DD8C0',
+          animation: 'adminSpin 0.75s linear infinite',
+        }} />
+        <p style={{
+          fontSize: '11px',
+          color: 'rgba(255,255,255,0.20)',
+          letterSpacing: '0.10em',
+          textTransform: 'uppercase',
+          fontWeight: 500,
+        }}>
+          Authenticating
+        </p>
       </div>
     );
   }
 
   return (
     <div
+      className="teal-layout"
       style={{
         display: 'flex',
         minHeight: '100vh',
@@ -77,14 +85,15 @@ export default function AdminLayout({ children }) {
             aria-label="Open sidebar"
             onClick={() => setSidebarOpen(true)}
           >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="2" y1="5" x2="16" y2="5" />
-              <line x1="2" y1="9" x2="16" y2="9" />
-              <line x1="2" y1="13" x2="16" y2="13" />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+              <line x1="2" y1="4" x2="14" y2="4" />
+              <line x1="2" y1="8" x2="14" y2="8" />
+              <line x1="2" y1="12" x2="14" y2="12" />
             </svg>
           </button>
-          <span style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.75)' }}>
-            VibeScout Admin
+          <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.45)', letterSpacing: '-0.01em' }}>
+            VibeScout{' '}
+            <span style={{ color: '#0DD8C0', opacity: 0.85 }}>Admin</span>
           </span>
         </div>
 

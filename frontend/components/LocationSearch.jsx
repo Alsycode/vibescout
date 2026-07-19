@@ -69,7 +69,7 @@ export default function LocationSearch({ onResolved, placeholder }) {
     try {
       const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
         componentRestrictions: { country: 'in' },
-        fields: ['geometry', 'name', 'place_id', 'formatted_address'],
+        fields: ['geometry', 'name', 'place_id', 'formatted_address', 'types'],
       });
 
       autocomplete.addListener('place_changed', () => {
@@ -80,6 +80,7 @@ export default function LocationSearch({ onResolved, placeholder }) {
           lng: place.geometry.location.lng(),
           name: place.name || place.formatted_address || '',
           placeId: place.place_id,
+          types: place.types || [],
         });
       });
 

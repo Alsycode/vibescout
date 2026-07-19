@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import LocationSearch from '../../../components/LocationSearch';
 import api from '../../../lib/api';
+import { getNonResidentialWarning } from '../../../lib/placeType';
 
 const LocationConfirmMap = dynamic(
   () => import('../../../components/LocationConfirmMap'),
@@ -49,6 +50,7 @@ export default function AnalyzePage() {
   const [resolved,    setResolved]    = useState(null);
   const [loading,     setLoading]     = useState(false);
   const [error,       setError]       = useState('');
+  const [warningDismissed, setWarningDismissed] = useState(false);
 
   useEffect(() => {
     api.get('/auth/me')
@@ -90,9 +92,11 @@ export default function AnalyzePage() {
   function handleReset() {
     setResolved(null);
     setError('');
+    setWarningDismissed(false);
   }
 
   const isConfirm = !!resolved;
+  const nonResidentialWarning = resolved ? getNonResidentialWarning(resolved.types) : null;
 
   return (
     <div
@@ -196,6 +200,52 @@ export default function AnalyzePage() {
             <LocationSearch onResolved={setResolved} />
           ) : (
             <div>
+              {nonResidentialWarning && !warningDismissed && (
+                <div
+                  style={{
+                    background: 'rgba(240,180,40,0.08)',
+                    border: '1px solid rgba(240,180,40,0.28)',
+                    borderRadius: '10px',
+                    padding: '12px 16px',
+                    marginBottom: '20px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '10px',
+                  }}
+                >
+                  <span style={{ fontSize: '15px', lineHeight: 1.4 }} aria-hidden="true">⚠️</span>
+                  <p
+                    style={{
+                      flex: 1,
+                      margin: 0,
+                      fontSize: '13px',
+                      fontWeight: 300,
+                      lineHeight: 1.55,
+                      color: 'rgba(255,255,255,0.75)',
+                    }}
+                  >
+                    {nonResidentialWarning}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setWarningDismissed(true)}
+                    aria-label="Dismiss warning"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'rgba(255,255,255,0.40)',
+                      fontSize: '14px',
+                      lineHeight: 1,
+                      cursor: 'pointer',
+                      padding: '2px',
+                      flexShrink: 0,
+                    }}
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+
               <LocationConfirmMap
                 lat={resolved.lat}
                 lng={resolved.lng}

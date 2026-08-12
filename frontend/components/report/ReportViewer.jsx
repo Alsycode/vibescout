@@ -7,6 +7,7 @@ import { useRef, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import SharePDFBar from '../SharePDFBar';
 import AmenitySummaryCard from './AmenitySummaryCard';
+import NearbyComplexesCard from './NearbyComplexesCard';
 
 const IntelligenceMapCard = dynamic(
   () => import('./IntelligenceMapCard'),
@@ -1018,10 +1019,63 @@ function LandHistoryCard({ data }) {
   );
 }
 
+// Mini cross-section: dashed line = surrounding ground level, dot = where the property sits.
+function TerrainProfile({ relativeM, color }) {
+  const clamped = Math.max(-12, Math.min(12, relativeM));
+  const dotY = 20 - (clamped / 12) * 13;
+  return (
+    <svg viewBox="0 0 100 40" style={{ width: '100%', height: 38 }} preserveAspectRatio="none">
+      <line x1="4" y1="20" x2="96" y2="20"
+        stroke="rgba(255,255,255,0.18)" strokeWidth="1" strokeDasharray="3 3" />
+      <line x1="50" y1="20" x2="50" y2={dotY}
+        stroke={color} strokeWidth="1" opacity="0.45" />
+      <circle cx="50" cy={dotY} r="3.4" fill={color} />
+    </svg>
+  );
+}
+
+function TerrainCard({ data }) {
+  if (!data) return null;
+  const riskColor = RISK_COLORS[data.drainageRisk] ?? '#D4A853';
+  const sign = data.relativeM > 0 ? '+' : '';
+  return (
+    <div style={{
+      background: 'rgba(8,12,28,0.85)', border: '1px solid rgba(255,255,255,0.07)',
+      borderTop: `2px solid ${riskColor}50`, borderRadius: 12, padding: '16px 14px',
+    }}>
+      <p style={{ fontSize: 8, fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>Terrain · Drainage</p>
+      <p style={{ fontSize: 19, fontWeight: 700, color: riskColor, lineHeight: 1.15, marginBottom: 3 }}>{data.terrainPosition}</p>
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginBottom: 10 }}>{data.drainageRisk} drainage risk</p>
+
+      <TerrainProfile relativeM={data.relativeM} color={riskColor} />
+      <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.22)', textAlign: 'center', marginTop: 2, marginBottom: 10, letterSpacing: '0.06em' }}>
+        vs surrounding ground level
+      </p>
+
+      <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5, marginBottom: 10 }}>{data.reason}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 300 }}>
+          Elevation: {data.elevationM}m ({sign}{data.relativeM}m vs surroundings)
+        </p>
+        <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.28)', fontWeight: 300 }}>
+          Local relief: {data.localReliefM}m across {data.samplesUsed} sample points
+        </p>
+        <p style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.24)', marginTop: 6, fontWeight: 300, lineHeight: 1.5, fontStyle: 'italic' }}>
+          Shows how water flows across the land. Does not account for stormwater drains or
+          sewer capacity, which drive flooding in flat cities.
+        </p>
+        <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.18)', marginTop: 4, fontWeight: 300 }}>
+          Source: {data.source === 'open-meteo' ? 'Copernicus DEM GLO-90' : 'SRTM 30m'} · {data.confidence} confidence
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function DerivedIntelligence({ derivedSignals }) {
   if (!derivedSignals) return null;
-  const { livabilityIndex, maturityScore, solarSavings, infrastructureMomentum, landHistory } = derivedSignals;
-  if (!livabilityIndex && !maturityScore && !solarSavings && !infrastructureMomentum && !landHistory) return null;
+  const { livabilityIndex, maturityScore, solarSavings, infrastructureMomentum, landHistory, terrain } = derivedSignals;
+  if (!livabilityIndex && !maturityScore && !solarSavings && !infrastructureMomentum && !landHistory && !terrain) return null;
 
   return (
     <div style={{ maxWidth: 860, width: '100%', margin: '0 auto 16px' }}>
@@ -1032,6 +1086,7 @@ function DerivedIntelligence({ derivedSignals }) {
         <SolarSavingsCard data={solarSavings} />
         <InfraCard data={infrastructureMomentum} />
         <LandHistoryCard data={landHistory} />
+        <TerrainCard data={terrain} />
       </div>
     </div>
   );
@@ -1266,6 +1321,7 @@ export default function ReportViewer({ report, shareToken, readonly, preferences
         lng={report.propertyLng}
         priorities={preferences?.step5?.amenityPriorities ?? []}
       />
+      <NearbyComplexesCard nearbyComplexes={signals.nearbyComplexes} />
       <LocalIntelligence localNews={signals.localNews} />
       <DerivedIntelligence derivedSignals={signals.derivedSignals} />
       <RentalSection

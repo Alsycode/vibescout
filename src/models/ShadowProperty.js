@@ -13,8 +13,14 @@ const ShadowPropertySchema = new mongoose.Schema({
   },
   confirmedByUser: { type: Boolean, default: false },
   clusterId: { type: String },
+  location: {
+    displayName: { type: String },
+    cityName: { type: String },
+    locationCascade: [{ type: String }],
+  },
   userProvidedSpecs: {
     budgetBracket: { type: String },
+    actualAmount: { type: Number },
     bhk: {
       type: String,
       enum: ['1BHK', '2BHK', '3BHK', '4BHK+', 'Studio', 'Villa', 'Plot', 'PG'],
@@ -123,6 +129,19 @@ const ShadowPropertySchema = new mongoose.Schema({
       reason:            String,
       hasHistoricalWater: Boolean,
       source:            String,
+    },
+    terrain: {
+      elevationM:         Number,
+      surroundingMedianM: Number,
+      relativeM:          Number,
+      localReliefM:       Number,
+      terrainPosition:    String,
+      drainageRisk:       String,
+      drainageScore:      Number,
+      reason:             String,
+      confidence:         String,
+      samplesUsed:        Number,
+      source:             String,
     },
   },
   dataSource: {

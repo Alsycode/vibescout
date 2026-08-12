@@ -17,6 +17,7 @@ import { computeMaturityScore } from './maturity.service.js';
 import { computeSolarSavings } from './solarSavings.service.js';
 import { extractInfraSignals } from './infrastructureMomentum.service.js';
 import { fetchLandHistory } from './jrc.service.js';
+import { fetchTerrain } from './terrain.service.js';
 
 // ─── Part 9a — Waterfall helpers ────────────────────────────────────
 
@@ -227,12 +228,14 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
   const solarSavings           = computeSolarSavings(solar?.peakSunHours);
   const infrastructureMomentum = extractInfraSignals(localNews?.headlines ?? []);
 
-  let landHistory = null;
-  try {
-    landHistory = await withTimeout(fetchLandHistory(lat, lng), 12000);
-  } catch (err) {
-    console.warn('[Pipeline] Land history fetch failed:', err.message);
-  }
+  // Both are geospatial lookups against external DEM/water services — run them together
+  // so the slower of the two sets the wall-clock cost rather than their sum.
+  const [landHistory, terrain] = await Promise.all([
+    withTimeout(fetchLandHistory(lat, lng), 12000)
+      .catch(err => { console.warn('[Pipeline] Land history fetch failed:', err.message); return null; }),
+    withTimeout(fetchTerrain(lat, lng), 12000)
+      .catch(err => { console.warn('[Pipeline] Terrain fetch failed:', err.message); return null; }),
+  ]);
 
   // SF-02: Removed dead Redis write — session:{sessionId}:intelligence was never read
   // Intelligence is persisted to MongoDB (ShadowProperty) and read from there by report generation
@@ -243,7 +246,7 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
       intelligence: {
         aqi, noise, solar, weather, amenities, localNews,
         livabilityIndex, maturityScore, solarSavings,
-        infrastructureMomentum, landHistory,
+        infrastructureMomentum, landHistory, terrain,
       },
       dataSource: {
         aqi:       aqi.source,

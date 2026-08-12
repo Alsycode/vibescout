@@ -9,7 +9,7 @@ import User from '../src/models/User.js';
 const ACCOUNTS = [
   { name: 'User One',    email: 'user1@vibescout.com', password: 'user1pass', role: 'user' },
   { name: 'User Two',    email: 'user2@vibescout.com', password: 'user2pass', role: 'user' },
-  { name: 'Admin',       email: 'admin@vibescout.com', password: 'adminpass', role: 'admin' },
+  { name: 'Admin',       email: 'admin@vibescout.com', password: '.env', role: 'admin' },
 ];
 
 async function seed() {

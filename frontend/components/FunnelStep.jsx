@@ -5,9 +5,10 @@
 
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import LocationSearch from './LocationSearch';
+import api from '../lib/api';
 
 const LocationConfirmMap = dynamic(
   () => import('./LocationConfirmMap'),
@@ -146,6 +147,7 @@ function Step1({ onSubmit, loading, initialData }) {
       : null
   );
   const [workplaceConfirmed, setWorkplaceConfirmed] = useState(!!initialData?.workplaceLat);
+  const [nearbyComplexesCount, setNearbyComplexesCount] = useState(null);
   const [commuteMode, setCommuteMode] = useState(initialData?.commuteMode ?? '');
   const [maxCommuteMinutes, setMaxCommuteMinutes] = useState(
     initialData?.maxCommuteMinutes ? String(initialData.maxCommuteMinutes) : ''
@@ -157,7 +159,21 @@ function Step1({ onSubmit, loading, initialData }) {
   const handleWorkplaceResolved = useCallback((result) => {
     setWorkplaceResolved(result);
     setWorkplaceConfirmed(false);
+    setNearbyComplexesCount(null);
   }, []);
+
+  // Fire-and-forget teaser lookup once the workplace pin is confirmed — purely informational,
+  // failures are silent since this is not required to proceed through the funnel.
+  useEffect(() => {
+    if (!workplaceConfirmed || !workplaceResolved?.lat || !workplaceResolved?.lng) return;
+    let cancelled = false;
+    api.get('/funnel/nearby-complexes-count', {
+      params: { lat: workplaceResolved.lat, lng: workplaceResolved.lng },
+    })
+      .then((res) => { if (!cancelled) setNearbyComplexesCount(res.data?.count ?? null); })
+      .catch(() => { if (!cancelled) setNearbyComplexesCount(null); });
+    return () => { cancelled = true; };
+  }, [workplaceConfirmed, workplaceResolved?.lat, workplaceResolved?.lng]);
 
   function handleSubmit() {
     if (!canSubmit) return;
@@ -272,6 +288,16 @@ function Step1({ onSubmit, loading, initialData }) {
                   Change
                 </button>
               </div>
+            )}
+            {workplaceConfirmed && nearbyComplexesCount !== null && nearbyComplexesCount > 0 && (
+              <p style={{
+                fontSize: '12px',
+                fontWeight: 300,
+                color: 'var(--color-accent-70)',
+                marginTop: 'var(--space-xs)',
+              }}>
+                Found {nearbyComplexesCount} residential complex{nearbyComplexesCount === 1 ? '' : 'es'} within 5km — we'll show these in your report.
+              </p>
             )}
           </div>
 

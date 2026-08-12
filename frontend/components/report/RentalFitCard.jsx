@@ -52,9 +52,16 @@ const MOVE_IN_LABELS = {
   '3_plus_months': '3+ months',
 };
 
+const BASELINE_CONFIDENCE_LABELS = {
+  high: 'Based on sourced market data',
+  medium: 'Estimated — limited local data available',
+  low: 'Estimated — regional/national average used, no local data',
+};
+
 export default function RentalFitCard({ budget, financial, financialNote, preferences }) {
   const rentToIncomeRatio = financial?.rentToIncomeRatio ?? null;
   const annualRentBurden = financial?.annualRentBurden ?? null;
+  const rentBaseline = financial?.rentBaseline ?? null;
 
   const rentPrefs = preferences?.step7 ?? {};
   const leaseDuration = rentPrefs.leaseDuration;
@@ -305,6 +312,61 @@ export default function RentalFitCard({ budget, financial, financialNote, prefer
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Market baseline comparison */}
+      {rentBaseline && (
+        <div
+          style={{
+            padding: '16px 18px',
+            background: 'rgba(11,11,11,0.55)',
+            border: '1px solid rgba(13,216,192,0.07)',
+            borderRadius: '12px',
+            marginBottom: '12px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: '10px',
+              marginBottom: '8px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '9px',
+                fontWeight: 500,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(13,216,192,0.45)',
+              }}
+            >
+              Vs. Market Baseline{rentBaseline.matchedLabel ? ` — ${rentBaseline.matchedLabel}` : ''}
+            </p>
+            <VerdictBadge verdict={rentBaseline.verdict} />
+          </div>
+          <p
+            style={{
+              fontSize: '13px',
+              fontWeight: 400,
+              color: 'rgba(255,255,255,0.8)',
+              marginBottom: '4px',
+            }}
+          >
+            Your rent (₹{rentBaseline.actualRent.toLocaleString('en-IN')}) is{' '}
+            {rentBaseline.deltaPercent > 0 ? `${rentBaseline.deltaPercent}% above` : `${Math.abs(rentBaseline.deltaPercent)}% below`}{' '}
+            the average of ₹{rentBaseline.baselineAvg.toLocaleString('en-IN')}
+          </p>
+          <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.4)' }}>
+            {rentBaseline.label}
+          </p>
+          <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.28)', marginTop: '6px' }}>
+            {BASELINE_CONFIDENCE_LABELS[rentBaseline.confidence]}
+          </p>
         </div>
       )}
 

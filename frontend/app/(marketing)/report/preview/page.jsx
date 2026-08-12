@@ -150,6 +150,66 @@ const MOCK_REPORT = {
         },
       ],
     },
+    // Values below are real output from the live services for PROPERTY_LAT/LNG, so the
+    // preview reflects what an actual Whitefield report renders.
+    derivedSignals: {
+      livabilityIndex: {
+        score: 78,
+        grade: 'B+',
+        breakdown: {
+          aqi:   { score: 88 },
+          noise: { score: 68 },
+          parks: { score: 70 },
+          solar: { score: 82 },
+        },
+      },
+      maturityScore: {
+        score: 72,
+        band: 'Established',
+        counts: {
+          schools: 3, hospitals: 2, cafes: 3,
+          parks: 2, gyms: 1, restaurants: 2, worship: 1,
+        },
+      },
+      solarSavings: {
+        annualSavingsRs: 46800,
+        annualKwh: 5850,
+        dailyKwh: 16,
+        panelKw: 3,
+        displayText: '₹46,800/yr',
+      },
+      infrastructureMomentum: {
+        hasSignals: true,
+        count: 2,
+        signals: [
+          { title: 'Whitefield Metro Phase 3 to be operational by March 2027', matchedKeywords: ['metro', 'corridor'] },
+          { title: 'New flyover near Marathahalli to ease peak-hour traffic',  matchedKeywords: ['flyover'] },
+        ],
+      },
+      landHistory: {
+        floodRisk: 'Low-Moderate',
+        floodRiskScore: 25,
+        waterOccurrence: null,
+        nearestWaterBodyM: 420,
+        reason: 'Nearest water body is 420m away',
+        hasHistoricalWater: null,
+        source: 'osm',
+      },
+      terrain: {
+        elevationM: 887,
+        surroundingMedianM: 879,
+        relativeM: 8,
+        localReliefM: 51,
+        terrainPosition: 'Elevated',
+        drainageRisk: 'Low',
+        drainageScore: 12,
+        reason: 'Property sits about 8m above the surrounding area — runoff drains away from this location.',
+        isCoastal: false,
+        confidence: 'moderate',
+        samplesUsed: 37,
+        source: 'open-meteo',
+      },
+    },
   },
   financial: {
     rentToIncomeRatio: 34,

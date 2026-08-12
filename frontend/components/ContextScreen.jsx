@@ -143,13 +143,16 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
 export default function ContextScreen({ sessionId, onComplete }) {
   const [listingType, setListingType] = useState('sale');
   const [budgetBracket, setBudgetBracket] = useState('');
+  const [actualAmount, setActualAmount] = useState('');
   const [bhk, setBhk] = useState('');
   const [floor, setFloor] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const brackets = listingType === 'sale' ? SALE_BRACKETS : RENT_BRACKETS;
-  const allFilled = budgetBracket && bhk && floor;
+  const parsedAmount = Number(actualAmount);
+  const amountValid = actualAmount !== '' && Number.isFinite(parsedAmount) && parsedAmount > 0;
+  const allFilled = budgetBracket && bhk && floor && amountValid;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -160,6 +163,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
       await api.post(`/analyze/${sessionId}/context`, {
         listingType,
         budgetBracket,
+        actualAmount: parsedAmount,
         bhk,
         floor,
       });
@@ -254,7 +258,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 type="button"
-                onClick={() => { setListingType('sale'); setBudgetBracket(''); }}
+                onClick={() => { setListingType('sale'); setBudgetBracket(''); setActualAmount(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -281,7 +285,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setListingType('rent'); setBudgetBracket(''); }}
+                onClick={() => { setListingType('rent'); setBudgetBracket(''); setActualAmount(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -309,7 +313,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
             </div>
           </div>
 
-          {/* 2-column row: Asking price + Floor */}
+          {/* 2-column row: Asking price bracket + Floor */}
           <div className="context-fields-grid">
             <div>
               <label htmlFor="budget" style={labelStyle}>
@@ -333,6 +337,37 @@ export default function ContextScreen({ sessionId, onComplete }) {
                 onChange={setFloor}
               />
             </div>
+          </div>
+
+          {/* Exact amount — used to compare against the market baseline for this area */}
+          <div>
+            <label htmlFor="actualAmount" style={labelStyle}>
+              {listingType === 'sale' ? 'Exact Asking Price (₹)' : 'Exact Monthly Rent (₹)'}
+            </label>
+            <input
+              id="actualAmount"
+              type="number"
+              min="1"
+              inputMode="numeric"
+              placeholder={listingType === 'sale' ? 'e.g. 8500000' : 'e.g. 32000'}
+              value={actualAmount}
+              onChange={(e) => setActualAmount(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                fontSize: '14px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: '10px',
+                color: 'rgba(255,255,255,0.88)',
+                boxSizing: 'border-box',
+              }}
+            />
+            <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
+              {listingType === 'sale'
+                ? 'Used in your financial breakdown.'
+                : 'We compare this against typical rents for the area in your report.'}
+            </p>
           </div>
 
           {/* BHK — full width */}

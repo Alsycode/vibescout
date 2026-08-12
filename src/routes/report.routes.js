@@ -9,10 +9,12 @@ import { requireAuth } from '../middleware/auth.middleware.js';
 import { redisGet, redisSet } from '../lib/redis.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
 import { fetchCommuteRoute } from '../services/commute.service.js';
+import { fetchResidentialComplexes } from '../services/places.service.js';
 import { trackReportGenerated, trackFunnelAbandon } from '../services/analytics.service.js';
 import { callGroq } from '../services/groq.service.js';
 import { validateGroqOutput } from '../services/groqValidator.service.js';
 import { buildTemplateReport, NEWS_TEMPLATES } from '../services/reportTemplates.service.js';
+import { compareRentToBaseline } from '../services/baselineResolver.service.js';
 
 const router = Router();
 
@@ -55,15 +57,26 @@ const DOWN_PAYMENT_MIDPOINTS = {
   'Above 1Cr': 12500000,
 };
 
-function computeFinancialScores(userProvidedSpecs, preferences) {
+function computeFinancialScores(userProvidedSpecs, preferences, location) {
   const income = INCOME_MIDPOINTS[preferences.step7?.monthlyHouseholdIncome] ?? 75000;
   const listingType = userProvidedSpecs.listingType;
   const budgetBracket = userProvidedSpecs.budgetBracket;
 
   if (listingType === 'rent') {
-    const rent = RENT_MIDPOINTS[budgetBracket] ?? 25000;
+    const rent = userProvidedSpecs.actualAmount ?? RENT_MIDPOINTS[budgetBracket] ?? 25000;
     const monthlyRentPercent = Math.round((rent / income) * 100);
     const rentStressFreeScore = Math.max(0, Math.min(100, Math.round(100 - (monthlyRentPercent / 60) * 100)));
+
+    let rentBaseline = null;
+    if (userProvidedSpecs.actualAmount) {
+      rentBaseline = compareRentToBaseline({
+        cityName: location?.cityName,
+        suburb: location?.locationCascade?.[0],
+        bhk: userProvidedSpecs.bhk,
+        actualRent: userProvidedSpecs.actualAmount,
+      });
+    }
+
     return {
       monthlyRentPercent,
       rentStressFreeScore,
@@ -72,6 +85,7 @@ function computeFinancialScores(userProvidedSpecs, preferences) {
       // field names expected by RentalFitCard
       rentToIncomeRatio: monthlyRentPercent,
       annualRentBurden: `₹${(rent * 12).toLocaleString('en-IN')} / yr`,
+      rentBaseline,
     };
   }
 
@@ -200,18 +214,22 @@ router.get('/generate', requireAuth, async (req, res, next) => {
     const workplaceLat = preferences.step1?.workplaceLat;
     const workplaceLng = preferences.step1?.workplaceLng;
     let commuteRoute = null;
+    let nearbyComplexes = { items: [], count: 0, source: 'unavailable' };
     if (wfhStatus !== 'full-time' && workplaceLat && workplaceLng) {
-      commuteRoute = await fetchCommuteRoute(
-        sp.coordinates.lat, sp.coordinates.lng,
-        workplaceLat, workplaceLng,
-        preferences.step1?.commuteMode,
-      );
+      [commuteRoute, nearbyComplexes] = await Promise.all([
+        fetchCommuteRoute(
+          sp.coordinates.lat, sp.coordinates.lng,
+          workplaceLat, workplaceLng,
+          preferences.step1?.commuteMode,
+        ),
+        fetchResidentialComplexes(workplaceLat, workplaceLng),
+      ]);
     }
 
     const verdictObject = computeAllVerdicts(sp, preferences, {
       realCommuteMins: commuteRoute?.durationMinutes ?? null,
     });
-    const financialScores = computeFinancialScores(sp.userProvidedSpecs, preferences);
+    const financialScores = computeFinancialScores(sp.userProvidedSpecs, preferences, sp.location);
 
     const factSheet = {
       ...verdictObject,
@@ -277,6 +295,11 @@ router.get('/generate', requireAuth, async (req, res, next) => {
           workplaceLat: workplaceLat ?? null,
           workplaceLng: workplaceLng ?? null,
         },
+        nearbyComplexes: {
+          ...nearbyComplexes,
+          workplaceLat: workplaceLat ?? null,
+          workplaceLng: workplaceLng ?? null,
+        },
         budget: {
           bracket: sp.userProvidedSpecs.budgetBracket,
           verdict: verdictObject.budgetVerdict,
@@ -308,6 +331,7 @@ router.get('/generate', requireAuth, async (req, res, next) => {
           solarSavings:           sp.intelligence.solarSavings           ?? null,
           infrastructureMomentum: sp.intelligence.infrastructureMomentum ?? null,
           landHistory:            sp.intelligence.landHistory            ?? null,
+          terrain:                sp.intelligence.terrain                ?? null,
         },
       },
       financial: financialScores,

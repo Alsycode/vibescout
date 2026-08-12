@@ -124,6 +124,9 @@ router.post('/start', requireAuth, async (req, res, next) => {
       const geo = await reverseGeocode(lat, lng);
       if (geo.cityName) cityName = geo.cityName;
       if (geo.locationCascade) locationCascade = geo.locationCascade;
+      await ShadowProperty.findByIdAndUpdate(sp._id, {
+        location: { displayName: geo.displayName, cityName, locationCascade },
+      });
     } catch {
       // fallback to name
     }
@@ -140,7 +143,7 @@ router.post('/start', requireAuth, async (req, res, next) => {
 router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
   try {
     const { sessionId } = req.params;
-    const { budgetBracket, bhk, floor, listingType } = req.body;
+    const { budgetBracket, actualAmount, bhk, floor, listingType } = req.body;
 
     if (!VALID_LISTING_TYPE.includes(listingType)) {
       return res.status(400).json({ error: 'Invalid listingType — must be sale or rent' });
@@ -159,9 +162,14 @@ router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid budgetBracket for selected listingType' });
     }
 
+    const parsedAmount = Number(actualAmount);
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+      return res.status(400).json({ error: 'actualAmount must be a positive number' });
+    }
+
     const sp = await ShadowProperty.findOneAndUpdate(
       { sessionId },
-      { userProvidedSpecs: { budgetBracket, bhk, floor, listingType } },
+      { userProvidedSpecs: { budgetBracket, actualAmount: parsedAmount, bhk, floor, listingType } },
       { new: true }
     );
 

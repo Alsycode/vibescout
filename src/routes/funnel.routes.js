@@ -9,6 +9,7 @@ import { requireAuth } from '../middleware/auth.middleware.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
 import { computeLeadScore } from '../services/leadScore.service.js';
 import { trackFunnelStep, trackFunnelAbandon, trackAmenityPreference } from '../services/analytics.service.js';
+import { fetchResidentialComplexes } from '../services/places.service.js';
 import {
   logFunnelEvent,
   getStepCompletionRates,
@@ -89,6 +90,22 @@ router.post('/save', requireAuth, async (req, res, next) => {
     }
 
     res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /funnel/nearby-complexes-count — lightweight teaser for step1 workplace confirmation
+router.get('/nearby-complexes-count', requireAuth, async (req, res, next) => {
+  try {
+    const lat = parseFloat(req.query.lat);
+    const lng = parseFloat(req.query.lng);
+    if (isNaN(lat) || isNaN(lng)) {
+      return res.status(400).json({ error: 'lat and lng are required' });
+    }
+
+    const { count } = await fetchResidentialComplexes(lat, lng);
+    res.json({ count });
   } catch (err) {
     next(err);
   }

@@ -4,6 +4,7 @@
 import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
 import { haversineKm } from './clusterService.js';
+import { redisGet, redisSet } from '../lib/redis.js';
 
 async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
   const controller = new AbortController();
@@ -108,6 +109,88 @@ async function fetchFromClusterCache(clusterId) {
     };
   } catch {
     return null;
+  }
+}
+
+// Nearby residential complexes/apartment projects — discovery layer, not a listings feed.
+// Two broad keyword searches (not per-type) to keep Google Places API cost bounded;
+// cached by rounded coordinate since buildings don't move.
+const COMPLEX_KEYWORDS = ['apartment complex', 'residential complex'];
+const COMPLEX_CACHE_TTL_S = 30 * 24 * 60 * 60; // 30 days
+
+async function searchComplexesByKeyword(lat, lng, keyword) {
+  if (!process.env.GOOGLE_PLACES_API_KEY) return [];
+  try {
+    const url =
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json` +
+      `?location=${lat},${lng}&radius=5000&keyword=${encodeURIComponent(keyword)}` +
+      `&key=${process.env.GOOGLE_PLACES_API_KEY}`;
+    const res = await fetchWithTimeout(url, {}, 5000);
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (data.status !== 'OK' && data.status !== 'ZERO_RESULTS') return [];
+    return (data.results ?? []).map((place) => {
+      const placeLat = place.geometry?.location?.lat ?? lat;
+      const placeLng = place.geometry?.location?.lng ?? lng;
+      const distanceM = Math.round(haversineKm({ lat, lng }, { lat: placeLat, lng: placeLng }) * 1000);
+      return {
+        name: place.name,
+        distanceM,
+        placeId: place.place_id ?? null,
+        lat: placeLat,
+        lng: placeLng,
+        rating: place.rating ?? null,
+      };
+    });
+  } catch {
+    return [];
+  }
+}
+
+// Returns { items, count, source } — items are named complexes only (no price/availability).
+export async function fetchResidentialComplexes(lat, lng) {
+  const cacheKey = `complexes:${lat.toFixed(2)}:${lng.toFixed(2)}`;
+
+  try {
+    const cached = await redisGet(cacheKey);
+    if (cached) {
+      const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
+      return { ...parsed, source: 'cache' };
+    }
+  } catch {
+    // Redis miss — continue to live fetch
+  }
+
+  if (!process.env.GOOGLE_PLACES_API_KEY) {
+    return { items: [], count: 0, source: 'unavailable' };
+  }
+
+  try {
+    const results = await Promise.all(
+      COMPLEX_KEYWORDS.map((kw) => searchComplexesByKeyword(lat, lng, kw))
+    );
+    const seen = new Set();
+    const deduped = [];
+    for (const item of results.flat()) {
+      const key = item.placeId ?? item.name;
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      deduped.push(item);
+    }
+    deduped.sort((a, b) => a.distanceM - b.distanceM);
+    const items = deduped.slice(0, 12);
+    const payload = { items, count: items.length };
+
+    try {
+      await redisSet(cacheKey, JSON.stringify(payload), COMPLEX_CACHE_TTL_S);
+    } catch {
+      // Cache write failure is non-fatal
+    }
+
+    return { ...payload, source: 'live' };
+  } catch (err) {
+    console.error('[Places] Residential complexes fetch failed:', err.message);
+    return { items: [], count: 0, source: 'error' };
   }
 }
 

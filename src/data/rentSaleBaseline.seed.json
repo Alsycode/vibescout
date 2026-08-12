@@ -1,0 +1,2142 @@
+{
+  "meta": {
+    "generatedAt": "2026-07-28T00:00:00.000Z",
+    "notes": "Indicative baselines compiled from public aggregator reports and real-estate blogs (Housing.com/NoBroker/99acres-sourced summaries, Sobha, Squareyards, Casafy, etc.), not live listing data. For comparison/flagging use only, not a valuation. Villa/independent-house data was omitted for nearly all cities because no credible aggregate/average source could be found (only scattered individual listings existed, which were deliberately excluded per sourcing rules) — sale/rent figures below are apartment/flat baselines unless a villa block is explicitly present. Some BHK sizes are omitted at city or locality level where no sourced figure could be found; these gaps are intentional, not zeros. SECOND PASS (2026-07-29): Added villa/independent-house baselines for Bangalore, Hyderabad, Chennai, Pune, Gurgaon, Jaipur, Kochi, Kolkata, Noida, Surat, and Chandigarh (Mohali/Zirakpur) — aggregated from named builder/gated-community villa projects and locality-level villa-specific price data across multiple sources (see each city's sources array). Villa data intentionally omitted for Mumbai, Delhi, Ahmedabad, Indore, Nagpur, Lucknow where no credible multi-source villa/independent-house pricing could be found. Also added rent baselines for Indore (citywide + Vijay Nagar locality), Chandigarh (citywide 2BHK/3BHK), and additional Lucknow localities (Hazratganj, Indira Nagar, Alambagh) plus Gomti Nagar 3BHK."
+  },
+  "cities": {
+    "mumbai": {
+      "displayName": "Mumbai",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Mumbai",
+          "url": "https://www.nobroker.in/blog/property-rates-in-mumbai/"
+        },
+        {
+          "name": "NoBroker - Cost of Living in Mumbai 2026",
+          "url": "https://www.nobroker.in/blog/cost-of-living-in-mumbai/"
+        },
+        {
+          "name": "Casafy - Mumbai Property Rates 2026",
+          "url": "https://www.casafy.in/mumbai-property-rates/"
+        },
+        {
+          "name": "Sobha - Mumbai Real Estate Price Trends 2026",
+          "url": "https://www.sobha.com/blog/mumbai-real-estate-price-trends/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 25000,
+              "avg": 32500,
+              "high": 40000
+            },
+            "salePricePerSqft": {
+              "low": 18000,
+              "avg": 32000,
+              "high": 60000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 35000,
+              "avg": 55000,
+              "high": 90000
+            },
+            "salePricePerSqft": {
+              "low": 18000,
+              "avg": 32000,
+              "high": 60000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 60000,
+              "avg": 95000,
+              "high": 150000
+            },
+            "salePricePerSqft": {
+              "low": 18000,
+              "avg": 32000,
+              "high": 60000
+            }
+          }
+        }
+      },
+      "localities": {
+        "andheri-west": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 55000,
+                "high": 80000
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 50000,
+                "avg": 90000,
+                "high": 150000
+              },
+              "salePricePerSqft": {
+                "low": 38000,
+                "avg": 46500,
+                "high": 55000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 80000,
+                "avg": 150000,
+                "high": 250000
+              },
+              "salePricePerSqft": {
+                "low": 38000,
+                "avg": 46500,
+                "high": 55000
+              }
+            }
+          }
+        },
+        "bandra-west": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 40000,
+                "avg": 65000,
+                "high": 100000
+              },
+              "salePricePerSqft": {
+                "low": 35000,
+                "avg": 47500,
+                "high": 60000
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 70000,
+                "avg": 120000,
+                "high": 200000
+              },
+              "salePricePerSqft": {
+                "low": 35000,
+                "avg": 47500,
+                "high": 60000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 120000,
+                "avg": 200000,
+                "high": 400000
+              },
+              "salePricePerSqft": {
+                "low": 35000,
+                "avg": 47500,
+                "high": 60000
+              }
+            }
+          }
+        },
+        "powai": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 25000,
+                "avg": 40000,
+                "high": 60000
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 40000,
+                "avg": 70000,
+                "high": 120000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 70000,
+                "avg": 120000,
+                "high": 200000
+              }
+            }
+          }
+        },
+        "thane": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 25000,
+                "avg": 35000,
+                "high": 45000
+              },
+              "salePricePerSqft": {
+                "low": 18000,
+                "avg": 23000,
+                "high": 28000
+              }
+            }
+          }
+        },
+        "navi-mumbai": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 40000,
+                "high": 60000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 65000,
+                "high": 100000
+              }
+            }
+          }
+        }
+      }
+    },
+    "delhi-ncr-delhi": {
+      "displayName": "Delhi",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Delhi 2026",
+          "url": "https://www.nobroker.in/blog/property-rates-in-delhi/"
+        },
+        {
+          "name": "99acres - Property Rates in Delhi July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-delhi-prffid"
+        },
+        {
+          "name": "HexaHome - Circle Rate Rohini, Delhi 2026",
+          "url": "https://www.hexahome.in/circle-rate-in-rohini-delhi-hmcrr/"
+        },
+        {
+          "name": "HexaHome - Circle Rate Vasant Kunj, Delhi 2026",
+          "url": "https://www.hexahome.in/circle-rate-in-vasant-kunj-delhi-hmcrr/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 12000,
+              "avg": 20000,
+              "high": 40000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 20000,
+              "avg": 32500,
+              "high": 45000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 35000,
+              "avg": 55000,
+              "high": 80000
+            }
+          }
+        }
+      },
+      "localities": {
+        "dwarka": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 22500,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 18000,
+                "avg": 29000,
+                "high": 40000
+              }
+            }
+          }
+        },
+        "rohini": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 22500,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 6500,
+                "avg": 9300,
+                "high": 12100
+              }
+            }
+          }
+        },
+        "vasant-kunj": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 40000,
+                "high": 50000
+              },
+              "salePricePerSqft": {
+                "low": 13000,
+                "avg": 17000,
+                "high": 22000
+              }
+            }
+          }
+        },
+        "saket": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 38000,
+                "high": 50000
+              },
+              "salePricePerSqft": {
+                "low": 9000,
+                "avg": 11000,
+                "high": 13000
+              }
+            }
+          }
+        }
+      }
+    },
+    "delhi-ncr-gurgaon": {
+      "displayName": "Gurgaon (Gurugram)",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Gurgaon 2026",
+          "url": "https://www.nobroker.in/blog/property-rates-in-gurgaon/"
+        },
+        {
+          "name": "Ganga Realty - Property Rates in Gurgaon 2026",
+          "url": "https://www.gangarealty.com/blog/property-rates-in-gurgaon-real-estate/"
+        },
+        {
+          "name": "RentOk - Best Areas to Live in Gurgaon 2026",
+          "url": "https://rentok.com/blogs/market-trends/best-areas-to-live-in-gurgaon-ultimate-rental-guide"
+        },
+        {
+          "name": "CommonFloor - Golf Links Independent Floor, Sohna Road Gurgaon",
+          "url": "https://www.commonfloor.com/golf-links-independent-floor-gurgaon/povp-s7fwv1"
+        },
+        {
+          "name": "99acres - Property Rates in Sohna Road, Gurgaon 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-sohna-road-gurgaon-prffid"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 22000,
+              "avg": 31000,
+              "high": 40000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 30000,
+              "avg": 40000,
+              "high": 50000
+            }
+          }
+        },
+        "villa": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 3500,
+              "avg": 9600,
+              "high": 15750
+            }
+          }
+        }
+      },
+      "localities": {
+        "dlf-phase-1-golf-course-road": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 25000,
+                "avg": 37500,
+                "high": 50000
+              },
+              "salePricePerSqft": {
+                "low": 8000,
+                "avg": 16500,
+                "high": 25000
+              }
+            }
+          }
+        },
+        "sohna-road": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 22000,
+                "avg": 31000,
+                "high": 40000
+              },
+              "salePricePerSqft": {
+                "low": 9000,
+                "avg": 12250,
+                "high": 15500
+              }
+            }
+          }
+        },
+        "dwarka-expressway-new-gurgaon": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 8500,
+                "high": 12000
+              }
+            }
+          }
+        }
+      }
+    },
+    "delhi-ncr-noida": {
+      "displayName": "Noida",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Noida 2026",
+          "url": "https://www.nobroker.in/blog/property-rates-in-noida/"
+        },
+        {
+          "name": "99acres - Property Rates in Noida July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-noida-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Greater Noida",
+          "url": "https://www.squareyards.com/property-rates-in-greater-noida"
+        },
+        {
+          "name": "VillasInNoida - Luxury Villas in Noida 2026: Market Forecasts & Price Trends",
+          "url": "https://www.villasinnoida.com/luxury-villas-in-noida-2026-market-forecasts-price-trends-best-areas-to-invest.php"
+        },
+        {
+          "name": "HexaHome - Sector 150, Noida Rates 2026",
+          "url": "https://www.hexahome.in/property-rate-trends-in-sector-150-noida-hmprt/"
+        },
+        {
+          "name": "RiseVillas - Independent House in Noida Guide 2026",
+          "url": "https://risevillas.com/property/independent-house-in-noida-guide/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 8000,
+              "avg": 11250,
+              "high": 14500
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 8000,
+              "avg": 12100,
+              "high": 18000
+            }
+          },
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 8000,
+              "avg": 12100,
+              "high": 18000
+            }
+          }
+        }
+      },
+      "localities": {
+        "sector-62": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 16000,
+                "avg": 19000,
+                "high": 22000
+              },
+              "salePricePerSqft": {
+                "low": 9000,
+                "avg": 10400,
+                "high": 12000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 35000,
+                "avg": 40000,
+                "high": 45000
+              },
+              "salePricePerSqft": {
+                "low": 9000,
+                "avg": 10400,
+                "high": 12000
+              }
+            }
+          }
+        },
+        "sector-137": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5000,
+                "high": 5500
+              }
+            }
+          }
+        },
+        "noida-extension-greater-noida-west": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 7850,
+                "high": 9250
+              }
+            }
+          }
+        }
+      }
+    },
+    "bangalore": {
+      "displayName": "Bangalore",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NestriQo - Average Rent in Bangalore 2026",
+          "url": "https://www.nestriqo.com/guides/average-rent-in-bangalore-2026"
+        },
+        {
+          "name": "NestriQo - Rental Price Trends Bangalore 2026",
+          "url": "https://www.nestriqo.com/blog/rental-price-trends-in-bangalore"
+        },
+        {
+          "name": "Goodreturns - House Rent in Bangalore 2026",
+          "url": "https://www.goodreturns.in/personal-finance/house-rent-in-bangalore-2026-1bhk-2bhk-prices-area-wise-from-rs-5-500-to-rs-50-000-1501393.html"
+        },
+        {
+          "name": "99acres - Property Rates in Whitefield, Bangalore 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-whitefield-bangalore-east-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Indiranagar, Bangalore 2025",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-indiranagar-bangalore-south-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in HSR Layout, Bangalore 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-hsr-layout-bangalore-south-prffid"
+        },
+        {
+          "name": "AddressOfChoice - Top Gated Community Villa Projects in Bangalore",
+          "url": "https://www.addressofchoice.com/blog/top-gated-community-villa-projects-in-bangalore"
+        },
+        {
+          "name": "99acres - Villas for Rent in Whitefield, Bangalore",
+          "url": "https://www.99acres.com/villas-for-rent-in-whitefield-bangalore-east-ffid"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 12000,
+              "avg": 17000,
+              "high": 22000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 22000,
+              "avg": 33500,
+              "high": 45000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 35000,
+              "avg": 52500,
+              "high": 70000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 65000,
+              "avg": 94000,
+              "high": 128000
+            },
+            "rentPerMonth": {
+              "low": 100000,
+              "avg": 140000,
+              "high": 200000
+            }
+          },
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 65000,
+              "avg": 96000,
+              "high": 128000
+            },
+            "rentPerMonth": {
+              "low": 150000,
+              "avg": 200000,
+              "high": 300000
+            }
+          }
+        }
+      },
+      "localities": {
+        "whitefield": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 22000,
+                "avg": 30000,
+                "high": 40000
+              },
+              "salePricePerSqft": {
+                "low": 12450,
+                "avg": 14050,
+                "high": 18050
+              }
+            }
+          }
+        },
+        "koramangala": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 25000,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 20000,
+                "avg": 25000,
+                "high": 30000
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 38000,
+                "avg": 45000,
+                "high": 55000
+              },
+              "salePricePerSqft": {
+                "low": 20000,
+                "avg": 25000,
+                "high": 30000
+              }
+            }
+          }
+        },
+        "indiranagar": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 25000,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 10550,
+                "avg": 18750,
+                "high": 28050
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 38000,
+                "avg": 45000,
+                "high": 55000
+              },
+              "salePricePerSqft": {
+                "low": 10550,
+                "avg": 18750,
+                "high": 28050
+              }
+            }
+          }
+        },
+        "hsr-layout": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 22000,
+                "avg": 28500,
+                "high": 35000
+              },
+              "salePricePerSqft": {
+                "low": 14000,
+                "avg": 19500,
+                "high": 25000
+              }
+            }
+          }
+        },
+        "electronic-city": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 14000,
+                "avg": 18000,
+                "high": 22000
+              }
+            }
+          }
+        },
+        "btm-layout": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 18000,
+                "avg": 23000,
+                "high": 28000
+              }
+            }
+          }
+        }
+      }
+    },
+    "pune": {
+      "displayName": "Pune",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Pune 2026",
+          "url": "https://www.nobroker.in/blog/property-rates-in-pune/"
+        },
+        {
+          "name": "99acres - Property Rates in Pune July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-pune-prffid"
+        },
+        {
+          "name": "HexaHome - Kothrud, Pune 2026",
+          "url": "https://www.hexahome.in/compare-property-prices-in-kothrud-pune-hmcpp/"
+        },
+        {
+          "name": "CirclePe - Average Rent in Pune",
+          "url": "https://www.circlepe.club/blog/average-rent-in-pune"
+        },
+        {
+          "name": "Squareyards - Villas for Sale in Pune",
+          "url": "https://www.squareyards.com/sale/villas-for-sale-in-pune"
+        },
+        {
+          "name": "Squareyards - Kolte Patil Life Republic Twin Bungalows, Hinjewadi Pune",
+          "url": "https://www.squareyards.com/pune-residential-property/kolte-patil-life-republic-twin-bungalows/24891/project"
+        },
+        {
+          "name": "99acres - Kolte Patil Life Republic Hinjewadi, Pune",
+          "url": "https://www.99acres.com/kolte-patil-life-republic-hinjewadi-pune-npxid-r1363"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 13000,
+              "avg": 18500,
+              "high": 24000
+            },
+            "salePricePerSqft": {
+              "low": 5000,
+              "avg": 9000,
+              "high": 13000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 18000,
+              "avg": 28000,
+              "high": 39000
+            },
+            "salePricePerSqft": {
+              "low": 5000,
+              "avg": 9000,
+              "high": 13000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 30000,
+              "avg": 40000,
+              "high": 50000
+            },
+            "salePricePerSqft": {
+              "low": 5000,
+              "avg": 9000,
+              "high": 13000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 8500,
+              "avg": 14000,
+              "high": 29900
+            }
+          },
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 9450,
+              "avg": 10800,
+              "high": 11800
+            }
+          }
+        }
+      },
+      "localities": {
+        "kharadi": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 27500,
+                "high": 35000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 32000,
+                "avg": 43500,
+                "high": 55000
+              }
+            }
+          }
+        },
+        "wakad": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 13000,
+                "avg": 15000,
+                "high": 17000
+              },
+              "salePricePerSqft": {
+                "low": 7000,
+                "avg": 10500,
+                "high": 14000
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 16000,
+                "avg": 20500,
+                "high": 25000
+              },
+              "salePricePerSqft": {
+                "low": 7000,
+                "avg": 10500,
+                "high": 14000
+              }
+            }
+          }
+        },
+        "hinjewadi": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 18000,
+                "avg": 23000,
+                "high": 28000
+              },
+              "salePricePerSqft": {
+                "low": 7000,
+                "avg": 10500,
+                "high": 14000
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 9450,
+                "avg": 9700,
+                "high": 9950
+              }
+            },
+            "4bhk": {
+              "salePricePerSqft": {
+                "low": 9450,
+                "avg": 9700,
+                "high": 9950
+              }
+            }
+          }
+        },
+        "baner": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 18000,
+                "avg": 21000,
+                "high": 24000
+              },
+              "salePricePerSqft": {
+                "low": 12000,
+                "avg": 17000,
+                "high": 22000
+              }
+            }
+          }
+        },
+        "viman-nagar": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 27000,
+                "avg": 33000,
+                "high": 39000
+              }
+            }
+          }
+        },
+        "kothrud": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 11500,
+                "avg": 13500,
+                "high": 15500
+              }
+            }
+          }
+        },
+        "kondhwa": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 6000,
+                "high": 7000
+              }
+            }
+          }
+        }
+      }
+    },
+    "hyderabad": {
+      "displayName": "Hyderabad",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Hyderabad",
+          "url": "https://www.nobroker.in/blog/property-rates-in-hyderabad/"
+        },
+        {
+          "name": "99acres - Property Rates in Hyderabad July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-hyderabad-prffid"
+        },
+        {
+          "name": "HousingPal - Gachibowli vs Kondapur vs Madhapur 2026",
+          "url": "https://www.housingpal.in/blog/gachibowli-vs-kondapur-vs-madhapur-which-area-to-rent-in-hyderabad-in-2026"
+        },
+        {
+          "name": "KLM Projects - Gated Community Villas for Sale in Hyderabad",
+          "url": "https://klmprojects.in/gated-community-villas-for-sale-in-hyderabad/"
+        },
+        {
+          "name": "KLM Projects - Luxury Villas for Sale in Hyderabad 2026 Guide",
+          "url": "https://klmprojects.in/luxury-villas-for-sale-in-hyderabad/"
+        },
+        {
+          "name": "RealtyPromoo - Best Luxury Villas in Hyderabad Under 5 Crore 2026",
+          "url": "https://realtypromoo.com/guides/best-luxury-villas-in-hyderabad-under-5-crore-in-2026"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 15000,
+              "avg": 21500,
+              "high": 35000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 3500,
+              "avg": 10000,
+              "high": 18000
+            }
+          },
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 3500,
+              "avg": 11000,
+              "high": 20000
+            }
+          }
+        }
+      },
+      "localities": {
+        "gachibowli": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 18000,
+                "high": 22000
+              },
+              "salePricePerSqft": {
+                "low": 9000,
+                "avg": 11300,
+                "high": 13500
+              }
+            }
+          }
+        },
+        "hitech-city": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 18000,
+                "high": 22000
+              },
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 7800,
+                "high": 10000
+              }
+            }
+          }
+        },
+        "kondapur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 8000,
+                "avg": 10000,
+                "high": 12000
+              }
+            }
+          }
+        },
+        "kukatpally": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 7050,
+                "high": 8500
+              }
+            }
+          }
+        },
+        "madhapur": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 18000,
+                "high": 22000
+              }
+            }
+          }
+        }
+      }
+    },
+    "chennai": {
+      "displayName": "Chennai",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "NoBroker - Property Rates in Chennai 2026",
+          "url": "https://www.nobroker.in/blog/property-rates-in-chennai/"
+        },
+        {
+          "name": "99acres - Property Rates in Chennai July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-chennai-prffid"
+        },
+        {
+          "name": "HexaHome - Adyar, Chennai 2026",
+          "url": "https://www.hexahome.in/compare-property-prices-in-adyar-chennai-hmcpp/"
+        },
+        {
+          "name": "Livehomes - Location Wise Property Rate per Sq ft in Chennai 2026",
+          "url": "https://www.livehomes.in/blog-details/Location-Wise-Property-Rate-per-Sq-ft-in-Chennai-2026-Updated"
+        },
+        {
+          "name": "Findbhk - Villas for Sale in OMR, Chennai",
+          "url": "https://findbhk.com/villas-for-sale-in-omr"
+        },
+        {
+          "name": "NoBroker - Gated Community Plots in Chennai 2026",
+          "url": "https://www.nobroker.in/blog/gated-community-plots-in-chennai/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 6000,
+              "avg": 12000,
+              "high": 18000
+            },
+            "salePricePerSqft": {
+              "low": 4000,
+              "avg": 9500,
+              "high": 15000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 9000,
+              "avg": 16000,
+              "high": 23000
+            },
+            "salePricePerSqft": {
+              "low": 4000,
+              "avg": 9500,
+              "high": 15000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 15000,
+              "avg": 27500,
+              "high": 40000
+            },
+            "salePricePerSqft": {
+              "low": 4000,
+              "avg": 9500,
+              "high": 15000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 2350,
+              "avg": 6100,
+              "high": 9500
+            }
+          }
+        }
+      },
+      "localities": {
+        "omr": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 12000,
+                "avg": 12500,
+                "high": 13000
+              }
+            }
+          }
+        },
+        "velachery": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 10500,
+                "avg": 11000,
+                "high": 11500
+              }
+            }
+          }
+        },
+        "anna-nagar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 16000,
+                "avg": 18600,
+                "high": 21000
+              }
+            }
+          }
+        },
+        "adyar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 16000,
+                "avg": 18500,
+                "high": 21000
+              }
+            }
+          }
+        },
+        "porur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 8250,
+                "high": 10500
+              }
+            }
+          }
+        }
+      }
+    },
+    "kolkata": {
+      "displayName": "Kolkata",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "MyGate - Cost of living in Kolkata 2026",
+          "url": "https://mygate.com/blog/neighbourhood/cost-of-living-in-kolkata/"
+        },
+        {
+          "name": "Squareyards - Rajarhat New Town, Kolkata",
+          "url": "https://www.squareyards.com/rajarhat-new-town-in-kolkata-overview-1219"
+        },
+        {
+          "name": "RenterFinder - Renting in Kolkata 2026 Guide",
+          "url": "https://www.renterfinder.com/blog/renting-in-kolkata-2026-guide"
+        },
+        {
+          "name": "HexaHome - Rajarhat (New Town), Kolkata Guide 2026",
+          "url": "https://www.hexahome.in/rajarhat-kolkata-locality-guide-hmlg/"
+        },
+        {
+          "name": "99acres - Villas in Rajarhat, Kolkata",
+          "url": "https://www.99acres.com/villas-in-rajarhat-kolkata-east-ffid"
+        },
+        {
+          "name": "Squareyards - Villas for Sale in Rajarhat, Kolkata",
+          "url": "https://www.squareyards.com/sale/villas-for-sale-in-rajarhat-kolkata"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 8000,
+              "avg": 9000,
+              "high": 20000
+            },
+            "salePricePerSqft": {
+              "low": 4500,
+              "avg": 6200,
+              "high": 10000
+            }
+          }
+        },
+        "villa": {
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 5500,
+              "avg": 7700,
+              "high": 9900
+            }
+          }
+        }
+      },
+      "localities": {
+        "salt-lake": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 16000,
+                "avg": 22000,
+                "high": 28000
+              },
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 8000,
+                "high": 10000
+              }
+            }
+          }
+        },
+        "new-town-rajarhat": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 16000,
+                "avg": 22000,
+                "high": 28000
+              },
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 7750,
+                "high": 8000
+              }
+            }
+          },
+          "villa": {
+            "4bhk": {
+              "salePricePerSqft": {
+                "low": 5500,
+                "avg": 7700,
+                "high": 9900
+              }
+            }
+          }
+        },
+        "ballygunge": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 25000,
+                "avg": 30000,
+                "high": 40000
+              }
+            }
+          }
+        }
+      }
+    },
+    "ahmedabad": {
+      "displayName": "Ahmedabad",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Bopal, Ahmedabad 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-bopal-ahmedabad-west-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Vastrapur, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/vastrapur-ahmedabad"
+        },
+        {
+          "name": "NoBroker - Cost of Living in Ahmedabad 2026",
+          "url": "https://www.nobroker.in/blog/cost-of-living-in-ahmedabad/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 12000,
+              "avg": 18500,
+              "high": 25000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 20000,
+              "avg": 30000,
+              "high": 42500
+            }
+          }
+        }
+      },
+      "localities": {
+        "bopal": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4650,
+                "avg": 5400,
+                "high": 6500
+              }
+            }
+          }
+        },
+        "south-bopal": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5100,
+                "high": 6000
+              }
+            }
+          }
+        },
+        "vastrapur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 7500,
+                "avg": 8650,
+                "high": 9500
+              }
+            }
+          }
+        },
+        "satellite": {
+          "apartment": {
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 40000,
+                "high": 42500
+              },
+              "salePricePerSqft": {
+                "low": 7500,
+                "avg": 8150,
+                "high": 9000
+              }
+            }
+          }
+        },
+        "sg-highway": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 8000,
+                "avg": 9250,
+                "high": 10500
+              }
+            }
+          }
+        }
+      }
+    },
+    "jaipur": {
+      "displayName": "Jaipur",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Vaishali Nagar, Jaipur 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-vaishali-nagar-jaipur-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Jaipur July-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-jaipur-prffid"
+        },
+        {
+          "name": "Sankalp Builders - Flat in Rent Jaipur 2026",
+          "url": "https://sankalpbuilders.com/flat-in-rent-jaipur-tips-2026/"
+        },
+        {
+          "name": "Squareyards - Property Rates in Mansarovar, Jaipur",
+          "url": "https://www.squareyards.com/property-rates/mansarovar-jaipur"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 7000,
+              "avg": 11000,
+              "high": 15000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 11000,
+              "avg": 16500,
+              "high": 22000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 20000,
+              "avg": 27500,
+              "high": 35000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 4900,
+              "avg": 8800,
+              "high": 16100
+            }
+          }
+        }
+      },
+      "localities": {
+        "vaishali-nagar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4000,
+                "avg": 4950,
+                "high": 6000
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 5349,
+                "avg": 5349,
+                "high": 5349
+              }
+            }
+          }
+        },
+        "malviya-nagar": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 8000,
+                "avg": 11500,
+                "high": 15000
+              }
+            }
+          }
+        },
+        "mansarovar": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 11000,
+                "avg": 16000,
+                "high": 22000
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 4900,
+                "avg": 10500,
+                "high": 16100
+              }
+            }
+          }
+        }
+      }
+    },
+    "lucknow": {
+      "displayName": "Lucknow",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Gomti Nagar, Lucknow 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-gomti-nagar-lucknow-prffid"
+        },
+        {
+          "name": "Squareyards - Cost of Living in Lucknow 2026",
+          "url": "https://www.squareyards.com/blog/cost-of-living-in-lucknow-2"
+        },
+        {
+          "name": "RealEstateIndia - 2 BHK Flats for Rent in Hazratganj, Lucknow",
+          "url": "https://www.realestateindia.com/lucknow-property/2-bhk-flats-apartments-for-rent-in-hazratganj-ffid.htm"
+        },
+        {
+          "name": "RealEstateIndia - Flats/Apartments for Rent in Hazratganj, Lucknow",
+          "url": "https://www.realestateindia.com/lucknow-property/flats-apartments-for-rent-in-hazratganj.htm"
+        },
+        {
+          "name": "HexaHome - Flats for Rent in Lucknow",
+          "url": "https://www.hexahome.in/flats-for-rent-in-lucknow-hmfr/"
+        },
+        {
+          "name": "Squareyards - 2 BHK for Rent in Lucknow",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-lucknow"
+        },
+        {
+          "name": "Squareyards - 3 BHK for Rent in Gomti Nagar, Lucknow",
+          "url": "https://www.squareyards.com/rent/3-bhk-for-rent-in-gomti-nagar-lucknow"
+        },
+        {
+          "name": "HexaHome - Flats for Rent in Gomti Nagar, Lucknow 2026",
+          "url": "https://www.hexahome.in/flats-for-rent-in-gomti-nagar-lucknow-hmfr/"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "1bhk": {
+            "rentPerMonth": {
+              "low": 7500,
+              "avg": 15000,
+              "high": 20000
+            }
+          },
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 8000,
+              "avg": 20000,
+              "high": 35000
+            }
+          }
+        }
+      },
+      "localities": {
+        "gomti-nagar": {
+          "apartment": {
+            "1bhk": {
+              "rentPerMonth": {
+                "low": 9000,
+                "avg": 11000,
+                "high": 14000
+              },
+              "salePricePerSqft": {
+                "low": 5150,
+                "avg": 7450,
+                "high": 9800
+              }
+            },
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 16000,
+                "avg": 22500,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 5150,
+                "avg": 7450,
+                "high": 9800
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 18000,
+                "avg": 21000,
+                "high": 27000
+              }
+            }
+          }
+        },
+        "hazratganj": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 14000,
+                "avg": 17000,
+                "high": 20000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 24000,
+                "high": 27000
+              }
+            }
+          }
+        },
+        "indira-nagar": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 12000,
+                "avg": 16000,
+                "high": 21500
+              }
+            }
+          }
+        },
+        "alambagh": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 12000,
+                "avg": 15000,
+                "high": 18000
+              }
+            }
+          }
+        }
+      }
+    },
+    "chandigarh": {
+      "displayName": "Chandigarh",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "SBP Group - Current Price Per Square Foot in Chandigarh",
+          "url": "https://blog.sbpgroup.in/what-is-the-current-price-per-square-foot-in-chandigarh/"
+        },
+        {
+          "name": "Openplot - Chandigarh Investment Guide",
+          "url": "https://blog.openplot.com/blog/chandigarh-investment-guide-highest-rental-income-areas/"
+        },
+        {
+          "name": "Property1313 - Property Price Trends in Mohali: 2026 Growth Analysis",
+          "url": "https://property1313.com/blog/property-price-trends-in-mohali"
+        },
+        {
+          "name": "Homeonline - Real Estate Projects in Zirakpur, Chandigarh",
+          "url": "https://www.homeonline.com/projects-for-sale-zirakpur-chandigarh/"
+        },
+        {
+          "name": "Harji Housing - Villa & Kothi Builders in Mohali & Chandigarh",
+          "url": "https://www.harjihousing.com/residential-construction/villa-kothi-builders.html"
+        },
+        {
+          "name": "Squareyards - Cost of Living in Chandigarh 2026",
+          "url": "https://www.squareyards.com/blog/cost-of-living-in-chandigarh"
+        },
+        {
+          "name": "Quora - Average rent cost for 2BHK houses in Chandigarh",
+          "url": "https://www.quora.com/Whats-the-average-rent-cost-for-2bhk-houses-in-Chandigarh"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 11100,
+              "avg": 15500,
+              "high": 20000
+            },
+            "rentPerMonth": {
+              "low": 18000,
+              "avg": 22000,
+              "high": 28000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 28000,
+              "avg": 33000,
+              "high": 38000
+            }
+          }
+        }
+      },
+      "localities": {
+        "mohali": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 8500,
+                "high": 11000
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 10000,
+                "high": 15000
+              }
+            },
+            "4bhk": {
+              "salePricePerSqft": {
+                "low": 5000,
+                "avg": 10000,
+                "high": 15000
+              }
+            }
+          }
+        },
+        "zirakpur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5450,
+                "high": 6500
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 4850,
+                "avg": 6400,
+                "high": 7950
+              }
+            }
+          }
+        }
+      }
+    },
+    "kochi": {
+      "displayName": "Kochi",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "Sobha - Kakkanad vs Edappally vs Vyttila",
+          "url": "https://www.sobha.com/blog/kakkanad-vs-edappally-vs-vyttila-best-roi-flats-kochi/"
+        },
+        {
+          "name": "99acres - Property Rates in Kochi May-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-kochi-prffid"
+        },
+        {
+          "name": "Pardha Greenscapes - Kochi Real Estate 2026: Growth, Investment Opportunities",
+          "url": "https://pardhagreenscapes.com/resources/kochi-properties/kochi-real-estate-2026-growth-opportunities"
+        },
+        {
+          "name": "Greentech Builders - Villas in Kakkanad, Kochi",
+          "url": "https://www.greentechbuilders.in/location/kakkanad"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "rentPerMonth": {
+              "low": 10000,
+              "avg": 14000,
+              "high": 20000
+            },
+            "salePricePerSqft": {
+              "low": 4500,
+              "avg": 5521,
+              "high": 7000
+            }
+          }
+        },
+        "villa": {
+          "3bhk": {
+            "salePricePerSqft": {
+              "low": 7000,
+              "avg": 10000,
+              "high": 13000
+            }
+          },
+          "4bhk": {
+            "salePricePerSqft": {
+              "low": 7000,
+              "avg": 10000,
+              "high": 13000
+            }
+          }
+        }
+      },
+      "localities": {
+        "marine-drive": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 40000,
+                "high": 55000
+              },
+              "salePricePerSqft": {
+                "low": 8000,
+                "avg": 9399,
+                "high": 11000
+              }
+            }
+          }
+        },
+        "kakkanad": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 22000,
+                "avg": 30500,
+                "high": 40000
+              },
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5188,
+                "high": 6000
+              }
+            }
+          }
+        },
+        "vyttila": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 20000,
+                "high": 28000
+              },
+              "salePricePerSqft": {
+                "low": 7000,
+                "avg": 7822,
+                "high": 9000
+              }
+            }
+          }
+        },
+        "edappally": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 6900,
+                "high": 8000
+              }
+            }
+          }
+        }
+      }
+    },
+    "surat": {
+      "displayName": "Surat",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Vesu, Surat 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-vesu-surat-prffid"
+        },
+        {
+          "name": "Surat VR Properties - Property Rates Surat 2026",
+          "url": "https://suratvrproperties.com/property-rates-surat-2026/"
+        },
+        {
+          "name": "99acres - Luxury Villas / Bungalow in Vesu, Surat",
+          "url": "https://www.99acres.com/luxury-villas-in-vesu-surat-ffid"
+        },
+        {
+          "name": "Squareyards - Villas & Bungalow for Sale in Vesu, Surat",
+          "url": "https://www.squareyards.com/sale/villas-for-sale-in-vesu-surat"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 3500,
+              "avg": 4400,
+              "high": 5600
+            }
+          }
+        }
+      },
+      "localities": {
+        "vesu": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 14000,
+                "avg": 17000,
+                "high": 20000
+              },
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5700,
+                "high": 6100
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 22000,
+                "avg": 43500,
+                "high": 65000
+              },
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5700,
+                "high": 6100
+              }
+            },
+            "4bhk": {
+              "rentPerMonth": {
+                "low": 45000,
+                "avg": 72500,
+                "high": 100000
+              },
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5700,
+                "high": 6100
+              }
+            }
+          },
+          "villa": {
+            "3bhk": {
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5700,
+                "high": 6100
+              }
+            },
+            "4bhk": {
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5700,
+                "high": 6100
+              }
+            }
+          }
+        },
+        "adajan": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 10000,
+                "avg": 12000,
+                "high": 14000
+              },
+              "salePricePerSqft": {
+                "low": 4200,
+                "avg": 4600,
+                "high": 5000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 18500,
+                "high": 22000
+              },
+              "salePricePerSqft": {
+                "low": 4200,
+                "avg": 4600,
+                "high": 5000
+              }
+            }
+          }
+        },
+        "piplod": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 9700,
+                "high": 13400
+              }
+            }
+          }
+        }
+      }
+    },
+    "indore": {
+      "displayName": "Indore",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Vijay Nagar, Indore 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-vijay-nagar-indore-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Indore June-2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-indore-prffid"
+        },
+        {
+          "name": "99acres - 2 BHK Flats for Rent in Vijay Nagar, Indore",
+          "url": "https://www.99acres.com/2-bhk-flats-for-rent-in-vijay-nagar-indore-ffid"
+        },
+        {
+          "name": "99acres - Independent House for Rent in Vijay Nagar, Indore",
+          "url": "https://www.99acres.com/independent-house-for-rent-in-vijay-nagar-indore-ffid"
+        },
+        {
+          "name": "Squareyards - Independent Houses for Rent in Indore",
+          "url": "https://www.squareyards.com/rent/independent-houses-for-rent-in-indore"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 2500,
+              "avg": 3500,
+              "high": 5000
+            },
+            "rentPerMonth": {
+              "low": 9000,
+              "avg": 16000,
+              "high": 25000
+            }
+          },
+          "3bhk": {
+            "rentPerMonth": {
+              "low": 20000,
+              "avg": 30000,
+              "high": 45000
+            }
+          }
+        }
+      },
+      "localities": {
+        "vijay-nagar": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 9000,
+                "avg": 18000,
+                "high": 31000
+              },
+              "salePricePerSqft": {
+                "low": 4650,
+                "avg": 5700,
+                "high": 7450
+              }
+            }
+          }
+        }
+      }
+    },
+    "nagpur": {
+      "displayName": "Nagpur",
+      "asOf": "2026-07",
+      "sources": [
+        {
+          "name": "99acres - Property Rates in Dharampeth, Nagpur 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-dharampeth-nagpur-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in New Manish Nagar, Nagpur 2026",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-new-manish-nagar-nagpur-prffid"
+        },
+        {
+          "name": "Bajaj Finserv - Property Rates in Nagpur 2026",
+          "url": "https://www.bajajfinserv.in/about-property-rates-nagpur"
+        }
+      ],
+      "citywide": {
+        "apartment": {
+          "2bhk": {
+            "salePricePerSqft": {
+              "low": 2500,
+              "avg": 3500,
+              "high": 5000
+            }
+          }
+        }
+      },
+      "localities": {
+        "dharampeth": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 17800,
+                "avg": 33500,
+                "high": 49000
+              },
+              "salePricePerSqft": {
+                "low": 8500,
+                "avg": 10000,
+                "high": 12000
+              }
+            }
+          }
+        },
+        "manish-nagar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4000,
+                "avg": 4550,
+                "high": 5000
+              }
+            }
+          }
+        },
+        "wardha-road": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 2200,
+                "avg": 2850,
+                "high": 3500
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

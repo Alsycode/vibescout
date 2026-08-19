@@ -11,6 +11,7 @@ export const TIER_1_CITIES = [
 // Well-known tier-2 cities — present as keys in rentSaleBaseline.seed.json.
 export const TIER_2_CITIES = [
   'jaipur', 'lucknow', 'chandigarh', 'kochi', 'surat', 'indore', 'nagpur',
+  'coimbatore', 'vadodara', 'bhopal', 'visakhapatnam', 'nashik', 'mysuru', 'bhubaneswar', 'mangalore',
 ];
 
 // Common alternate spellings / synonyms mapped to the seed file's city keys.
@@ -28,6 +29,11 @@ export const CITY_ALIASES = {
   poona: 'pune',
   calcutta: 'kolkata',
   bombay: 'mumbai',
+  vizag: 'visakhapatnam',
+  visakhapatanam: 'visakhapatnam',
+  mysore: 'mysuru',
+  mangaluru: 'mangalore',
+  baroda: 'vadodara',
 };
 
 /**

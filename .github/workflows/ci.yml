@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: "true"
+
+jobs:
+  backend:
+    name: Backend — tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      # test/setup.js backfills dummy env — no secrets needed for Stage 0 suites.
+      - run: npm test
+
+  frontend:
+    name: Frontend — typecheck + unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit -p tsconfig.json
+      - run: npm test
+      # Frontend lint is `next lint` (separate ESLint setup from the backend's
+      # eslint.config.js) — not yet configured, tracked as its own follow-up.
+
+  audit:
+    name: npm audit (high+)
+    runs-on: ubuntu-latest
+    # Stage 1.1 triaged every High/Critical (see TEST_PROGRESS.md) and fixed
+    # everything with a non-major/low-risk path. What's left (bcrypt, vitest,
+    # jspdf, next — all major-version-only fixes) is a deliberate, documented
+    # exception, not an oversight — so this still can't be made blocking
+    # without an allowlist mechanism this repo doesn't have yet (`--audit-level`
+    # has no per-advisory ignore list). Kept non-blocking so it still surfaces
+    # new advisories in the PR log without failing every build on known ones.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: audit (root)
+        run: npm audit --audit-level=high
+      - name: audit (frontend)
+        working-directory: frontend
+        run: npm audit --audit-level=high

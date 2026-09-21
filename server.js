@@ -1,78 +1,78 @@
 // FILE: server.js
-// PURPOSE: Express app init, middleware, routes, MongoDB connection, cron import
+// PURPOSE: Runtime bootstrap — load env, connect MongoDB, start cron, listen.
+//          The Express app itself lives in src/app.js (imported below) so tests
+//          can mount it without DB / cron / listen side effects.
 
 import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
+import './src/config/validateEnv.js'; // SEC-10 — exits(1) before anything else runs if env is invalid
 import mongoose from 'mongoose';
 
-import { errorHandler } from './src/middleware/errorHandler.js';
-import { apiLimiter, authLimiter, analyzeLimiter, reportLimiter } from './src/middleware/rateLimiter.js';
+import { apiMongoOptions } from './src/config/mongoOptions.js';
+import { shutdownApiUsage } from './src/services/apiUsage.service.js';
+import app from './src/app.js';
+// PERF-3 — cron no longer starts here. This process is autoscaled (multiple
+// API instances behind a load balancer); cron now runs only in worker.js,
+// the single designated owner, guarded further by a Redis lock in case that
+// process itself is ever scaled out. See src/jobs/cronJobs.js.
 
-import authRoutes from './src/routes/auth.routes.js';
-import analyzeRoutes from './src/routes/analyze.routes.js';
-import funnelRoutes from './src/routes/funnel.routes.js';
-import reportRoutes from './src/routes/report.routes.js';
-import paymentRoutes from './src/routes/payment.routes.js';
-import shadowPropertiesAdminRoutes from './src/routes/admin/shadowProperties.admin.routes.js';
-import leadsAdminRoutes from './src/routes/admin/leads.admin.routes.js';
-import brokersAdminRoutes from './src/routes/admin/brokers.admin.routes.js';
-import clustersAdminRoutes from './src/routes/admin/clusters.admin.routes.js';
-import blogAdminRoutes from './src/routes/admin/blog.admin.routes.js';
-import analyticsAdminRoutes from './src/routes/admin/analytics.admin.routes.js';
-import postsRoutes from './src/routes/posts.routes.js';
-
-import './src/jobs/cronJobs.js';
-
-// Dev-only route — only imported + mounted when DEV_UNLOCK=true
-let devTestRoutes = null;
-if (process.env.DEV_UNLOCK === 'true') {
-  devTestRoutes = (await import('./src/routes/devTest.routes.js')).default;
-}
-
-const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// SEC-20 — graceful shutdown: stop accepting new connections, let in-flight
+// requests drain, close Mongo, then exit. No dropped 502s on deploy.
+// Registered up front (not inside the connect().then()) so a signal that
+// arrives while still connecting to Mongo is also handled cleanly, instead
+// of falling through to Node's default (immediate, non-graceful) behavior.
+let server = null;
+let shuttingDown = false;
 
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`[Server] ${signal} received — shutting down gracefully`);
 
-app.use('/api', apiLimiter);
+  const forceExit = setTimeout(() => {
+    console.error('[Server] Graceful shutdown timed out — forcing exit');
+    process.exit(1);
+  }, 10000);
+  forceExit.unref();
 
-app.use('/auth', authLimiter, authRoutes);
-app.use('/analyze', analyzeLimiter, analyzeRoutes);
-app.use('/funnel', funnelRoutes);
-app.use('/report', reportLimiter, reportRoutes);
-app.use('/payment', paymentRoutes);
-app.use('/admin/shadow-properties', shadowPropertiesAdminRoutes);
-app.use('/admin/leads', leadsAdminRoutes);
-app.use('/admin/brokers', brokersAdminRoutes);
-app.use('/admin/clusters', clustersAdminRoutes);
-app.use('/admin/blog', blogAdminRoutes);
-app.use('/admin/analytics', analyticsAdminRoutes);
-app.use('/posts', postsRoutes);
+  const finish = async (err) => {
+    if (err) console.error('[Server] Error closing HTTP server:', err.message);
+    try {
+      await shutdownApiUsage(); // PERF-6 — flush the in-process API-usage counters
+    } catch (usageErr) {
+      console.error('[ApiUsage] Error flushing on shutdown:', usageErr.message);
+    }
+    try {
+      await mongoose.connection.close();
+      console.log('[MongoDB] Connection closed');
+    } catch (closeErr) {
+      console.error('[MongoDB] Error closing connection:', closeErr.message);
+    }
+    clearTimeout(forceExit);
+    process.exit(err ? 1 : 0);
+  };
 
-if (devTestRoutes) {
-  app.use('/dev', devTestRoutes);
-  console.log('[Server] Dev test routes mounted at /dev');
+  if (server) {
+    server.close(finish);
+  } else {
+    finish();
+  }
 }
 
-app.use(errorHandler);
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
-mongoose.connect(process.env.MONGODB_URI)
+mongoose.connect(process.env.MONGODB_URI, apiMongoOptions)
   .then(() => {
     console.log('[MongoDB] Connected');
-    app.listen(PORT, () => {
+    server = app.listen(PORT, () => {
       console.log(`[Server] Running on port ${PORT}`);
     });
+
+    // PERF-8 — tuned for running behind a load balancer / proxy
+    server.keepAliveTimeout = 65000;
+    server.headersTimeout = 66000;
   })
   .catch((err) => {
     console.error('[MongoDB] Connection failed:', err.message);

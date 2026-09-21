@@ -3,25 +3,13 @@
 // JRC: free REST endpoint, no key required, Landsat 1984-present coverage all India
 // Overpass: queries natural=water/wetland + waterway features within 500m
 
-import fetch from 'node-fetch';
 
 const OVERPASS_ENDPOINTS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.private.coffee/api/interpreter',
 ];
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 async function fetchJRCOccurrence(lat, lng) {
   try {
@@ -81,7 +69,7 @@ function haversineM(lat1, lng1, lat2, lng2) {
   return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
-function classifyFloodRisk(occurrence, nearestWaterM) {
+export function classifyFloodRisk(occurrence, nearestWaterM) {
   if (occurrence !== null) {
     if (occurrence >= 50) return { risk: 'Very High', score: 90, reason: 'Location was under water >50% of observed years (1984–2024)' };
     if (occurrence >= 20) return { risk: 'High',      score: 70, reason: 'Seasonal water presence detected at this coordinate historically' };

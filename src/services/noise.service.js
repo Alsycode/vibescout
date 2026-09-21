@@ -8,23 +8,11 @@
 //   Level 3 — Groq AI estimation (city/locality context only, no coordinates)
 //   Absolute — safe hardcoded default (if Groq also fails)
 
-import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
 
 // ─── Fetch helper ────────────────────────────────────────────────────────────
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 // ─── Overpass endpoints ───────────────────────────────────────────────────────
 

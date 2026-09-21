@@ -8,7 +8,7 @@ import ShadowProperty from '../models/ShadowProperty.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
 import { computeLeadScore } from '../services/leadScore.service.js';
-import { trackFunnelStep, trackFunnelAbandon, trackAmenityPreference } from '../services/analytics.service.js';
+import { trackFunnelStep, trackAmenityPreference } from '../services/analytics.service.js';
 import { fetchResidentialComplexes } from '../services/places.service.js';
 import {
   logFunnelEvent,
@@ -51,12 +51,12 @@ router.post('/save', requireAuth, async (req, res, next) => {
     }
 
     if (complete) {
-      const sp = await ShadowProperty.findOne({ sessionId });
+      const sp = await ShadowProperty.findOne({ sessionId, userId: req.user.userId }); // SEC-01
       if (!sp) {
         return res.status(404).json({ error: 'Session not found' });
       }
 
-      const user = await User.findById(req.user.userId);
+      const user = await User.findById(req.user.userId).select('preferences phone');
       const preferences = user.preferences;
 
       // FAIL-02: Guard against incomplete preferences before verdict computation
@@ -67,24 +67,32 @@ router.post('/save', requireAuth, async (req, res, next) => {
       const verdictObject = computeAllVerdicts(sp, preferences);
       const { compositeScore, tier, breakdown } = computeLeadScore(preferences, sp, verdictObject);
 
-      await Lead.create({
-        userId: req.user.userId,
-        shadowPropertyId: sp._id,
-        sessionId,
-        phone: user.phone ?? null,
-        propertyName: sp.name ?? null,
-        clusterId: sp.clusterId,
-        listingType: sp.userProvidedSpecs.listingType,
-        preferences,
-        userProvidedSpecs: sp.userProvidedSpecs,
-        budgetBracket: sp.userProvidedSpecs.budgetBracket,
-        verdictObject,
-        compositeScore,
-        scoreTier: tier,
-        scoreBreakdown: breakdown,
-        dataSource: sp.dataSource,
-        stage: 'new',
-      });
+      try {
+        await Lead.create({
+          userId: req.user.userId,
+          shadowPropertyId: sp._id,
+          sessionId,
+          phone: user.phone ?? null,
+          propertyName: sp.name ?? null,
+          clusterId: sp.clusterId,
+          listingType: sp.userProvidedSpecs.listingType,
+          preferences,
+          userProvidedSpecs: sp.userProvidedSpecs,
+          budgetBracket: sp.userProvidedSpecs.budgetBracket,
+          verdictObject,
+          compositeScore,
+          scoreTier: tier,
+          scoreBreakdown: breakdown,
+          dataSource: sp.dataSource,
+          stage: 'new',
+        });
+      } catch (err) {
+        // PERF-4 — Lead.sessionId is unique; a double funnel-complete (double
+        // click, retried request) used to throw an E11000 here, surfacing as
+        // a generic 500 even though the lead was already correctly created
+        // the first time. Treat it as the success it actually is.
+        if (err.code !== 11000) throw err;
+      }
 
       return res.json({ ok: true, sessionId });
     }
@@ -156,7 +164,7 @@ router.post('/analytics', requireAuth, async (req, res, next) => {
 // GET /funnel/analytics — admin only, get aggregated funnel stats
 router.get('/analytics', requireAuth, async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId);
+    const user = await User.findById(req.user.userId).select('role');
     if (user.role !== 'admin') {
       return res.status(403).json({ error: 'Admin access required' });
     }

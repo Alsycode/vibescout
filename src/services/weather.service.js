@@ -1,36 +1,15 @@
 // FILE: src/services/weather.service.js
 // PURPOSE: Weather waterfall — OpenWeatherMap live → cluster cache → seasonal city averages
 
-import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
-import { getSeasonalWeather, WEATHER_STATE_NAME_MAP } from '../data/cityWeatherAverages.js';
+import { getSeasonalWeather } from '../data/cityWeatherAverages.js';
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
+import { reverseGeocodeNominatim } from './geocode.service.js';
 
 async function reverseGeocodeState(lat, lng) {
-  try {
-    const res = await fetchWithTimeout(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-      { headers: { 'User-Agent': 'Vibescout/1.0' } },
-      5000
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.address?.state ?? null;
-  } catch {
-    return null;
-  }
+  const address = await reverseGeocodeNominatim(lat, lng);
+  return address?.state ?? null;
 }
 
 // Level 1: OpenWeatherMap live data
@@ -74,7 +53,7 @@ async function fetchFromClusterCache(clusterId) {
 }
 
 // Full 3-level weather waterfall — never returns null
-export async function fetchWeather(lat, lng, clusterId, cityName) {
+export async function fetchWeather(lat, lng, clusterId, _cityName) {
   // Level 1: OpenWeatherMap live
   const live = await fetchFromOpenWeatherMap(lat, lng);
   if (live) return live;

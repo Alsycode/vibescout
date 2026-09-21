@@ -1,23 +1,11 @@
 // FILE: src/services/places.service.js
 // PURPOSE: Amenities waterfall — Google Places at exact coords → cluster cache → seed fallback
 
-import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
 import { haversineKm } from './clusterService.js';
 import { redisGet, redisSet } from '../lib/redis.js';
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 const PLACE_TYPE_MAP = {
   school: 'schools',

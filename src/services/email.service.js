@@ -25,27 +25,33 @@ export async function sendPasswordResetEmail(toEmail, resetToken) {
 
   const transporter = createTransporter();
   if (!transporter) {
-    // Dev fallback: log to console when SMTP not configured
+    // Stage 1.5 — EMAIL_* is a warn-only (not boot-fatal) env var per validateEnv.js,
+    // so a misconfigured production deploy could otherwise reach here and console.log
+    // a live, unexpired reset token/URL straight into server logs. Fail loudly instead
+    // of leaking it; the dev/test console fallback stays for local convenience only.
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Email is not configured — cannot send password reset email');
+    }
     console.log('[Email] SMTP not configured. Password reset link:');
     console.log(`[Email] ${resetUrl}`);
     return { ok: true, devMode: true };
   }
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM ?? `VibeScout <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM ?? `Haum <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: 'Reset your VibeScout password',
+    subject: 'Reset your Haum password',
     html: `
       <div style="font-family: 'Inter', sans-serif; max-width: 520px; margin: 0 auto; background: #080812; color: #fff; border-radius: 12px; padding: 40px 32px;">
         <div style="margin-bottom: 28px;">
           <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #0DD8C0; margin: 0 0 12px;">
-            VIBESCOUT INTELLIGENCE
+            HAUM INTELLIGENCE
           </p>
           <h1 style="font-size: 24px; font-weight: 500; color: rgba(255,255,255,0.92); margin: 0 0 8px;">
             Reset your password
           </h1>
           <p style="font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; margin: 0;">
-            We received a request to reset the password for your VibeScout account.
+            We received a request to reset the password for your Haum account.
           </p>
         </div>
 
@@ -65,7 +71,7 @@ export async function sendPasswordResetEmail(toEmail, resetToken) {
         </p>
       </div>
     `,
-    text: `Reset your VibeScout password\n\nLink: ${resetUrl}\n\nExpires in 1 hour. Ignore if you didn't request this.`,
+    text: `Reset your Haum password\n\nLink: ${resetUrl}\n\nExpires in 1 hour. Ignore if you didn't request this.`,
   });
 
   return { ok: true };

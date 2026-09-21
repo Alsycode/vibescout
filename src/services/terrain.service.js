@@ -14,7 +14,6 @@
 //   Level 2 — OpenTopoData (SRTM 30m)
 //   Level 3 — null; the report card hides rather than guessing.
 
-import fetch from 'node-fetch';
 
 // Radii were calibrated against known-flooding vs known-dry localities in Bengaluru.
 // Tight rings (<1km) fail badly: the Challaghatta/Bellandur flood valleys are kilometres
@@ -46,18 +45,7 @@ const LEVEL_BAND_M = 5;
 // relative-elevation reading, and confidence is downgraded accordingly.
 const FLAT_TERRAIN_RELIEF_M = 8;
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 // Property first, then each ring clockwise from north. Index 0 is always the property itself.
 function buildSamplePoints(lat, lng) {
@@ -106,7 +94,7 @@ async function fetchFromOpenTopoData(points) {
   }
 }
 
-function median(values) {
+export function median(values) {
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
@@ -115,7 +103,7 @@ function median(values) {
 // Coastal sites are judged on height above sea level: near the coast the threat is tidal
 // surge and a water table that leaves runoff nowhere to go, neither of which shows up as a
 // dip relative to neighbours.
-function classifyCoastal(elevationM) {
+export function classifyCoastal(elevationM) {
   if (elevationM <= 3) {
     return {
       terrainPosition: 'Coastal low-lying',
@@ -135,7 +123,7 @@ function classifyCoastal(elevationM) {
   return null; // High enough to judge on local terrain instead.
 }
 
-function classifyInland(relativeM, localReliefM) {
+export function classifyInland(relativeM, localReliefM) {
   // On genuinely flat ground the relative reading is inside the error bar either way,
   // so report position honestly and never escalate drainage risk off DEM noise.
   if (localReliefM < FLAT_TERRAIN_RELIEF_M) {

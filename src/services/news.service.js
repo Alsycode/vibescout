@@ -2,21 +2,9 @@
 // PURPOSE: News waterfall — GNews → NewsAPI → Google RSS → empty fallback; cluster-level Redis cache EX 86400
 //          Queries are tuned for home buyers (civic, infrastructure, safety) not investors or corporates.
 
-import fetch from 'node-fetch';
 import { redisGet, redisSet } from '../lib/redis.js';
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 6000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 // ── Relevance filters ─────────────────────────────────────────────────────────
 
@@ -54,15 +42,6 @@ function mentionsLocation(title = '', snippet = '', locationName = '') {
   if (loc === 'bangalore' && text.includes('bengaluru')) return true;
   return false;
 }
-
-// Home-buyer query terms — things that affect daily life in a neighbourhood
-const HOME_BUYER_TERMS = [
-  'residents', 'flooding', 'waterlogging', 'metro', 'road', 'flyover',
-  'water supply', 'bwssb', 'bescom', 'power cut', 'civic', 'bbmp',
-  'school', 'hospital', 'safety', 'crime', 'traffic', 'infrastructure',
-  'apartments', 'neighbourhood', 'locality', 'connectivity', 'drainage',
-  'garbage', 'park', 'footpath', 'signal', 'pothole',
-].join(' OR ');
 
 // ── RSS parser ────────────────────────────────────────────────────────────────
 

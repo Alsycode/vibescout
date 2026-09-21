@@ -1,21 +1,9 @@
 // FILE: src/services/solar.service.js
 // PURPOSE: Solar waterfall — Open-Meteo live → cluster cache → latitude-based computation
 
-import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 function solarViability(peakSunHours) {
   if (peakSunHours > 5) return 'Good';

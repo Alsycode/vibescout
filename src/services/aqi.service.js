@@ -1,22 +1,11 @@
 // FILE: src/services/aqi.service.js
 // PURPOSE: AQI waterfall — Google Air Quality → Open-Meteo → WAQI → OpenAQ → cluster cache → CPCB city average → seasonal fallback
 
-import fetch from 'node-fetch';
 import Cluster from '../models/Cluster.js';
-import { CITY_AQI_AVERAGES, STATE_NAME_MAP, getSeasonalAQI } from '../data/cityAQIAverages.js';
+import { getSeasonalAQI } from '../data/cityAQIAverages.js';
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return res;
-  } catch (err) {
-    clearTimeout(id);
-    throw err;
-  }
-}
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
+import { reverseGeocodeNominatim } from './geocode.service.js';
 
 function aqiCategory(aqi) {
   if (aqi <= 50) return 'Good';
@@ -66,21 +55,12 @@ function pm10ToAQI(pm10) {
 }
 
 async function reverseGeocodeState(lat, lng) {
-  try {
-    const res = await fetchWithTimeout(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-      { headers: { 'User-Agent': 'Vibescout/1.0' } },
-      5000
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      city: data.address?.city || data.address?.town || data.address?.village || null,
-      state: data.address?.state || null,
-    };
-  } catch {
-    return null;
-  }
+  const address = await reverseGeocodeNominatim(lat, lng);
+  if (!address) return null;
+  return {
+    city: address.city || address.town || address.village || null,
+    state: address.state || null,
+  };
 }
 
 function haversineKm(lat1, lng1, lat2, lng2) {
@@ -167,9 +147,7 @@ async function fetchFromOpenMeteo(lat, lng) {
     const pm10s = data?.hourly?.pm10 ?? [];
     if (!times.length) return null;
 
-    // Find the index of the current hour
-    const nowHour = new Date().toISOString().slice(0, 13); // "2026-06-30T14"
-    // Open-Meteo returns local-time strings like "2026-06-30T14:00"
+    // Find the index of the current hour — Open-Meteo returns local-time strings like "2026-06-30T14:00"
     const nowLocal = new Date(Date.now() + 5.5 * 3600 * 1000)
       .toISOString()
       .slice(0, 13);

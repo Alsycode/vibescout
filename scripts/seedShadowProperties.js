@@ -5,6 +5,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import ShadowProperty from '../src/models/ShadowProperty.js';
+import User from '../src/models/User.js';
 
 function sessionId() {
   return crypto.randomBytes(12).toString('hex');
@@ -34,7 +35,7 @@ const PROPERTIES = [
         schools:   [{ name: 'Delhi Public School Whitefield', distanceM: 520 }],
         hospitals: [{ name: 'Columbia Asia Hospital', distanceM: 1200 }],
         parks:     [{ name: 'Whitefield Lake Park', distanceM: 680 }],
-        gyms:      [{ name: 'Gold's Gym Whitefield', distanceM: 750 }],
+        gyms:      [{ name: "Gold's Gym Whitefield", distanceM: 750 }],
         cafes:     [{ name: 'Café Coffee Day', distanceM: 310 }],
         source: 'live',
       },
@@ -123,7 +124,7 @@ const PROPERTIES = [
       solar: { peakSunHours: 6.0, viability: 'Good', morningScore: 8, wfhLightScore: 8, acSavingsEstimate: 4800, source: 'computed' },
       weather: { temp: 27, humidity: 55, source: 'seasonal' },
       amenities: {
-        schools:   [{ name: 'St. Joseph's School', distanceM: 650 }],
+        schools:   [{ name: "St. Joseph's School", distanceM: 650 }],
         hospitals: [{ name: 'Jehangir Hospital', distanceM: 2100 }],
         parks:     [{ name: 'Kothrud Central Park', distanceM: 430 }],
         gyms:      [{ name: 'Fitness First Kothrud', distanceM: 520 }],
@@ -157,7 +158,7 @@ const PROPERTIES = [
         schools:   [{ name: 'DPS Gurugram', distanceM: 1800 }],
         hospitals: [{ name: 'Medanta Hospital', distanceM: 3200 }],
         parks:     [{ name: 'Leisure Valley Park', distanceM: 2100 }],
-        gyms:      [{ name: 'Gold's Gym Golf Course Road', distanceM: 1400 }],
+        gyms:      [{ name: "Gold's Gym Golf Course Road", distanceM: 1400 }],
         cafes:     [{ name: 'Starbucks Cyber Hub', distanceM: 950 }],
         source: 'live',
       },
@@ -219,7 +220,7 @@ const PROPERTIES = [
       solar: { peakSunHours: 4.8, viability: 'Moderate', morningScore: 6, wfhLightScore: 7, acSavingsEstimate: 3200, source: 'live' },
       weather: { temp: 30, humidity: 82, source: 'live' },
       amenities: {
-        schools:   [{ name: 'St. George's School Edappally', distanceM: 560 }],
+        schools:   [{ name: "St. George's School Edappally", distanceM: 560 }],
         hospitals: [{ name: 'Lakeshore Hospital', distanceM: 1300 }],
         parks:     [{ name: 'Edappally Waterfront', distanceM: 820 }],
         gyms:      [{ name: 'Talrop Fitness', distanceM: 700 }],
@@ -333,6 +334,18 @@ async function seed() {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log('[seedShadowProperties] Connected to MongoDB');
 
+  // SEC-01 — ShadowProperty.userId is now required. This script has no concept
+  // of a logged-in user, so attach these demo properties to an arbitrary
+  // existing account (they're only ever Browse via admin routes, which don't
+  // filter by userId) rather than inventing a synthetic "system user".
+  const owner = await User.findOne();
+  if (!owner) {
+    console.error('[seedShadowProperties] No users exist in this database — create an account first, then re-run.');
+    await mongoose.disconnect();
+    process.exit(1);
+  }
+  console.log(`[seedShadowProperties] Attaching demo properties to user ${owner.email}`);
+
   let created = 0;
   const insertedIds = [];
 
@@ -340,6 +353,7 @@ async function seed() {
     const sid = sessionId();
     const doc = await ShadowProperty.create({
       sessionId: sid,
+      userId: owner._id,
       placeId: null,
       name: p.name,
       coordinates: p.coordinates,

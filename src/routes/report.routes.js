@@ -5,6 +5,8 @@ import { Router } from 'express';
 import crypto from 'crypto';
 import ShadowProperty from '../models/ShadowProperty.js';
 import User from '../models/User.js';
+import Report from '../models/Report.js';
+import Payment from '../models/Payment.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { redisGet, redisSet } from '../lib/redis.js';
 import { computeAllVerdicts } from '../services/verdictEngine.service.js';
@@ -57,7 +59,7 @@ const DOWN_PAYMENT_MIDPOINTS = {
   'Above 1Cr': 12500000,
 };
 
-function computeFinancialScores(userProvidedSpecs, preferences, location) {
+export function computeFinancialScores(userProvidedSpecs, preferences, location) {
   const income = INCOME_MIDPOINTS[preferences.step7?.monthlyHouseholdIncome] ?? 75000;
   const listingType = userProvidedSpecs.listingType;
   const budgetBracket = userProvidedSpecs.budgetBracket;
@@ -128,19 +130,26 @@ function validatePreferencesComplete(preferences) {
 // GET /report — list caller's reports (metadata only, no snapshot)
 router.get('/', requireAuth, async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.userId).select('reportHistory unlockedReports');
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    // PERF-4 — Report is its own collection now (was User.reportHistory[]);
+    // "paid" comes from Payment (was User.unlockedReports[]) via one query
+    // for the whole page rather than a per-report lookup.
+    const [reportDocs, paidPayments] = await Promise.all([
+      Report.find({ userId: req.user.userId })
+        .select('sessionId listingType propertyName generatedAt shareToken')
+        .sort({ generatedAt: -1 })
+        .lean(),
+      Payment.find({ userId: req.user.userId, status: 'paid' }).select('sessionId').lean(),
+    ]);
 
-    const reports = (user.reportHistory ?? [])
-      .map(({ sessionId, listingType, propertyName, generatedAt, shareToken }) => ({
-        sessionId,
-        listingType,
-        propertyName,
-        generatedAt,
-        shareToken,
-        paid: user.unlockedReports?.includes(sessionId) ?? false,
-      }))
-      .sort((a, b) => new Date(b.generatedAt) - new Date(a.generatedAt));
+    const paidSessionIds = new Set(paidPayments.map(p => p.sessionId));
+    const reports = reportDocs.map(({ sessionId, listingType, propertyName, generatedAt, shareToken }) => ({
+      sessionId,
+      listingType,
+      propertyName,
+      generatedAt,
+      shareToken,
+      paid: paidSessionIds.has(sessionId),
+    }));
 
     res.json({ reports });
   } catch (err) {
@@ -157,14 +166,14 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'sessionId query parameter is required' });
     }
 
-    const sp = await ShadowProperty.findOne({ sessionId });
+    const sp = await ShadowProperty.findOne({ sessionId, userId: req.user.userId }); // SEC-01
 
     if (!sp) {
-      const user = await User.findById(req.user.userId);
-      const cached = user?.reportHistory?.find(r => r.sessionId === sessionId);
+      // PERF-4 — ShadowProperty has a 24h TTL; Report is the permanent record.
+      const cached = await Report.findOne({ sessionId, userId: req.user.userId }).select('snapshot').lean();
       if (cached) {
-        const paid = user?.unlockedReports?.includes(sessionId) ?? false;
-        return res.json({ report: cached.reportSnapshot, paid });
+        const paid = !!(await Payment.exists({ userId: req.user.userId, sessionId, status: 'paid' }));
+        return res.json({ report: cached.snapshot, paid });
       }
       return res.status(404).json({ status: 'not_found' });
     }
@@ -188,8 +197,11 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       return res.status(400).json({ status: 'incomplete', message: 'Property context (listing type and budget) not yet submitted.' });
     }
 
-    const user = await User.findById(req.user.userId);
-    const paid = user?.unlockedReports?.includes(sessionId) ?? false;
+    // PERF-4 — only preferences is needed from User on this path now.
+    const [user, paid] = await Promise.all([
+      User.findById(req.user.userId).select('preferences'),
+      Payment.exists({ userId: req.user.userId, sessionId, status: 'paid' }).then(Boolean),
+    ]);
 
     const redisCached = await redisGet(`report:${sessionId}`);
     if (redisCached) {
@@ -346,31 +358,26 @@ router.get('/generate', requireAuth, async (req, res, next) => {
       },
     };
 
-    // RACE-03: Atomic push with duplicate guard — only push if sessionId not already in reportHistory
+    // RACE-03: unique index on Report.sessionId is the duplicate guard now —
+    // a concurrent/duplicate /generate for the same session hits E11000
+    // instead of racing an array push; fetch the winner's shareToken either way.
     const shareToken = crypto.randomBytes(16).toString('hex');
-
-    const updateResult = await User.updateOne(
-      { _id: req.user.userId, 'reportHistory.sessionId': { $ne: sessionId } },
-      {
-        $push: {
-          reportHistory: {
-            sessionId,
-            listingType: sp.userProvidedSpecs.listingType,
-            propertyName: sp.name,
-            reportSnapshot: report,
-            shareToken,
-            generatedAt: new Date(),
-          },
-        },
-      },
-    );
-
-    // If duplicate suppressed (modifiedCount === 0), fetch existing entry's shareToken
     let finalShareToken = shareToken;
-    if (updateResult.modifiedCount === 0) {
-      const existingUser = await User.findById(req.user.userId);
-      const existingEntry = existingUser?.reportHistory?.find(r => r.sessionId === sessionId);
-      finalShareToken = existingEntry?.shareToken ?? shareToken;
+
+    try {
+      await Report.create({
+        userId: req.user.userId,
+        sessionId,
+        listingType: sp.userProvidedSpecs.listingType,
+        propertyName: sp.name,
+        snapshot: report,
+        shareToken,
+        generatedAt: new Date(),
+      });
+    } catch (err) {
+      if (err.code !== 11000) throw err;
+      const existing = await Report.findOne({ sessionId, userId: req.user.userId }).select('shareToken').lean();
+      finalShareToken = existing?.shareToken ?? shareToken;
     }
 
     trackReportGenerated(req.user.userId, sessionId, {
@@ -400,40 +407,53 @@ router.get('/:sessionId', async (req, res, next) => {
     const { sessionId } = req.params;
     const { share } = req.query;
 
-    if (share) {
-      const owner = await User.findOne({
-        'reportHistory.sessionId': sessionId,
-        'reportHistory.shareToken': share,
-      });
-      if (!owner) {
-        return res.status(403).json({ error: 'Invalid share token' });
-      }
-      const entry = owner.reportHistory.find(r => r.sessionId === sessionId);
-      return res.json({ report: entry.reportSnapshot, readonly: true });
+    if (share && typeof share !== 'string') {
+      return res.status(400).json({ error: 'Invalid share token' });
     }
 
-    if (!req.cookies?.vb_token) {
+    if (share) {
+      // PERF-4 — no need to find the owning User first; Report is keyed
+      // directly by sessionId+shareToken now.
+      const entry = await Report.findOne({ sessionId, shareToken: share }).select('snapshot').lean();
+      if (!entry) {
+        return res.status(403).json({ error: 'Invalid share token' });
+      }
+      return res.json({ report: entry.snapshot, readonly: true });
+    }
+
+    // SEC-04 — vb_session (httpOnly) is the current cookie; vb_token is kept
+    // as a fallback only so sessions issued before that change don't get
+    // logged out early (it's still signature-verified below, same as
+    // auth.middleware.js's requireAuth). See SEC-17 for folding this route
+    // onto the shared requireAuth middleware.
+    const sessionToken = req.cookies?.vb_session ?? req.cookies?.vb_token;
+    if (!sessionToken) {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
     const { verifyToken } = await import('../services/token.service.js');
-    const decoded = verifyToken(req.cookies.vb_token);
+    const decoded = verifyToken(sessionToken);
     if (!decoded) {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
-    const user = await User.findById(decoded.userId);
+    // PERF-4 — user-existence check kept for the same "account was deleted"
+    // 401 this route always gave; Report itself is looked up separately
+    // (already implicitly scoped to decoded.userId — a cross-user sessionId
+    // just won't match and 404s, same IDOR posture as SEC-01's other fixes).
+    const [user, entry] = await Promise.all([
+      User.findById(decoded.userId).select('_id').lean(),
+      Report.findOne({ sessionId, userId: decoded.userId }).select('snapshot shareToken').lean(),
+    ]);
     if (!user) {
       return res.status(401).json({ error: 'User not found' });
     }
-
-    const entry = user.reportHistory.find(r => r.sessionId === sessionId);
     if (!entry) {
       return res.status(404).json({ error: 'Report not found' });
     }
 
-    const paid = user.unlockedReports?.includes(sessionId) ?? false;
-    res.json({ report: entry.reportSnapshot, shareToken: entry.shareToken, paid });
+    const paid = !!(await Payment.exists({ userId: decoded.userId, sessionId, status: 'paid' }));
+    res.json({ report: entry.snapshot, shareToken: entry.shareToken, paid });
   } catch (err) {
     next(err);
   }

@@ -4,11 +4,11 @@
 import { Router } from 'express';
 import Broker from '../../models/Broker.js';
 import Lead from '../../models/Lead.js';
-import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
+import { requireAdminAuth } from '../../middleware/auth.middleware.js';
 
 const router = Router();
 
-router.use(requireAuth, requireAdmin);
+router.use(requireAdminAuth);
 
 // GET /admin/brokers — list all brokers
 router.get('/', async (req, res, next) => {

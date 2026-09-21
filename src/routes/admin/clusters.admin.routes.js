@@ -3,7 +3,7 @@
 
 import { Router } from 'express';
 import Cluster from '../../models/Cluster.js';
-import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
+import { requireAdminAuth } from '../../middleware/auth.middleware.js';
 import { redisSet } from '../../lib/redis.js';
 import { fetchAQI } from '../../services/aqi.service.js';
 import { fetchNoise } from '../../services/noise.service.js';
@@ -13,7 +13,7 @@ import { fetchAmenities } from '../../services/places.service.js';
 
 const router = Router();
 
-router.use(requireAuth, requireAdmin);
+router.use(requireAdminAuth);
 
 // TTL thresholds in seconds per signal type (mirrors cron job expectations)
 const SIGNAL_TTL = {

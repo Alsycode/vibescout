@@ -323,10 +323,6 @@ async function probeGroqReport() {
     newsHeadlines: ['City rents rise 8% in Q1'], newsCount: 1,
   };
 
-  const t0 = Date.now();
-  let hung = false;
-  const hangTimer = setTimeout(() => { hung = true; }, 15000);
-
   const { result, ms } = await timed(() =>
     fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
@@ -346,7 +342,6 @@ async function probeGroqReport() {
     }).then(r => r.json())
   );
 
-  clearTimeout(hangTimer);
   const content = result?.choices?.[0]?.message?.content ?? null;
   status('GROQ report call returned', !!result,   `ms=${ms}`);
   status('content present',           !!content,  `length=${content?.length}`);

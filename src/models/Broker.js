@@ -26,7 +26,8 @@ const BrokerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-BrokerSchema.index({ email: 1 }, { unique: true });
+// PERF-5 — email's field-level `unique: true` above already creates this
+// index; removed the redundant duplicate .index() call that used to be here.
 
 const Broker = mongoose.model('Broker', BrokerSchema);
 

@@ -16,7 +16,9 @@ const BlogPostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-BlogPostSchema.index({ slug: 1 });
+// PERF-5 — slug's field-level `unique: true` above already creates an index
+// on slug; a second, non-unique .index({slug:1}) call was a redundant
+// duplicate (Mongoose warned on every boot — removed, not added, here).
 BlogPostSchema.index({ published: 1, date: -1 });
 
 export default mongoose.model('BlogPost', BlogPostSchema);

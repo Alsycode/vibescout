@@ -5,6 +5,10 @@ import mongoose from 'mongoose';
 
 const ShadowPropertySchema = new mongoose.Schema({
   sessionId: { type: String, required: true, unique: true },
+  // SEC-01 — ownership binding. Every downstream query must scope on
+  // { sessionId, userId } so one account can never read/mutate another's
+  // in-flight analysis session (sessionId alone is a guessable-enough URL value).
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
   placeId: { type: String, default: null },
   name: { type: String, required: true },
   coordinates: {
@@ -165,7 +169,9 @@ const ShadowPropertySchema = new mongoose.Schema({
 });
 
 ShadowPropertySchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 }); // TTL
-ShadowPropertySchema.index({ sessionId: 1 }, { unique: true });
+// PERF-5 — sessionId's field-level `unique: true` above already creates an
+// index on it; a second explicit .index() call was a redundant duplicate
+// (Mongoose warned on every boot — removed, not added, here).
 
 const ShadowProperty = mongoose.model('ShadowProperty', ShadowPropertySchema);
 

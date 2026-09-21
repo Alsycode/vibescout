@@ -1,7 +1,7 @@
 // FILE: src/services/commute.service.js
 // PURPOSE: Google Directions API — real route duration + encoded polyline for map display
 
-import fetch from 'node-fetch';
+import { fetchWithTimeout } from '../lib/fetchWithTimeout.js';
 
 const DIRECTIONS_MODE = {
   walking:          'walking',
@@ -45,10 +45,7 @@ export async function fetchCommuteRoute(originLat, originLng, destLat, destLng, 
       `&mode=${travelMode}` +
       `&key=${process.env.GOOGLE_PLACES_API_KEY}`;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeout);
+    const res = await fetchWithTimeout(url, {}, 8000);
 
     if (!res.ok) return null;
     const data = await res.json();

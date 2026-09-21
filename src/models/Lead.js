@@ -51,9 +51,19 @@ const LeadSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-LeadSchema.index({ sessionId: 1 }, { unique: true });
+// PERF-5 — sessionId's field-level `unique: true` above already creates an
+// index on it; a second explicit .index() call here was a redundant
+// duplicate (Mongoose warned on every boot — removed, not added).
 LeadSchema.index({ scoreTier: 1, listingType: 1 });
 LeadSchema.index({ stage: 1 });
+// GET /admin/leads always sorts { createdAt: -1 } regardless of filter —
+// without this, an unfiltered (or lightly filtered) list page is an
+// in-memory sort over the whole collection.
+LeadSchema.index({ createdAt: -1 });
+// GET /admin/brokers/:id's Lead.find({ assignedBrokerId }) had no index
+// support at all before this — a full collection scan on every broker
+// detail page view.
+LeadSchema.index({ assignedBrokerId: 1 });
 
 const Lead = mongoose.model('Lead', LeadSchema);
 

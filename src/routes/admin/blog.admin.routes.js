@@ -2,7 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import BlogPost from '../../models/BlogPost.js';
-import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
+import { requireAdminAuth } from '../../middleware/auth.middleware.js';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -14,7 +14,7 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 8 *
 
 const router = Router();
 
-router.use(requireAuth, requireAdmin);
+router.use(requireAdminAuth);
 
 // POST /admin/blog/upload-image — upload cover image to Cloudinary
 router.post('/upload-image', upload.single('image'), async (req, res) => {
@@ -29,6 +29,7 @@ router.post('/upload-image', upload.single('image'), async (req, res) => {
     });
     res.json({ url: result.secure_url });
   } catch (err) {
+    console.error('[Blog:UploadImage]', err.message);
     res.status(500).json({ error: 'Image upload failed.' });
   }
 });

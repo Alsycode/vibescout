@@ -19,7 +19,7 @@ const AnalyticsEventSchema = new mongoose.Schema({
   // --- shared fields ---
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', index: true },
   sessionId: { type: String, index: true },
-  createdAt: { type: Date, default: Date.now, index: true },
+  createdAt: { type: Date, default: Date.now },
 
   // --- funnel_step_complete / funnel_abandon ---
   step: { type: Number }, // 1–7
@@ -49,6 +49,14 @@ const AnalyticsEventSchema = new mongoose.Schema({
 // Compound indexes for common query patterns
 AnalyticsEventSchema.index({ type: 1, createdAt: -1 });
 AnalyticsEventSchema.index({ type: 1, listingType: 1, 'location.city': 1 });
+// PERF-5 — this grew unbounded before (no TTL anywhere on this collection).
+// A single-field index services both range queries on createdAt alone and
+// the TTL expiry; replaces the plain `index: true` that used to be on the
+// field above rather than adding a second, redundant plain index on it.
+// 180 days — comfortably past the admin dashboard's longest `daysBack`
+// default (30) with room for ad-hoc longer lookbacks, while still bounding
+// growth. Adjust here if retention needs change; no other code depends on it.
+AnalyticsEventSchema.index({ createdAt: 1 }, { expireAfterSeconds: 180 * 24 * 60 * 60 });
 
 const AnalyticsEvent = mongoose.model('AnalyticsEvent', AnalyticsEventSchema);
 

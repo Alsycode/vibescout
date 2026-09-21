@@ -57,26 +57,24 @@ const UserSchema = new mongoose.Schema({
       moveInTimeline: String,
     },
   },
-  reportHistory: [{
-    sessionId: String,
-    listingType: String,
-    propertyName: String,
-    reportSnapshot: Object,
-    // full rendered report JSON — permanent record
-    // source of truth after ShadowProperty expires
-    shareToken: String,
-    // crypto.randomBytes(16).toString('hex') — 32 chars, 128-bit entropy
-    // stored here — validated by matching sessionId + shareToken
-    generatedAt: Date,
-  }],
-  unlockedReports: [{ type: String }],
-  // sessionIds that have been paid for
+  // PERF-4 — reportHistory[] and unlockedReports[] used to live here: every
+  // report's full JSON snapshot inline on the account document, growing
+  // without bound toward Mongo's 16MB doc limit, and hydrated on every
+  // User.findById(...) even when the request had nothing to do with reports.
+  // Moved to their own collections: see src/models/Report.js (one doc per
+  // report) and src/models/Payment.js (status:'paid' is now the source of
+  // truth for "unlocked", replacing unlockedReports[]).
+  // Deliberately not removed from existing documents in the database —
+  // scripts/migrateReportsAndUnlocks.js copies the data out; the old fields
+  // are just inert once the schema (here) no longer declares them, so
+  // nothing reads or writes them going forward.
   resetToken:       { type: String, default: null },
   resetTokenExpiry: { type: Date,   default: null },
   createdAt: { type: Date, default: Date.now },
 });
 
-UserSchema.index({ email: 1 }, { unique: true });
+// PERF-5 — email's field-level `unique: true` above already creates this
+// index; removed the redundant duplicate .index() call that used to be here.
 
 const User = mongoose.model('User', UserSchema);
 

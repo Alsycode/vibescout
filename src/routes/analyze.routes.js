@@ -7,7 +7,8 @@ import ShadowProperty from '../models/ShadowProperty.js';
 import User from '../models/User.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { assignCluster } from '../services/clusterService.js';
-import { runPipeline } from '../services/intelligencePipeline.service.js';
+import { enqueuePipelineJob } from '../queues/pipelineQueue.js';
+import { reverseGeocodeNominatim } from '../services/geocode.service.js';
 
 const router = Router();
 
@@ -35,11 +36,7 @@ async function getCoordinatesFromPlaceId(placeId) {
 }
 
 async function reverseGeocode(lat, lng) {
-  const url = `https://nominatim.openstreetmap.org/reverse`
-    + `?lat=${lat}&lon=${lng}&format=json&addressdetails=1`;
-  const res = await fetch(url, { headers: { 'User-Agent': 'Vibescout/1.0' } });
-  const data = await res.json();
-  const addr = data.address ?? {};
+  const addr = (await reverseGeocodeNominatim(lat, lng)) ?? {};
   // Most-specific → broadest: neighbourhood/suburb → city/town → district/county
   const suburb = addr.suburb || addr.neighbourhood || addr.quarter || null;
   const city   = addr.city || addr.town || null;
@@ -47,7 +44,7 @@ async function reverseGeocode(lat, lng) {
   const locationCascade = [suburb, city, county].filter(Boolean)
     .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
   return {
-    displayName: data.display_name ?? 'Selected location',
+    displayName: addr.displayName ?? 'Selected location',
     cityName: city || suburb || county || null,
     locationCascade: locationCascade.length ? locationCascade : null,
   };
@@ -103,6 +100,7 @@ router.post('/start', requireAuth, async (req, res, next) => {
 
     const sp = await ShadowProperty.create({
       sessionId,
+      userId: req.user.userId, // SEC-01 — binds this session to the creating account
       placeId: placeId ?? null,
       name,
       coordinates: { lat, lng },
@@ -131,8 +129,16 @@ router.post('/start', requireAuth, async (req, res, next) => {
       // fallback to name
     }
 
-    runPipeline(sp._id, lat, lng, clusterId, cityName, locationCascade).catch(err => {
-      console.error(`[Pipeline] Error for session ${sessionId}:`, err.message);
+    // PERF-1 — enqueue instead of running inline. A worker process (worker.js)
+    // drains this with bounded concurrency; retries + backoff are BullMQ's,
+    // not ours. Enqueue failure (e.g. Redis down) is logged, matching the
+    // fire-and-forget posture this replaces — the response was already sent.
+    enqueuePipelineJob({
+      shadowPropertyId: sp._id.toString(),
+      sessionId,
+      lat, lng, clusterId, cityName, locationCascade,
+    }).catch(err => {
+      console.error(`[Pipeline] Enqueue failed for session ${sessionId}:`, err.message);
     });
   } catch (err) {
     next(err);
@@ -168,7 +174,7 @@ router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
     }
 
     const sp = await ShadowProperty.findOneAndUpdate(
-      { sessionId },
+      { sessionId, userId: req.user.userId }, // SEC-01 — an owner mismatch reads as not-found, not 403
       { userProvidedSpecs: { budgetBracket, actualAmount: parsedAmount, bhk, floor, listingType } },
       { new: true }
     );

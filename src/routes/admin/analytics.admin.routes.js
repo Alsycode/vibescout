@@ -2,14 +2,14 @@
 // PURPOSE: Admin analytics endpoints — funnel drop-off, conversion, verdict feedback, amenity preferences
 
 import { Router } from 'express';
-import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
+import { requireAdminAuth } from '../../middleware/auth.middleware.js';
 import AnalyticsEvent from '../../models/AnalyticsEvent.js';
 import User from '../../models/User.js';
 import ShadowProperty from '../../models/ShadowProperty.js';
 import { getStepCompletionRates, getAvgTimePerStep, getErrorRateByStep, getDeviceComparison, getRecentEvents } from '../../services/funnelAnalytics.service.js';
 
 const router = Router();
-router.use(requireAuth, requireAdmin);
+router.use(requireAdminAuth);
 
 function sinceDate(daysBack) {
   return new Date(Date.now() - daysBack * 24 * 60 * 60 * 1000);

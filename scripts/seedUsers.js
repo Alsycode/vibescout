@@ -29,7 +29,6 @@ async function seed() {
       passwordHash,
       role: account.role,
       preferences: {},
-      reportHistory: [],
     });
     console.log(`[seedUsers] Created ${account.email} (role: ${account.role})`);
   }

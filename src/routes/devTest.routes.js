@@ -6,7 +6,8 @@
 import { Router } from 'express';
 import crypto from 'crypto';
 import ShadowProperty from '../models/ShadowProperty.js';
-import User from '../models/User.js';
+import Report from '../models/Report.js';
+import Payment from '../models/Payment.js';
 import { requireAuth } from '../middleware/auth.middleware.js';
 import { assignCluster } from '../services/clusterService.js';
 import { runPipeline } from '../services/intelligencePipeline.service.js';
@@ -157,6 +158,7 @@ router.post('/seed-report', requireAuth, async (req, res, next) => {
     // ── 2. Create ShadowProperty ────────────────────────────────────────────
     const sp = await ShadowProperty.create({
       sessionId,
+      userId: req.user.userId, // SEC-01
       name: propertyName,
       coordinates: { lat, lng },
       confirmedByUser: true,
@@ -300,26 +302,38 @@ router.post('/seed-report', requireAuth, async (req, res, next) => {
       },
     };
 
-    // ── 9. Save to user reportHistory + Redis ───────────────────────────────
+    // ── 9. Save Report (+ a free dev Payment) + Redis ───────────────────────
+    // PERF-4 — reportHistory[]/unlockedReports[] on User are gone; this dev
+    // seeder writes the same two collections the real funnel now uses
+    // (Report, Payment) instead of reinventing its own storage.
     const shareToken = crypto.randomBytes(16).toString('hex');
-    const user = await User.findById(req.user.userId);
 
-    await User.updateOne(
-      { _id: req.user.userId, 'reportHistory.sessionId': { $ne: sessionId } },
-      {
-        $push: {
-          reportHistory: {
-            sessionId,
-            listingType,
-            propertyName,
-            reportSnapshot: report,
-            shareToken,
-            generatedAt: new Date(),
-          },
-        },
-        $addToSet: { unlockedReports: sessionId },
-      },
-    );
+    try {
+      await Report.create({
+        userId: req.user.userId,
+        sessionId,
+        listingType,
+        propertyName,
+        snapshot: report,
+        shareToken,
+        generatedAt: new Date(),
+      });
+    } catch (err) {
+      if (err.code !== 11000) throw err; // re-seeding an existing sessionId — fine, dev tool
+    }
+
+    const alreadyPaid = await Payment.exists({ userId: req.user.userId, sessionId, status: 'paid' });
+    if (!alreadyPaid) {
+      await Payment.create({
+        userId: req.user.userId,
+        sessionId,
+        razorpayOrderId: `dev_${sessionId}_${Date.now()}`,
+        amount: 19900, // ₹199 — mirrors payment.routes.js's REPORT_PRICE_PAISE
+        currency: 'INR',
+        status: 'paid',
+        source: 'dev',
+      });
+    }
 
     await redisSet(`report:${sessionId}`, JSON.stringify(report), 604800);
 

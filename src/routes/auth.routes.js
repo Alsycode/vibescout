@@ -11,10 +11,15 @@ import { sendPasswordResetEmail } from '../services/email.service.js';
 
 const router = Router();
 
+// SEC-03 — 'lax' (not 'none') in every environment. Safe because the frontend
+// only ever talks to the API same-origin, through the Next.js `/api/*`
+// rewrite (see frontend/next.config.js + frontend/lib/api.js) — the browser
+// never makes a genuinely cross-site request here, so 'none''s broader
+// exposure bought nothing and only widened the CSRF surface.
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure:   process.env.NODE_ENV === 'production',
-  sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+  sameSite: 'lax',
   maxAge:   7 * 24 * 60 * 60 * 1000, // 7 days
   path:     '/',
 };
@@ -58,8 +63,10 @@ router.post('/register', async (req, res, next) => {
     });
 
     res.cookie('vb_session', token, COOKIE_OPTIONS);
+    // SEC-04 — the httpOnly cookie is the sole transport; returning the raw
+    // JWT here too defeats httpOnly (any XSS could read it straight off the
+    // response, or off wherever the frontend then stashed it).
     return res.status(201).json({
-      token,
       user: {
         id:    user._id,
         name:  user.name,
@@ -100,7 +107,6 @@ router.post('/login', async (req, res, next) => {
 
     res.cookie('vb_session', token, COOKIE_OPTIONS);
     return res.json({
-      token,
       user: {
         id:    user._id,
         name:  user.name,
@@ -118,7 +124,7 @@ router.post('/logout', (req, res) => {
   res.clearCookie('vb_session', {
     httpOnly: true,
     secure:   process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    sameSite: 'lax',
     path:     '/',
   });
   res.clearCookie('vb_token', {
@@ -179,6 +185,9 @@ router.post('/forgot-password', async (req, res, next) => {
 router.post('/reset-password', async (req, res, next) => {
   try {
     const { token, password } = req.body;
+    if (typeof token !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ error: 'Token and password are required' });
+    }
     if (!token || !password) return res.status(400).json({ error: 'Token and password are required' });
     if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 

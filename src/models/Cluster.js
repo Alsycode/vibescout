@@ -76,8 +76,13 @@ const ClusterSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-ClusterSchema.index({ clusterId: 1 }, { unique: true });
+// PERF-5 — clusterId's field-level `unique: true` above already creates this
+// exact index; a second explicit .index() call for it was a redundant
+// duplicate (Mongoose warned on every boot — removed, not added, here).
 ClusterSchema.index({ centroidLat: 1, centroidLng: 1 });
+// getAllActiveClusters() — run by every cron job (clusterService.js) — had
+// no index support for this at all; a full collection scan on every run.
+ClusterSchema.index({ lastSearchedAt: 1 });
 
 const Cluster = mongoose.model('Cluster', ClusterSchema);
 

@@ -10,7 +10,7 @@ import { fetchSolar } from './solar.service.js';
 import { fetchWeather } from './weather.service.js';
 import { fetchAmenities } from './places.service.js';
 import { fetchNewsWithFallback } from './news.service.js';
-import { getSeasonalAQI, CITY_AQI_AVERAGES } from '../data/cityAQIAverages.js';
+import { getSeasonalAQI } from '../data/cityAQIAverages.js';
 import { getSeasonalWeather } from '../data/cityWeatherAverages.js';
 import { computeLivabilityIndex } from './livability.service.js';
 import { computeMaturityScore } from './maturity.service.js';
@@ -64,13 +64,24 @@ async function cacheClusterSignal(clusterId, signalType, data) {
   }
 }
 
+// A cached signal is only trustworthy if it carries the field the rest of the
+// pipeline actually reads. Older/partial cache writes (e.g. a cachedAQI row
+// saved without its `aqi` field) must NOT be treated as a hit — silently
+// returning them produces "undefined" values downstream (verdicts, report text).
+function isUsableCachedSignal(signalType, obj) {
+  if (signalType === 'AQI') return obj?.value != null;
+  return true;
+}
+
 export async function getOrFetchClusterSignal(clusterId, lat, lng, signalType, cityName) {
   // 1. Redis hot cache
   try {
     const cached = await redisGet(`cluster:${clusterId}:${signalType}`);
     if (cached) {
       const parsed = typeof cached === 'string' ? JSON.parse(cached) : cached;
-      return { ...parsed, source: 'cache' };
+      if (isUsableCachedSignal(signalType, parsed)) {
+        return { ...parsed, source: 'cache' };
+      }
     }
   } catch {
     // Redis miss — continue
@@ -85,7 +96,9 @@ export async function getOrFetchClusterSignal(clusterId, lat, lng, signalType, c
         const raw = cluster[cacheField].toObject();
         // Cluster schema stores AQI as 'aqi', pipeline expects 'value' — normalize on read
         if (signalType === 'AQI' && raw.aqi != null) raw.value = raw.aqi;
-        return { ...raw, source: 'cache' };
+        if (isUsableCachedSignal(signalType, raw)) {
+          return { ...raw, source: 'cache' };
+        }
       }
     } catch {
       // DB miss — continue
@@ -126,7 +139,7 @@ export async function fetchNoiseWithFallback(lat, lng, clusterId, cityName) {
   }
 }
 
-export async function fetchAmenitiesWithFallback(lat, lng, clusterId, cityName) {
+export async function fetchAmenitiesWithFallback(lat, lng, clusterId, _cityName) {
   try {
     const result = await fetchAmenities(lat, lng, clusterId);
     return result;
@@ -140,7 +153,7 @@ export async function fetchAmenitiesWithFallback(lat, lng, clusterId, cityName) 
   }
 }
 
-export function getFallbackSignal(signalType, lat, lng, cityName) {
+export function getFallbackSignal(signalType, lat, _lng, _cityName) {
   switch (signalType) {
     case 'AQI': {
       // NOTE (SF-07): Unreachable in normal pipeline flow — fetchAQI() never returns null
@@ -183,9 +196,6 @@ function withTimeout(promise, timeoutMs = 10000) {
 // ─── Part 9b — Orchestrator ─────────────────────────────────────────
 
 export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityName, locationCascade) {
-  const sp = await ShadowProperty.findById(shadowPropertyId);
-  const sessionId = sp?.sessionId;
-
   // Define timeout fallbacks for each signal
   const aqiFallback = getFallbackSignal('AQI', lat, lng, cityName);
   const noiseFallback = {

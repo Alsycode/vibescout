@@ -3,11 +3,11 @@
 
 import { Router } from 'express';
 import Lead from '../../models/Lead.js';
-import { requireAuth, requireAdmin } from '../../middleware/auth.middleware.js';
+import { requireAdminAuth } from '../../middleware/auth.middleware.js';
 
 const router = Router();
 
-router.use(requireAuth, requireAdmin);
+router.use(requireAdminAuth);
 
 // GET /admin/leads — list with optional filters
 router.get('/', async (req, res, next) => {

@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, X } from 'lucide-react';
 import DataTable from '../../../../components/admin/DataTable';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 function ActivePill({ isActive }) {
   return (

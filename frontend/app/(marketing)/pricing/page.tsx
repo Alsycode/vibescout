@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Pricing — VibeScout',
+  title: 'Pricing — Haum',
   description: 'One report, one price. ₹199 for full property intelligence — no subscription, no hidden fees.',
 };
 
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: 'Is my payment secure?',
-    a: 'Yes. Payments are processed by Razorpay, a PCI-DSS compliant payment gateway. VibeScout never stores your card details.',
+    a: 'Yes. Payments are processed by Razorpay, a PCI-DSS compliant payment gateway. Haum never stores your card details.',
   },
   {
     q: 'How long is my report valid?',

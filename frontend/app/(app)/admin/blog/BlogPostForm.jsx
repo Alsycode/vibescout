@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 const CATEGORIES = ['Signal Deep Dive', 'Financial Intelligence', 'Buying Guide'];
 

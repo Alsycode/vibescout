@@ -6,35 +6,24 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
-
-function decodeToken(token) {
-  try {
-    const [, payload] = token.split('.');
-    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4);
-    return JSON.parse(atob(padded));
-  } catch {
-    return null;
-  }
-}
 
 export default function BrokerPortalLayout({ children }) {
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    const token = Cookies.get('vb_token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-    const decoded = decodeToken(token);
-    if (!decoded) {
-      router.push('/login');
-      return;
-    }
-    setAuthorized(true);
+    // SEC-04 — auth is the httpOnly vb_session cookie only; there's no
+    // client-readable token to decode, so ask the backend (same pattern as
+    // Navbar.jsx's auth check) rather than trust anything client-side.
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then((r) => {
+        if (r.ok) {
+          setAuthorized(true);
+        } else {
+          router.push('/login');
+        }
+      })
+      .catch(() => router.push('/login'));
   }, [router]);
 
   if (!authorized) {

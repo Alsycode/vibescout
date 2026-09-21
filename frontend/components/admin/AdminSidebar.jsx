@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard, Building2, Users, UserCheck,
   Network, Gavel, History, Settings, HelpCircle,
-  BookOpen, TrendingUp, BarChart2, ChevronRight,
+  BookOpen, TrendingUp, BarChart2, ChevronRight, Activity,
 } from 'lucide-react';
 
 const TEAL      = '#0DD8C0';
@@ -34,6 +34,7 @@ const NAV_SECTIONS = [
     items: [
       { label: 'Funnel Analytics',   href: '/admin/funnel-analytics',  icon: TrendingUp },
       { label: 'Conversion',         href: '/admin/conversion',        icon: BarChart2 },
+      { label: 'API Usage',          href: '/admin/api-usage',         icon: Activity },
     ],
   },
 ];
@@ -53,7 +54,7 @@ const BOTTOM_ITEMS = [
   { label: 'Help & Support', href: '/admin/help',     icon: HelpCircle },
 ];
 
-export default function AdminSidebar({ isOpen = false, onClose }) {
+export default function AdminSidebar({ isOpen = false, onClose, user, onLogout }) {
   const pathname     = usePathname();
   const searchParams = useSearchParams();
 
@@ -127,7 +128,7 @@ export default function AdminSidebar({ isOpen = false, onClose }) {
           </div>
           <div>
             <p style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1, letterSpacing: '-0.02em' }}>
-              VibeScout
+              Haum
             </p>
             <p style={{ fontSize: '10px', fontWeight: 500, color: TEAL, opacity: 0.6, marginTop: '3px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Admin
@@ -257,16 +258,20 @@ export default function AdminSidebar({ isOpen = false, onClose }) {
       </div>
 
       {/* ── User profile card ────────────────────────────────── */}
-      <div style={{
-        margin: '8px 12px 14px',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: '10px',
-        padding: '11px 13px',
-        display: 'flex', alignItems: 'center', gap: '10px',
-        cursor: 'pointer',
-        transition: 'background 150ms ease, border-color 150ms ease',
-      }}>
+      <div
+        onClick={onLogout}
+        title="Sign out"
+        style={{
+          margin: '8px 12px 14px',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: '10px',
+          padding: '11px 13px',
+          display: 'flex', alignItems: 'center', gap: '10px',
+          cursor: 'pointer',
+          transition: 'background 150ms ease, border-color 150ms ease',
+        }}
+      >
         <div style={{
           width: '32px', height: '32px', borderRadius: '50%',
           background: 'rgba(13,216,192,0.15)',
@@ -274,14 +279,16 @@ export default function AdminSidebar({ isOpen = false, onClose }) {
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0,
         }}>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: TEAL, lineHeight: 1 }}>A</span>
+          <span style={{ fontSize: '12px', fontWeight: 700, color: TEAL, lineHeight: 1 }}>
+            {(user?.name?.[0] ?? 'A').toUpperCase()}
+          </span>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.82)', lineHeight: 1, marginBottom: '3px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            Admin User
+            {user?.name ?? 'Admin'}
           </p>
           <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.28)', lineHeight: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            admin@vibescout.com
+            {user?.email ?? ''}
           </p>
         </div>
         <ChevronRight size={12} color="rgba(255,255,255,0.25)" style={{ flexShrink: 0 }} />

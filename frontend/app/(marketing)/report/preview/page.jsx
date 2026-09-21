@@ -253,7 +253,7 @@ export default function ReportPreviewPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <Link href="/" style={{ textDecoration: 'none' }}>
               <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 600, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.75)' }}>
-                VIBESCOUT
+                HAUM
               </span>
             </Link>
             <div style={{ width: '1px', height: '16px', background: 'rgba(255,255,255,0.10)' }} />

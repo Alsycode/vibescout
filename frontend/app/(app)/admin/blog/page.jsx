@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import DataTable from '../../../../components/admin/DataTable';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 function PublishedPill({ published }) {
   return (
@@ -162,7 +162,7 @@ export default function AdminBlogPage() {
             Blog Posts
           </h1>
           <p style={{ fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
-            Content marketing for the VibeScout audience.
+            Content marketing for the Haum audience.
           </p>
         </div>
         <Link href="/admin/blog/new" style={{ textDecoration: 'none' }}>

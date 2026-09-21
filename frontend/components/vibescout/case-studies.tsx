@@ -35,7 +35,7 @@ const CASES: CaseStudy[] = [
       { signal: 'FINANCIAL FIT', found: '+23% above comparable block average',      verdict: 'red_flag', icon: 'finance'  },
     ],
     outcome:
-      'Buyer negotiated ₹9.21 price reduction after presenting the VibeScout report. Commute risk was the deciding factor.',
+      'Buyer negotiated ₹9.21 price reduction after presenting the Haum report. Commute risk was the deciding factor.',
   },
   {
     id:       '002',
@@ -500,7 +500,7 @@ export default function CaseStudies() {
           >
             Three real property investigations across Bengaluru and Pune.
             <br />
-            Listing claims on the left. VibeScout findings on the right.
+            Listing claims on the left. Haum findings on the right.
           </p>
         </div>
 

@@ -6,7 +6,7 @@ import { TestimonialsColumn, type Testimonial } from '@/components/ui/testimonia
 
 const TESTIMONIALS: Testimonial[] = [
   {
-    text:   "I ran a report before signing the lease. VibeScout flagged 71dB noise from a construction corridor right next door. My broker never mentioned it once.",
+    text:   "I ran a report before signing the lease. Haum flagged 71dB noise from a construction corridor right next door. My broker never mentioned it once.",
     image:  'https://randomuser.me/api/portraits/men/32.jpg',
     name:   'Arjun Sharma',
     role:   'Software Engineer · Bengaluru',
@@ -34,7 +34,7 @@ const TESTIMONIALS: Testimonial[] = [
     signal: 'AQ SIGNAL',
   },
   {
-    text:   "I've started using VibeScout for every shortlist. The commute signal alone has ruled out four flats I would have wasted weekends visiting.",
+    text:   "I've started using Haum for every shortlist. The commute signal alone has ruled out four flats I would have wasted weekends visiting.",
     image:  'https://randomuser.me/api/portraits/women/12.jpg',
     name:   'Ananya Krishnan',
     role:   'Management Consultant · Bengaluru',

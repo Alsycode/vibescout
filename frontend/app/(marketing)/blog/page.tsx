@@ -3,11 +3,11 @@ import BlogGrid from './BlogGrid';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Blog — VibeScout | Property Intelligence Insights',
+  title: 'Blog — Haum | Property Intelligence Insights',
   description:
     'Deep dives on AQI, noise pollution, rental yield, and the signals Indian property listings never show you.',
   openGraph: {
-    title: 'Blog — VibeScout | Property Intelligence Insights',
+    title: 'Blog — Haum | Property Intelligence Insights',
     description:
       'Deep dives on AQI, noise pollution, rental yield, and the signals Indian property listings never show you.',
     type: 'website',
@@ -122,7 +122,7 @@ export default async function BlogListingPage() {
           }}
         >
           Research, signal breakdowns, and hard numbers on Indian property — sourced from the same data
-          pipelines that power every VibeScout report.
+          pipelines that power every Haum report.
         </p>
       </section>
 

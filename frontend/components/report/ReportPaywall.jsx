@@ -175,7 +175,7 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: order.amount,
       currency: order.currency,
-      name: 'VibeScout',
+      name: 'Haum',
       description: 'Full Property Intelligence Report',
       order_id: order.id,
       theme: { color: '#0DD8C0' },
@@ -260,7 +260,7 @@ export default function ReportPaywall({ report, sessionId, onUnlocked }) {
                   letterSpacing: '0.16em', textTransform: 'uppercase',
                   color: 'rgba(13,216,192,0.70)', margin: '0 0 6px',
                 }}>
-                  VIBESCOUT INTELLIGENCE
+                  HAUM INTELLIGENCE
                 </p>
                 {propertyName && (
                   <p style={{

@@ -6,7 +6,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import api from '../../../lib/api';
 import { CoreSpinLoader } from '../../../components/ui/core-spin-loader';
 
@@ -45,16 +44,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const { data } = await api.post('/auth/login', { email, password });
+      await api.post('/auth/login', { email, password });
 
-      if (data.token) {
-        Cookies.set('vb_token', data.token, { expires: 7, sameSite: 'lax' });
-      }
-
-      const role = data.user?.role;
+      // SEC-04 — the backend no longer returns the JWT in the response body;
+      // the httpOnly vb_session cookie it sets is the sole auth transport.
       setLoading(false);
       setRedirecting(true);
-      router.replace(role === 'admin' ? '/admin' : '/analyze');
+      router.replace('/analyze');
     } catch (err) {
       setError(err?.response?.data?.error ?? 'Invalid email or password.');
       setLoading(false);
@@ -112,7 +108,7 @@ export default function LoginPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
             <div style={{ width: '18px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(13,216,192,0.7))' }} />
             <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#0DD8C0', margin: 0 }}>
-              VIBESCOUT INTELLIGENCE
+              HAUM INTELLIGENCE
             </p>
             <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, rgba(13,216,192,0.55), transparent)' }} />
           </div>

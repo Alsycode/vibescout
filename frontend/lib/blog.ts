@@ -26,7 +26,7 @@ export const BLOG_POSTS: BlogPost[] = [
 <p>That is a structural blind spot, and it is expensive.</p>
 
 <h2>The Data Gap Nobody Talks About</h2>
-<p>India operates <strong>over 800 CAAQMS (Continuous Ambient Air Quality Monitoring Stations)</strong> across major cities. The OpenAQ database — the same live feed VibeScout pulls — updates hourly. A PM2.5 reading above 60 µg/m³ is "Poor" under CPCB's National Air Quality Index. Above 90 is "Very Poor." Above 120 is "Severe."</p>
+<p>India operates <strong>over 800 CAAQMS (Continuous Ambient Air Quality Monitoring Stations)</strong> across major cities. The OpenAQ database — the same live feed Haum pulls — updates hourly. A PM2.5 reading above 60 µg/m³ is "Poor" under CPCB's National Air Quality Index. Above 90 is "Very Poor." Above 120 is "Severe."</p>
 
 <p>Here is what that looks like in practice:</p>
 
@@ -51,8 +51,8 @@ What the AQI data says: annual average PM2.5 8–15 µg/m³ higher than comparab
   <li><strong>Adjust your price anchor.</strong> Poor-to-Very-Poor AQI is a quantifiable negative externality. A 10–12% discount relative to a comparable address with Satisfactory AQI is not unreasonable to demand.</li>
 </ol>
 
-<h2>What VibeScout Does</h2>
-<p>Every VibeScout report fetches live AQI data from the OpenAQ v3 API for the exact coordinates of the property you submit — not a city-wide average. The verdict engine classifies the reading deterministically: green (Good/Satisfactory), amber (Moderate), or red (Poor/Very Poor/Severe), and the Groq layer adds a plain-language label.</p>
+<h2>What Haum Does</h2>
+<p>Every Haum report fetches live AQI data from the OpenAQ v3 API for the exact coordinates of the property you submit — not a city-wide average. The verdict engine classifies the reading deterministically: green (Good/Satisfactory), amber (Moderate), or red (Poor/Very Poor/Severe), and the Groq layer adds a plain-language label.</p>
 
 <p>No model "estimates" the air quality. No broker opinion. The number is live. The verdict is rules-based.</p>
 
@@ -84,8 +84,8 @@ What the AQI data says: annual average PM2.5 8–15 µg/m³ higher than comparab
   <li><strong>Active construction zones</strong> — Particularly relevant in high-growth corridors (Sarjapur Road, Wakad, Gachibowli). Construction noise can persist 5–7 years if a large township is going up adjacent to the property.</li>
 </ul>
 
-<h2>How VibeScout Estimates Noise Risk Without Sensors</h2>
-<p>VibeScout doesn't use sound-level meters (that's physically impossible at scale). Instead, the noise signal is computed from <strong>OpenStreetMap Overpass API data</strong> — a community-maintained geospatial dataset that maps roads by classification, railways, airports, industrial zones, and place-of-worship locations to precise coordinates.</p>
+<h2>How Haum Estimates Noise Risk Without Sensors</h2>
+<p>Haum doesn't use sound-level meters (that's physically impossible at scale). Instead, the noise signal is computed from <strong>OpenStreetMap Overpass API data</strong> — a community-maintained geospatial dataset that maps roads by classification, railways, airports, industrial zones, and place-of-worship locations to precise coordinates.</p>
 
 <p>The risk engine assigns weighted scores based on:</p>
 <ul>
@@ -179,8 +179,8 @@ What the AQI data says: annual average PM2.5 8–15 µg/m³ higher than comparab
   <li><strong>You are in a lower tax bracket.</strong> For taxpayers below 20% slab, the post-tax hit is softer. Self-employed professionals with business income often have more tax-efficient structures for rental income.</li>
 </ul>
 
-<h2>What VibeScout Computes</h2>
-<p>VibeScout's financial card for rental properties shows:</p>
+<h2>What Haum Computes</h2>
+<p>Haum's financial card for rental properties shows:</p>
 <ul>
   <li><strong>Gross yield</strong> — benchmark against your location</li>
   <li><strong>Monthly rent-to-income ratio</strong> — is the rent sustainable relative to median incomes in the area?</li>
@@ -241,14 +241,14 @@ What the AQI data says: annual average PM2.5 8–15 µg/m³ higher than comparab
 
 <p>These signals are publicly available (OpenAQ, OpenStreetMap, PVGIS for solar), but assembling and interpreting them for a specific property requires technical infrastructure that most buyers do not have.</p>
 
-<p><strong>What VibeScout does:</strong> Fetches live environmental data for the exact coordinates you submit, runs deterministic verdicts against quantitative thresholds, and flags where the property's profile diverges from what a reasonable buyer would expect at the listed price. No AI hallucination. No broker framing. Numbers and thresholds, documented and consistent.</p>
+<p><strong>What Haum does:</strong> Fetches live environmental data for the exact coordinates you submit, runs deterministic verdicts against quantitative thresholds, and flags where the property's profile diverges from what a reasonable buyer would expect at the listed price. No AI hallucination. No broker framing. Numbers and thresholds, documented and consistent.</p>
 
 <h2>The Cost of Not Knowing</h2>
 <p>Renovation costs ₹800–₹2,500/sqft. A new kitchen is ₹3–8L. A new bathroom is ₹2–5L. These are recoverable.</p>
 
 <p>Moving costs — stamp duty, registration, broker fee, movers, temporary housing — run 6–9% of the transaction value. On a ₹1.2 Cr apartment, that is ₹7–11L to exit and re-enter the market.</p>
 
-<p>The intelligence you needed before the first payment was, in most cases, available. The VibeScout report takes under five minutes to generate. The site visit checklist above takes three hours across two visits. The document review — RERA registration, OC, encumbrance certificate, DP extract — takes a weekend.</p>
+<p>The intelligence you needed before the first payment was, in most cases, available. The Haum report takes under five minutes to generate. The site visit checklist above takes three hours across two visits. The document review — RERA registration, OC, encumbrance certificate, DP extract — takes a weekend.</p>
 
 <p>Spend the time before. The alternative is spending the money after.</p>
     `,

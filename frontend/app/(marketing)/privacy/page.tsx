@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Privacy Policy — VibeScout',
-  description: 'VibeScout Privacy Policy — how we collect, use, and protect your data.',
+  title: 'Privacy Policy — Haum',
+  description: 'Haum Privacy Policy — how we collect, use, and protect your data.',
 };
 
 const LAST_UPDATED = 'June 28, 2026';
@@ -36,7 +36,7 @@ const SECTIONS = [
   },
   {
     title: '8. Children',
-    body: 'VibeScout is not directed at children under 18. We do not knowingly collect personal data from minors. If you believe a minor has provided data to us, contact us and we will delete it promptly.',
+    body: 'Haum is not directed at children under 18. We do not knowingly collect personal data from minors. If you believe a minor has provided data to us, contact us and we will delete it promptly.',
   },
   {
     title: '9. Changes to This Policy',

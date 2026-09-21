@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import DataTable from '../../../../components/admin/DataTable';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 function StatusPill({ status }) {
   const colors = {

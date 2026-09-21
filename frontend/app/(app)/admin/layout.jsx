@@ -1,26 +1,44 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import AdminSidebar from '../../../components/admin/AdminSidebar';
 
 export default function AdminLayout({ children }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [authorized, setAuthorized] = useState(false);
+  const [adminUser, setAdminUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // The login page renders standalone — no sidebar chrome, no auth check
+  // (checking auth there would just bounce back to itself before login).
+  const isLoginPage = pathname === '/admin/login';
+
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
+    if (isLoginPage) return;
+
+    fetch('/api/admin/auth/me', { credentials: 'include' })
       .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
       .then(({ user }) => {
         if (user?.role === 'admin') {
+          setAdminUser(user);
           setAuthorized(true);
         } else {
-          router.push('/login');
+          router.push('/admin/login');
         }
       })
-      .catch(() => router.push('/login'));
-  }, [router]);
+      .catch(() => router.push('/admin/login'));
+  }, [router, isLoginPage]);
+
+  function handleLogout() {
+    fetch('/api/admin/auth/logout', { method: 'POST', credentials: 'include' })
+      .finally(() => router.push('/admin/login'));
+  }
+
+  if (isLoginPage) {
+    return children;
+  }
 
   if (!authorized) {
     return (
@@ -75,7 +93,7 @@ export default function AdminLayout({ children }) {
         />
       )}
 
-      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <AdminSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} user={adminUser} onLogout={handleLogout} />
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
         {/* Mobile topbar */}
@@ -92,7 +110,7 @@ export default function AdminLayout({ children }) {
             </svg>
           </button>
           <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.45)', letterSpacing: '-0.01em' }}>
-            VibeScout{' '}
+            Haum{' '}
             <span style={{ color: '#0DD8C0', opacity: 0.85 }}>Admin</span>
           </span>
         </div>

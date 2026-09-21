@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 const DAYS_OPTIONS = [7, 14, 30, 60];
 

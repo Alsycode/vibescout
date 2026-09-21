@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { RefreshCw, ChevronDown } from 'lucide-react';
 import ClusterHealthBadge from '../../../../components/admin/ClusterHealthBadge';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 const SIGNAL_OPTIONS = [
   { key: 'aqi',       label: 'AQI' },

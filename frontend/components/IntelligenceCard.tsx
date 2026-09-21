@@ -396,7 +396,7 @@ export default function IntelligenceCard({
           color:         'rgba(255,255,255,0.82)',
           flex:          1,
         }}>
-          VIBESCOUT INTELLIGENCE
+          HAUM INTELLIGENCE
         </span>
 
         {/* Live + time */}

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import VerdictBadge from '../../../../../components/report/VerdictBadge';
 import DataSourceLabel from '../../../../../components/report/DataSourceLabel';
-import api from '../../../../../lib/api';
+import api from '../../../../../lib/adminApi';
 
 /* ─── Design tokens ─────────────────────────────────────── */
 const TEAL = '#13DEB9';

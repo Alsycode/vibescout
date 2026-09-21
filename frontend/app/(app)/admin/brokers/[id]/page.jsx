@@ -8,7 +8,7 @@ import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LeadScoreBar from '../../../../../components/admin/LeadScoreBar';
-import api from '../../../../../lib/api';
+import api from '../../../../../lib/adminApi';
 
 function InfoRow({ label, value }) {
   return (

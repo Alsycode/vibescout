@@ -299,7 +299,7 @@ export default function HeroCanvas({ onLoadProgress, onLoadComplete }: HeroCanva
               lineHeight: 1.85,
             }}
           >
-            Vibescout understands how a place feels
+            Haum understands how a place feels
             <br />
             before you ever arrive.
           </motion.p>

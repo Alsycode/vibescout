@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import Image from 'next/image';
 import { Mail, MapPin } from 'lucide-react';
 
 // ── Star positions [cx%, cy%, opacity] — matches funnel bg ────────────────────
@@ -180,6 +181,7 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer
+      id="site-footer"
       style={{
         position:   'relative',
         overflow:   'hidden',
@@ -275,18 +277,22 @@ export default function Footer() {
           {/* Brand col */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
-              {/* Brand label — funnel sidebar-title style */}
-              <p style={{
-                fontFamily:    "'Inter', sans-serif",
-                fontSize:      '10px',
-                fontWeight:    600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                color:         '#0DD8C0',
-                marginBottom:  '8px',
-              }}>
-                VibeScout
-              </p>
+              {/* Brand logo */}
+              <Image
+                src="/haum-logo.png"
+                alt="Haum"
+                width={240}
+                height={118}
+                style={{
+                  height: '60px',
+                  width: 'auto',
+                  objectFit: 'contain',
+                  marginBottom: '12px',
+                  // haum-logo.png ships with a near-black background; `screen`
+                  // knocks it out against the footer's dark ground.
+                  mixBlendMode: 'screen',
+                }}
+              />
               <p style={{
                 fontFamily: "'Inter', sans-serif",
                 fontSize:   '13px',
@@ -411,7 +417,7 @@ export default function Footer() {
             letterSpacing: '0.04em',
             margin:     0,
           }}>
-            © 2026 VibeScout · All rights reserved
+            © 2026 Haum · All rights reserved
           </p>
 
           {/* Social icons — funnel step completed circle style */}
@@ -467,7 +473,7 @@ export default function Footer() {
         }}
         className="footer-hover-text"
       >
-        <TextHoverEffect text="VibeScout" />
+        <TextHoverEffect text="Haum" />
       </div>
 
       <style>{`

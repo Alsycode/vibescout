@@ -1,6 +1,8 @@
 // FILE: components/AuthGuard.jsx
 // PURPOSE: Client-side auth guard — verifies session via GET /auth/me (works with httpOnly cookies),
 //          redirects to /login on 401. Skips auth check on /login and /register to prevent loops.
+//          Also skips /admin — that subtree has its own separate auth guard
+//          (app/(app)/admin/layout.jsx) backed by a distinct admin session/cookie.
 
 'use client';
 
@@ -8,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import api from '../lib/api';
 
-const PUBLIC_PATHS = ['/login', '/register'];
+const PUBLIC_PATHS = ['/login', '/register', '/admin'];
 
 export default function AuthGuard({ children }) {
   const pathname = usePathname();

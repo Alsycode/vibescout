@@ -30,5 +30,5 @@ export function getNonResidentialWarning(types) {
   if (!Array.isArray(types) || types.length === 0) return null;
   const hit = types.find((t) => NON_RESIDENTIAL_TYPES.has(t));
   if (!hit) return null;
-  return "This looks like a business or landmark, not a home. VibeScout analyzes residential livability — results may not be relevant here.";
+  return "This looks like a business or landmark, not a home. Haum analyzes residential livability — results may not be relevant here.";
 }

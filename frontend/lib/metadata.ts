@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 // ── Site-wide constants ───────────────────────────────────────────────────────
 // Single source of truth. Update `url` before going to production.
 export const siteConfig = {
-  name: 'VibeScout',
+  name: 'Haum',
   url: 'https://vibescout.com',
   description:
     'What your broker won\'t tell you about any property — in 5 minutes. Six live signals: air quality, noise, solar potential, commute, financial fit, and local news. Sourced live. Computed deterministically.',

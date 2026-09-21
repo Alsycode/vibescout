@@ -1,8 +1,8 @@
 // FILE: app/(marketing)/report/[sessionId]/page.jsx
 // PURPOSE: Report viewer page — server component with conditional auth.
 //          Has ?share=TOKEN → public read-only report via share token validation.
-//          No share token → check JWT cookie → authenticated owner → full report.
-//          No JWT → redirect to /login.
+//          No share token → check the vb_session cookie → authenticated owner → full report.
+//          No cookie → redirect to /login.
 //          Lives in (marketing)/ route group for SSR.
 
 import { cookies } from 'next/headers';
@@ -29,21 +29,15 @@ async function fetchReportByShareToken(sessionId, shareToken) {
   }
 }
 
-async function fetchReportByOwner(sessionId, sessionToken, legacyToken) {
+async function fetchReportByOwner(sessionId, sessionToken) {
   try {
-    // Send both cookie names so the backend middleware can find either one
-    const cookieHeader = [
-      sessionToken ? `vb_session=${sessionToken}` : '',
-      legacyToken  ? `vb_token=${legacyToken}`   : '',
-    ].filter(Boolean).join('; ');
-
     const res = await fetch(
       `${API_URL}/report/generate?sessionId=${sessionId}`,
       {
         cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
-          Cookie: cookieHeader,
+          Cookie: `vb_session=${sessionToken}`,
         },
       }
     );
@@ -76,11 +70,9 @@ export default async function ReportPage({ params, searchParams }) {
 
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('vb_session')?.value;
-  const legacyToken  = cookieStore.get('vb_token')?.value;
-  const token = sessionToken ?? legacyToken;
-  if (!token) redirect('/login');
+  if (!sessionToken) redirect('/login');
 
-  const data = await fetchReportByOwner(sessionId, sessionToken, legacyToken);
+  const data = await fetchReportByOwner(sessionId, sessionToken);
   if (!data) return notFound();
 
   if (data.status === 'pending') {

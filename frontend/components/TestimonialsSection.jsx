@@ -4,7 +4,7 @@ import { useRef, useEffect } from 'react';
 
 const testimonials = [
   {
-    text: "I was about to sign a lease in a noisy neighbourhood near a highway. Vibescout flagged it immediately. Saved me from a decision I would have regretted.",
+    text: "I was about to sign a lease in a noisy neighbourhood near a highway. Haum flagged it immediately. Saved me from a decision I would have regretted.",
     img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Priya Nair",
     role: "Renter, Bengaluru",
@@ -22,7 +22,7 @@ const testimonials = [
     role: "IT Professional, Hyderabad",
   },
   {
-    text: "Sunlight analysis was a feature I didn't know I needed. West-facing flat with afternoon glare — Vibescout flagged it before I wasted a site visit.",
+    text: "Sunlight analysis was a feature I didn't know I needed. West-facing flat with afternoon glare — Haum flagged it before I wasted a site visit.",
     img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Kabir Desai",
     role: "First-time Buyer, Mumbai",
@@ -34,7 +34,7 @@ const testimonials = [
     role: "Renter, Chennai",
   },
   {
-    text: "The local news section surfaced a planned industrial project near the plot I was considering. Nothing on the listing mentioned it. Vibescout did.",
+    text: "The local news section surfaced a planned industrial project near the plot I was considering. Nothing on the listing mentioned it. Haum did.",
     img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Siddharth Rao",
     role: "Investor, NCR",
@@ -46,7 +46,7 @@ const testimonials = [
     role: "Buyer, Kochi",
   },
   {
-    text: "Most property tools show you listings. Vibescout shows you the truth about what living there actually feels like. That's a completely different product.",
+    text: "Most property tools show you listings. Haum shows you the truth about what living there actually feels like. That's a completely different product.",
     img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Nikhil Saxena",
     role: "Renter, Ahmedabad",
@@ -385,7 +385,7 @@ export default function TestimonialsSection() {
           </h2>
           <p className="vs-t-subtitle">
             From noise and air quality to commute and budget fit — people use
-            Vibescout to know what a property is really like before they commit.
+            Haum to know what a property is really like before they commit.
           </p>
         </div>
 

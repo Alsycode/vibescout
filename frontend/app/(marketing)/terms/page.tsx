@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Terms of Service — VibeScout',
-  description: 'VibeScout Terms of Service',
+  title: 'Terms of Service — Haum',
+  description: 'Haum Terms of Service',
 };
 
 const LAST_UPDATED = 'June 28, 2026';
@@ -8,11 +8,11 @@ const LAST_UPDATED = 'June 28, 2026';
 const SECTIONS = [
   {
     title: '1. Acceptance of Terms',
-    body: 'By accessing or using VibeScout ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service. VibeScout is operated by Alsycode Technologies and is available to users in India.',
+    body: 'By accessing or using Haum ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service. Haum is operated by Alsycode Technologies and is available to users in India.',
   },
   {
     title: '2. Description of Service',
-    body: 'VibeScout provides property intelligence reports based on publicly available data, third-party APIs, and deterministic algorithms. Reports include environmental signals (AQI, noise, solar), commute estimates, amenity proximity, and financial fit assessments. Reports are informational and should not be treated as professional real-estate, financial, legal, or investment advice.',
+    body: 'Haum provides property intelligence reports based on publicly available data, third-party APIs, and deterministic algorithms. Reports include environmental signals (AQI, noise, solar), commute estimates, amenity proximity, and financial fit assessments. Reports are informational and should not be treated as professional real-estate, financial, legal, or investment advice.',
   },
   {
     title: '3. User Accounts',
@@ -24,11 +24,11 @@ const SECTIONS = [
   },
   {
     title: '5. Accuracy of Data',
-    body: 'VibeScout uses live data feeds and third-party sources. While we use algorithmic verification to reduce errors, we cannot guarantee the absolute accuracy of all data points. AQI readings, noise estimates, commute times, and amenity distances are approximations. Always verify critical data independently before making property decisions.',
+    body: 'Haum uses live data feeds and third-party sources. While we use algorithmic verification to reduce errors, we cannot guarantee the absolute accuracy of all data points. AQI readings, noise estimates, commute times, and amenity distances are approximations. Always verify critical data independently before making property decisions.',
   },
   {
     title: '6. Intellectual Property',
-    body: 'All content on VibeScout — including the verdict engine, report templates, UI design, and brand assets — is the property of Alsycode Technologies. You may not copy, distribute, or commercially use any part of the Service without written permission.',
+    body: 'All content on Haum — including the verdict engine, report templates, UI design, and brand assets — is the property of Alsycode Technologies. You may not copy, distribute, or commercially use any part of the Service without written permission.',
   },
   {
     title: '7. Prohibited Use',
@@ -36,7 +36,7 @@ const SECTIONS = [
   },
   {
     title: '8. Limitation of Liability',
-    body: 'To the maximum extent permitted by law, VibeScout and Alsycode Technologies shall not be liable for any indirect, incidental, consequential, or punitive damages arising from your use of the Service, including any property decisions made based on reports. Our total liability shall not exceed the amount you paid for the relevant report.',
+    body: 'To the maximum extent permitted by law, Haum and Alsycode Technologies shall not be liable for any indirect, incidental, consequential, or punitive damages arising from your use of the Service, including any property decisions made based on reports. Our total liability shall not exceed the amount you paid for the relevant report.',
   },
   {
     title: '9. Termination',

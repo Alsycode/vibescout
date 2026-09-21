@@ -7,7 +7,7 @@
 import { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import DataSourceLabel from '../../../../../components/report/DataSourceLabel';
-import api from '../../../../../lib/api';
+import api from '../../../../../lib/adminApi';
 
 function SignalRow({ label, value, unit, source, updatedAt }) {
   return (

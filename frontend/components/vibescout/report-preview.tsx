@@ -152,7 +152,7 @@ export default function ReportPreview() {
             maxWidth:   '540px',
             margin:     '0 auto',
           }}>
-            Every VibeScout report includes all six signals, a consolidated
+            Every Haum report includes all six signals, a consolidated
             verdict, raw data sources, and a generation timestamp. No
             subscriptions. ₹199 per report, generated live.
           </p>

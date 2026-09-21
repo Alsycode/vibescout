@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import BlogPostForm from '../../BlogPostForm';
-import api from '../../../../../../lib/api';
+import api from '../../../../../../lib/adminApi';
 
 export default function EditBlogPostPage() {
   const { id } = useParams();

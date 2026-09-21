@@ -5,10 +5,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 import { ShinyButton } from '@/components/ui/shiny-button';
-import Cookies from 'js-cookie';
 
 const NAV_LINKS = [
   { href: '/#how-it-works', label: 'HOW IT WORKS'  },
@@ -31,7 +31,6 @@ export default function Navbar() {
 
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
-    Cookies.remove('vb_token');
     setAuthed(false);
     setOpen(false);
     setDropOpen(false);
@@ -124,30 +123,15 @@ export default function Navbar() {
 
         <div className="nav-inner">
           {/* ── Logo ─────────────────────────────────────────── */}
-          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: 9 }}>
-            <span
-              aria-hidden
-              style={{
-                width:        '6px',
-                height:       '6px',
-                borderRadius: '50%',
-                background:   '#22D3EE',
-                boxShadow:    '0 0 7px rgba(34,211,238,0.9), 0 0 18px rgba(34,211,238,0.35)',
-                flexShrink:   0,
-                display:      'inline-block',
-              }}
+          <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
+            <Image
+              src="/headerlogo.png"
+              alt="Haum — the verified vibe"
+              width={150}
+              height={56}
+              priority
+              style={{ height: '28px', width: 'auto', objectFit: 'contain' }}
             />
-            <span
-              style={{
-                fontFamily:    "'Geist Mono', monospace",
-                fontSize:      '13px',
-                fontWeight:    500,
-                letterSpacing: '0.10em',
-                color:         'rgba(255,255,255,0.92)',
-              }}
-            >
-              VIBESCOUT
-            </span>
           </Link>
 
           {/* ── Desktop nav ───────────────────────────────────── */}

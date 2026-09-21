@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Building2, Flame, UserCheck, Network, BookOpen, TrendingUp, BarChart2, ArrowRight } from 'lucide-react';
 import StatCard from '../../../components/admin/StatCard';
-import api from '../../../lib/api';
+import api from '../../../lib/adminApi';
 
 const QUICK_LINKS = [
   // { href: '/admin/shadow-properties', label: 'Audited Properties', icon: Building2,  metaKey: 'totalShadowProperties' },

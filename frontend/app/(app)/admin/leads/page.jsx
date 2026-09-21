@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import DataTable from '../../../../components/admin/DataTable';
 import LeadScoreBar from '../../../../components/admin/LeadScoreBar';
-import api from '../../../../lib/api';
+import api from '../../../../lib/adminApi';
 
 const TIER_COLORS = {
   hot:      '#E63946',

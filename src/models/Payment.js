@@ -11,10 +11,13 @@ const PaymentSchema = new mongoose.Schema({
   sessionId: { type: String, required: true, index: true },
   razorpayOrderId: { type: String, required: true, unique: true },
   // Set once the payment is captured — either by /verify or the webhook.
-  // Unique+sparse: absent while status is 'created', so multiple pending
-  // orders don't collide, but no two Payment docs can ever record the same
-  // captured payment.
-  razorpayPaymentId: { type: String, default: null, unique: true, sparse: true },
+  // Unique+sparse: genuinely absent (no `default`) while status is 'created',
+  // so multiple pending orders don't collide, but no two Payment docs can
+  // ever record the same captured payment. A `default: null` here would
+  // defeat the sparse index — Mongo only excludes a field that's truly
+  // missing, not one explicitly set to null, so every "created" order would
+  // collide on the same null value the moment a second one existed.
+  razorpayPaymentId: { type: String, unique: true, sparse: true },
   status: { type: String, enum: ['created', 'paid', 'failed'], default: 'created', index: true },
   amount: { type: Number, required: true },
   currency: { type: String, default: 'INR' },

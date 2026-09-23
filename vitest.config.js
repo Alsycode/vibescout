@@ -9,6 +9,11 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./test/setup.js'],
     include: ['test/**/*.test.js', 'src/**/*.test.js'],
+    // Stage 3 integration tests do real bcrypt (cost 12) round-trips and hit a
+    // real Atlas test DB over the network — both comfortably clear the 5s
+    // default on a loaded dev machine but need headroom.
+    testTimeout: 15000,
+    hookTimeout: 20000,
     // Route/integration tests share a DB and Redis namespace — keep them serial.
     fileParallelism: false,
     coverage: {

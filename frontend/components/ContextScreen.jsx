@@ -7,16 +7,6 @@
 import { useState, useRef, useEffect } from 'react';
 import api from '../lib/api';
 
-const SALE_BRACKETS = [
-  'Under 30L', '30L–60L', '60L–1Cr', '1Cr–1.5Cr',
-  '1.5Cr–2Cr', '2Cr–3Cr', '3Cr–5Cr', 'Above 5Cr',
-];
-
-const RENT_BRACKETS = [
-  'Under 10K', '10K–20K', '20K–35K', '35K–50K',
-  '50K–75K', '75K–1L', 'Above 1L',
-];
-
 const BHK_OPTIONS = [
   '1BHK', '2BHK', '3BHK', '4BHK+', 'Studio', 'Villa', 'Plot', 'PG',
 ];
@@ -142,7 +132,6 @@ function CustomSelect({ id, placeholder, options, value, onChange }) {
 
 export default function ContextScreen({ sessionId, onComplete }) {
   const [listingType, setListingType] = useState('sale');
-  const [budgetBracket, setBudgetBracket] = useState('');
   const [actualAmount, setActualAmount] = useState('');
   const [sqft, setSqft] = useState('');
   const [bhk, setBhk] = useState('');
@@ -150,12 +139,11 @@ export default function ContextScreen({ sessionId, onComplete }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const brackets = listingType === 'sale' ? SALE_BRACKETS : RENT_BRACKETS;
   const parsedAmount = Number(actualAmount);
   const amountValid = actualAmount !== '' && Number.isFinite(parsedAmount) && parsedAmount > 0;
   const parsedSqft = Number(sqft);
   const sqftValid = listingType !== 'sale' || (sqft !== '' && Number.isFinite(parsedSqft) && parsedSqft > 0);
-  const allFilled = budgetBracket && bhk && floor && amountValid && sqftValid;
+  const allFilled = bhk && floor && amountValid && sqftValid;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -165,7 +153,6 @@ export default function ContextScreen({ sessionId, onComplete }) {
     try {
       await api.post(`/analyze/${sessionId}/context`, {
         listingType,
-        budgetBracket,
         actualAmount: parsedAmount,
         sqft: listingType === 'sale' ? parsedSqft : undefined,
         bhk,
@@ -262,7 +249,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 type="button"
-                onClick={() => { setListingType('sale'); setBudgetBracket(''); setActualAmount(''); setSqft(''); }}
+                onClick={() => { setListingType('sale'); setActualAmount(''); setSqft(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -289,7 +276,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setListingType('rent'); setBudgetBracket(''); setActualAmount(''); setSqft(''); }}
+                onClick={() => { setListingType('rent'); setActualAmount(''); setSqft(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -317,19 +304,36 @@ export default function ContextScreen({ sessionId, onComplete }) {
             </div>
           </div>
 
-          {/* 2-column row: Asking price bracket + Floor */}
+          {/* 2-column row: exact amount (compared against the market baseline for this area) + Floor */}
           <div className="context-fields-grid">
             <div>
-              <label htmlFor="budget" style={labelStyle}>
-                {listingType === 'sale' ? 'Asking Price' : 'Monthly Rent'}
+              <label htmlFor="actualAmount" style={labelStyle}>
+                {listingType === 'sale' ? 'Asking Price (₹)' : 'Monthly Rent (₹)'}
               </label>
-              <CustomSelect
-                id="budget"
-                placeholder="Select bracket"
-                options={brackets}
-                value={budgetBracket}
-                onChange={setBudgetBracket}
+              <input
+                id="actualAmount"
+                type="number"
+                min="1"
+                inputMode="numeric"
+                placeholder={listingType === 'sale' ? 'e.g. 8500000' : 'e.g. 32000'}
+                value={actualAmount}
+                onChange={(e) => setActualAmount(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  fontSize: '14px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.09)',
+                  borderRadius: '10px',
+                  color: 'rgba(255,255,255,0.88)',
+                  boxSizing: 'border-box',
+                }}
               />
+              <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
+                {listingType === 'sale'
+                  ? 'Used in your financial breakdown.'
+                  : 'Compared against typical rents for the area.'}
+              </p>
             </div>
             <div>
               <label htmlFor="floor" style={labelStyle}>Which Floor?</label>
@@ -341,37 +345,6 @@ export default function ContextScreen({ sessionId, onComplete }) {
                 onChange={setFloor}
               />
             </div>
-          </div>
-
-          {/* Exact amount — used to compare against the market baseline for this area */}
-          <div>
-            <label htmlFor="actualAmount" style={labelStyle}>
-              {listingType === 'sale' ? 'Exact Asking Price (₹)' : 'Exact Monthly Rent (₹)'}
-            </label>
-            <input
-              id="actualAmount"
-              type="number"
-              min="1"
-              inputMode="numeric"
-              placeholder={listingType === 'sale' ? 'e.g. 8500000' : 'e.g. 32000'}
-              value={actualAmount}
-              onChange={(e) => setActualAmount(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '12px 16px',
-                fontSize: '14px',
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.09)',
-                borderRadius: '10px',
-                color: 'rgba(255,255,255,0.88)',
-                boxSizing: 'border-box',
-              }}
-            />
-            <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
-              {listingType === 'sale'
-                ? 'Used in your financial breakdown.'
-                : 'We compare this against typical rents for the area in your report.'}
-            </p>
           </div>
 
           {/* Built-up area — sale only, needed to compare price against the market's per-sqft baseline */}

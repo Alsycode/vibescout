@@ -53,14 +53,22 @@ async function reverseGeocode(lat, lng) {
 const VALID_BHK = ['1BHK', '2BHK', '3BHK', '4BHK+', 'Studio', 'Villa', 'Plot', 'PG'];
 const VALID_FLOOR = ['Ground', '1–3', '4–7', '8–15', '16+', 'Top Floor', 'Unknown'];
 const VALID_LISTING_TYPE = ['sale', 'rent'];
-const VALID_SALE_BRACKETS = [
-  'Under 30L', '30L–60L', '60L–1Cr', '1Cr–1.5Cr',
-  '1.5Cr–2Cr', '2Cr–3Cr', '3Cr–5Cr', 'Above 5Cr',
+// The user enters only the exact amount; the bracket (used by the budget verdict,
+// lead scoring and analytics) is derived from it. Each entry is [exclusive upper bound, label];
+// an amount exactly on a boundary falls into the higher bracket.
+const SALE_BRACKET_BOUNDS = [
+  [3000000, 'Under 30L'], [6000000, '30L–60L'], [10000000, '60L–1Cr'], [15000000, '1Cr–1.5Cr'],
+  [20000000, '1.5Cr–2Cr'], [30000000, '2Cr–3Cr'], [50000000, '3Cr–5Cr'], [Infinity, 'Above 5Cr'],
 ];
-const VALID_RENT_BRACKETS = [
-  'Under 10K', '10K–20K', '20K–35K', '35K–50K',
-  '50K–75K', '75K–1L', 'Above 1L',
+const RENT_BRACKET_BOUNDS = [
+  [10000, 'Under 10K'], [20000, '10K–20K'], [35000, '20K–35K'], [50000, '35K–50K'],
+  [75000, '50K–75K'], [100000, '75K–1L'], [Infinity, 'Above 1L'],
 ];
+
+export function deriveBudgetBracket(listingType, amount) {
+  const bounds = listingType === 'sale' ? SALE_BRACKET_BOUNDS : RENT_BRACKET_BOUNDS;
+  return bounds.find(([upper]) => amount < upper)[1];
+}
 
 // POST /analyze/start
 router.post('/start', requireAuth, async (req, res, next) => {
@@ -149,7 +157,7 @@ router.post('/start', requireAuth, async (req, res, next) => {
 router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
   try {
     const { sessionId } = req.params;
-    const { budgetBracket, actualAmount, bhk, floor, listingType, sqft } = req.body;
+    const { actualAmount, bhk, floor, listingType, sqft } = req.body;
 
     if (!VALID_LISTING_TYPE.includes(listingType)) {
       return res.status(400).json({ error: 'Invalid listingType — must be sale or rent' });
@@ -163,15 +171,11 @@ router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'Invalid floor value' });
     }
 
-    const validBrackets = listingType === 'sale' ? VALID_SALE_BRACKETS : VALID_RENT_BRACKETS;
-    if (!validBrackets.includes(budgetBracket)) {
-      return res.status(400).json({ error: 'Invalid budgetBracket for selected listingType' });
-    }
-
     const parsedAmount = Number(actualAmount);
     if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
       return res.status(400).json({ error: 'actualAmount must be a positive number' });
     }
+    const budgetBracket = deriveBudgetBracket(listingType, parsedAmount);
 
     // Built-up area (sqft) is required for sale so actualAmount can be normalized
     // to a per-sqft figure for the market-baseline comparison; not needed for rent.

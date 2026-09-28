@@ -15,6 +15,7 @@ vi.mock('../../src/queues/pipelineQueue.js', () => ({
 
 const { agent, setupDb, teardownDb, sessionCookieFor } = await import('./helpers.js');
 const { seedSessions } = await import('../fixtures/seedData.js');
+const ShadowProperty = (await import('../../src/models/ShadowProperty.js')).default;
 
 describe('analyze + funnel ownership', () => {
   let users;
@@ -69,7 +70,7 @@ describe('analyze + funnel ownership', () => {
   });
 
   describe('POST /analyze/:sessionId/context — ownership', () => {
-    const validContext = { budgetBracket: '1Cr–1.5Cr', actualAmount: 12000000, bhk: '2BHK', floor: '4–7', listingType: 'sale' };
+    const validContext = { actualAmount: 12000000, sqft: 1200, bhk: '2BHK', floor: '4–7', listingType: 'sale' };
 
     it('requires auth', async () => {
       const res = await agent.post(`/analyze/${seedSessions.completed}/context`).send(validContext);
@@ -92,10 +93,33 @@ describe('analyze + funnel ownership', () => {
       expect(res.status).toBe(400);
     });
 
-    it('rejects a budget bracket that does not match the listing type', async () => {
-      const res = await agent.post(`/analyze/${seedSessions.completed}/context`).set('Cookie', sessionCookieFor(users.user1))
-        .send({ ...validContext, budgetBracket: 'Under 10K' }); // a rent bracket, listingType=sale
-      expect(res.status).toBe(400);
+    it('rejects a missing or non-positive amount', async () => {
+      const { actualAmount, ...noAmount } = validContext;
+      const missing = await agent.post(`/analyze/${seedSessions.completed}/context`).set('Cookie', sessionCookieFor(users.user1)).send(noAmount);
+      expect(missing.status).toBe(400);
+      const negative = await agent.post(`/analyze/${seedSessions.completed}/context`).set('Cookie', sessionCookieFor(users.user1))
+        .send({ ...validContext, actualAmount: -5 });
+      expect(negative.status).toBe(400);
+    });
+
+    it('derives the budget bracket from the amount and ignores any client-sent bracket', async () => {
+      const send = (body) => agent.post(`/analyze/${seedSessions.completed}/context`).set('Cookie', sessionCookieFor(users.user1)).send(body);
+      const stored = async () => (await ShadowProperty.findOne({ sessionId: seedSessions.completed }).lean()).userProvidedSpecs.budgetBracket;
+
+      await send({ ...validContext, actualAmount: 12000000, budgetBracket: 'Under 30L' });
+      expect(await stored()).toBe('1Cr–1.5Cr');
+
+      // exactly on a boundary falls into the higher bracket
+      await send({ ...validContext, actualAmount: 10000000 });
+      expect(await stored()).toBe('1Cr–1.5Cr');
+      await send({ ...validContext, actualAmount: 9999999 });
+      expect(await stored()).toBe('60L–1Cr');
+
+      const rent = { ...validContext, listingType: 'rent', sqft: undefined };
+      await send({ ...rent, actualAmount: 32000 });
+      expect(await stored()).toBe('20K–35K');
+      await send({ ...rent, actualAmount: 250000 });
+      expect(await stored()).toBe('Above 1L');
     });
   });
 

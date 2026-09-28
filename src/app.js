@@ -77,8 +77,14 @@ app.use(requestTimeout(15000));
 // SEC-19 — unauthenticated, unrate-limited health checks for LB / uptime monitors
 app.use(healthRoutes);
 
+// FRONTEND_URL may hold several comma-separated origins (no trailing slash)
+const allowedOrigins = (process.env.FRONTEND_URL ?? '')
+  .split(',')
+  .map((o) => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -97,7 +103,7 @@ app.use(express.urlencoded({ extended: true, limit: '32kb' }));
 // after body/cookie parsing but before every mutating route, including the
 // Razorpay webhook — that request has no Origin/Referer at all, so it passes
 // through untouched (see csrf.js) and is authenticated by its own signature.
-app.use(csrfProtection([process.env.FRONTEND_URL]));
+app.use(csrfProtection(allowedOrigins));
 
 // SEC-05 — global backstop for every route. Previously mounted at '/api',
 // which the Next.js rewrite strips before the request reaches this backend

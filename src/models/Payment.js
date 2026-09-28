@@ -25,7 +25,14 @@ const PaymentSchema = new mongoose.Schema({
   // 'dev' — POST /payment/dev-unlock (DEV_UNLOCK gate). 'migration' — backfilled
   // by scripts/migrateReportsAndUnlocks.js from the pre-PERF-4 User.unlockedReports[].
   source: { type: String, enum: ['verify', 'webhook', 'dev', 'migration', null], default: null },
+  // When the payment actually captured — revenue reporting buckets on this, not
+  // createdAt (order creation) or updatedAt (changes on any later write). Absent
+  // on docs paid before this field existed; admin revenue falls back to updatedAt.
+  paidAt: { type: Date },
 }, { timestamps: true });
+
+// Revenue dashboard scans paid payments by date.
+PaymentSchema.index({ status: 1, paidAt: 1 });
 
 // PERF-4 — "is sessionId X paid for by user Y" is now the canonical way to
 // check report-unlock status (report.routes.js, payment.routes.js), read on

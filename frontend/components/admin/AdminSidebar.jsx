@@ -5,7 +5,7 @@ import { usePathname, useSearchParams } from 'next/navigation';
 import {
   LayoutDashboard, Building2, Users, UserCheck,
   Network, Gavel, History, Settings, HelpCircle,
-  BookOpen, TrendingUp, BarChart2, ChevronRight, Activity,
+  BookOpen, TrendingUp, BarChart2, ChevronRight, Activity, IndianRupee,
 } from 'lucide-react';
 
 const TEAL      = '#0DD8C0';
@@ -17,7 +17,7 @@ const NAV_SECTIONS = [
     label: 'Core',
     items: [
       { label: 'Overview',           href: '/admin',                  icon: LayoutDashboard, exact: true },
-      { label: 'Audited Properties', href: '/admin/shadow-properties', icon: Building2 },
+      // { label: 'Audited Properties', href: '/admin/shadow-properties', icon: Building2 },
       { label: 'Leads',              href: '/admin/leads',             icon: Users, hasSubnav: false },
       // { label: 'Brokers',            href: '/admin/brokers',           icon: UserCheck },
       // { label: 'Clusters',           href: '/admin/clusters',          icon: Network },
@@ -34,7 +34,8 @@ const NAV_SECTIONS = [
     items: [
       { label: 'Funnel Analytics',   href: '/admin/funnel-analytics',  icon: TrendingUp },
       { label: 'Conversion',         href: '/admin/conversion',        icon: BarChart2 },
-      { label: 'API Usage',          href: '/admin/api-usage',         icon: Activity },
+      { label: 'Revenue',            href: '/admin/revenue',           icon: IndianRupee },
+      // { label: 'API Usage',          href: '/admin/api-usage',         icon: Activity },
     ],
   },
 ];
@@ -50,8 +51,8 @@ const PHASE2_ITEMS = [
 ];
 
 const BOTTOM_ITEMS = [
-  { label: 'Settings',      href: '/admin/settings',  icon: Settings },
-  { label: 'Help & Support', href: '/admin/help',     icon: HelpCircle },
+  // { label: 'Settings',      href: '/admin/settings',  icon: Settings },
+  // { label: 'Help & Support', href: '/admin/help',     icon: HelpCircle },
 ];
 
 export default function AdminSidebar({ isOpen = false, onClose, user, onLogout }) {
@@ -241,7 +242,7 @@ export default function AdminSidebar({ isOpen = false, onClose, user, onLogout }
       </nav>
 
       {/* ── Bottom section ───────────────────────────────────── */}
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '8px 0' }}>
+      {BOTTOM_ITEMS.length > 0 && <div style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '8px 0' }}>
         {BOTTOM_ITEMS.map((item) => {
           const active = isActive(item.href);
           const Icon   = item.icon;
@@ -255,7 +256,7 @@ export default function AdminSidebar({ isOpen = false, onClose, user, onLogout }
             </Link>
           );
         })}
-      </div>
+      </div>}
 
       {/* ── User profile card ────────────────────────────────── */}
       <div

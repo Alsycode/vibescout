@@ -128,7 +128,7 @@ router.post('/verify', paymentLimiter, requireAuth, async (req, res, next) => {
     // the (idempotent) unlock below without double-processing.
     await Payment.findOneAndUpdate(
       { _id: payment._id, status: { $ne: 'paid' } },
-      { $set: { razorpayPaymentId: razorpay_payment_id, status: 'paid', source: 'verify' } },
+      { $set: { razorpayPaymentId: razorpay_payment_id, status: 'paid', source: 'verify', paidAt: new Date() } },
     );
 
     await unlockReport(req.user.userId, sessionId);
@@ -198,7 +198,7 @@ router.post('/webhook', webhookLimiter, async (req, res, next) => {
 
     const updated = await Payment.findOneAndUpdate(
       { _id: payment._id, status: { $ne: 'paid' } },
-      { $set: { razorpayPaymentId, status: 'paid', source: 'webhook' } },
+      { $set: { razorpayPaymentId, status: 'paid', source: 'webhook', paidAt: new Date() } },
       { new: true },
     );
 
@@ -250,6 +250,7 @@ router.post('/dev-unlock', paymentLimiter, requireAuth, async (req, res, next) =
         currency: 'INR',
         status: 'paid',
         source: 'dev',
+        paidAt: new Date(),
       });
     }
 

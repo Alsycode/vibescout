@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Building2, Flame, UserCheck, Network, BookOpen, TrendingUp, BarChart2, ArrowRight } from 'lucide-react';
+import { Building2, Flame, UserCheck, Network, BookOpen, TrendingUp, BarChart2, ArrowRight, IndianRupee } from 'lucide-react';
 import StatCard from '../../../components/admin/StatCard';
 import api from '../../../lib/adminApi';
 
@@ -14,6 +14,7 @@ const QUICK_LINKS = [
   { href: '/admin/blog',              label: 'Blog',               icon: BookOpen,    metaFixed: 'Manage posts' },
   { href: '/admin/funnel-analytics',  label: 'Funnel Analytics',   icon: TrendingUp,  metaFixed: 'Step completion rates' },
   { href: '/admin/conversion',        label: 'Conversion',         icon: BarChart2,   metaFixed: 'Unlock funnel' },
+  { href: '/admin/revenue',           label: 'Revenue',            icon: IndianRupee, metaFixed: 'Paid unlocks (₹199)' },
 ];
 
 const TIER_CONFIG = [
@@ -42,6 +43,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [revenue, setRevenue] = useState(null);
 
   useEffect(() => {
     api
@@ -49,6 +51,10 @@ export default function AdminDashboard() {
       .then((res) => setStats(res.data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+    api
+      .get('/admin/revenue?daysBack=30')
+      .then((res) => setRevenue(res.data))
+      .catch(() => {});
   }, []);
 
   const hot       = stats?.byTier?.hot       ?? 0;
@@ -127,6 +133,13 @@ export default function AdminDashboard() {
               sublabel={`${totalLeads} total leads`}
               accentColor="#E63946"
               icon={Flame}
+            />
+            <StatCard
+              label="Revenue (30d)"
+              value={revenue ? `₹${revenue.period.revenue.toLocaleString('en-IN')}` : '—'}
+              sublabel={revenue ? `${revenue.period.payments} paid unlocks · ₹${revenue.allTime.revenue.toLocaleString('en-IN')} all time` : 'Loading…'}
+              accentColor="#34D399"
+              icon={IndianRupee}
             />
             {/* <StatCard
               label="Active Brokers"

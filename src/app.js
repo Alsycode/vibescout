@@ -29,6 +29,7 @@ import clustersAdminRoutes from './routes/admin/clusters.admin.routes.js';
 import blogAdminRoutes from './routes/admin/blog.admin.routes.js';
 import analyticsAdminRoutes from './routes/admin/analytics.admin.routes.js';
 import apiUsageAdminRoutes from './routes/admin/apiUsage.admin.routes.js';
+import revenueAdminRoutes from './routes/admin/revenue.admin.routes.js';
 import postsRoutes from './routes/posts.routes.js';
 
 const app = express();
@@ -116,6 +117,7 @@ app.use('/admin/clusters', clustersAdminRoutes);
 app.use('/admin/blog', blogAdminRoutes);
 app.use('/admin/analytics', analyticsAdminRoutes);
 app.use('/admin/api-usage', apiUsageAdminRoutes);
+app.use('/admin/revenue', revenueAdminRoutes);
 app.use('/posts', postsRoutes);
 
 // Dev-only route — only imported + mounted when DEV_UNLOCK=true

@@ -15,6 +15,10 @@
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
+    "@tiptap/extension-table": "^3.31.3",
+    "@tiptap/pm": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
     "axios": "1.20.0",
     "framer-motion": "12.39.0",
     "gsap": "^3.15.0",

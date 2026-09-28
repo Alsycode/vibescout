@@ -353,7 +353,10 @@ export default function BlogPostContent({ post }: { post: BlogPost }) {
           padding-left: 20px;
           margin: 0 0 20px;
         }
+        .blog-content ul { list-style: disc; }
+        .blog-content ol { list-style: decimal; }
         .blog-content li { margin-bottom: 8px; }
+        .blog-content li p, .blog-content td p, .blog-content th p { margin: 0; }
         .blog-content strong { color: rgba(255,255,255,0.88); font-weight: 600; }
         .blog-content em { color: rgba(255,255,255,0.60); font-style: italic; }
         .blog-content code {

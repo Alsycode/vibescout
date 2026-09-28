@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import api from '../../../../lib/adminApi';
+import BlogEditor from './BlogEditor';
 
 const CATEGORIES = ['Signal Deep Dive', 'Financial Intelligence', 'Buying Guide'];
 
@@ -125,6 +126,10 @@ export default function BlogPostForm({ initial, postId }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(null);
+    if (!form.content.trim()) {
+      setError('Article content is required.');
+      return;
+    }
     setSaving(true);
     const payload = {
       ...form,
@@ -356,24 +361,10 @@ export default function BlogPostForm({ initial, postId }) {
         {/* — Content ————————————————————————————————————————————— */}
         <div>
           <p style={SECTION_LABEL_STYLE}>Content</p>
-          <Field label="HTML Content" required>
-            <textarea
-              value={form.content}
-              onChange={(e) => set('content', e.target.value)}
-              placeholder="<p>Article content as HTML...</p>"
-              required
-              {...inp('content')}
-              style={{
-                ...inp('content').style,
-                minHeight: '420px',
-                resize: 'vertical',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '13px',
-                lineHeight: 1.6,
-              }}
-            />
+          <Field label="Article" required>
+            <BlogEditor value={form.content} onChange={(html) => set('content', html)} />
             <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.22)', marginTop: '7px', letterSpacing: '0.02em' }}>
-              Supported: p, h2, h3, ul, ol, li, strong, em, code, table, th, td, a
+              Formatting is limited to what the blog page styles: headings (H2/H3), bold, italic, code, links, lists and tables.
             </p>
           </Field>
         </div>

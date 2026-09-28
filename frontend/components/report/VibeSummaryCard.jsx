@@ -149,7 +149,7 @@ export default function VibeSummaryCard({ report }) {
               marginBottom: '5px',
             }}
           >
-            HAUM INTELLIGENCE
+            VYBSPACES INTELLIGENCE
           </p>
           {propertyName && (
             <p

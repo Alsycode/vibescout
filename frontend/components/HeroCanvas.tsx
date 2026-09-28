@@ -299,7 +299,7 @@ export default function HeroCanvas({ onLoadProgress, onLoadComplete }: HeroCanva
               lineHeight: 1.85,
             }}
           >
-            Haum understands how a place feels
+            VybSpaces understands how a place feels
             <br />
             before you ever arrive.
           </motion.p>

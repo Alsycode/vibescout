@@ -4,7 +4,7 @@
 import './globals.css';
 
 export const metadata = {
-  title: 'Haum — Property Intelligence',
+  title: 'VybSpaces — Property Intelligence',
   description:
     "What your broker won't tell you about any property — in 5 minutes. Six live signals: air quality, noise, solar potential, commute, financial fit, and local news. Sourced live. Computed deterministically.",
 };

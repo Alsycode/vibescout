@@ -116,7 +116,7 @@ export default function LoadingScreen({ progress }: LoadingScreenProps) {
           className="text-[42px] font-light tracking-[0.25em] uppercase"
           style={{ color: "rgba(255,255,255,0.92)" }}
         >
-          Haum
+          VybSpaces
         </div>
         <div
           className="text-[9px] tracking-[0.35em] uppercase mt-3"

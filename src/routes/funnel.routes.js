@@ -74,6 +74,7 @@ router.post('/save', requireAuth, async (req, res, next) => {
           sessionId,
           phone: user.phone ?? null,
           propertyName: sp.name ?? null,
+          locality: sp.location?.displayName ?? sp.location?.cityName ?? null,
           clusterId: sp.clusterId,
           listingType: sp.userProvidedSpecs.listingType,
           preferences,

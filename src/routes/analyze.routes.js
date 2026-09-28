@@ -149,7 +149,7 @@ router.post('/start', requireAuth, async (req, res, next) => {
 router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
   try {
     const { sessionId } = req.params;
-    const { budgetBracket, actualAmount, bhk, floor, listingType } = req.body;
+    const { budgetBracket, actualAmount, bhk, floor, listingType, sqft } = req.body;
 
     if (!VALID_LISTING_TYPE.includes(listingType)) {
       return res.status(400).json({ error: 'Invalid listingType — must be sale or rent' });
@@ -173,9 +173,19 @@ router.post('/:sessionId/context', requireAuth, async (req, res, next) => {
       return res.status(400).json({ error: 'actualAmount must be a positive number' });
     }
 
+    // Built-up area (sqft) is required for sale so actualAmount can be normalized
+    // to a per-sqft figure for the market-baseline comparison; not needed for rent.
+    let parsedSqft = null;
+    if (listingType === 'sale') {
+      parsedSqft = Number(sqft);
+      if (!Number.isFinite(parsedSqft) || parsedSqft <= 0) {
+        return res.status(400).json({ error: 'sqft (built-up area) must be a positive number for sale listings' });
+      }
+    }
+
     const sp = await ShadowProperty.findOneAndUpdate(
       { sessionId, userId: req.user.userId }, // SEC-01 — an owner mismatch reads as not-found, not 403
-      { userProvidedSpecs: { budgetBracket, actualAmount: parsedAmount, bhk, floor, listingType } },
+      { userProvidedSpecs: { budgetBracket, actualAmount: parsedAmount, sqft: parsedSqft, bhk, floor, listingType } },
       { new: true }
     );
 

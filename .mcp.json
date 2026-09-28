@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "ScraplingServer": {
+      "command": "D:/scrapling-mcp-venv/Scripts/scrapling-mcp.exe",
+      "env": {
+        "PLAYWRIGHT_BROWSERS_PATH": "D:/scrapling-browsers"
+      }
+    }
+  }
+}

@@ -18,7 +18,7 @@ const NAV_SECTIONS = [
     items: [
       { label: 'Overview',           href: '/admin',                  icon: LayoutDashboard, exact: true },
       { label: 'Audited Properties', href: '/admin/shadow-properties', icon: Building2 },
-      { label: 'Leads',              href: '/admin/leads',             icon: Users, hasSubnav: true },
+      { label: 'Leads',              href: '/admin/leads',             icon: Users, hasSubnav: false },
       // { label: 'Brokers',            href: '/admin/brokers',           icon: UserCheck },
       // { label: 'Clusters',           href: '/admin/clusters',          icon: Network },
     ],
@@ -128,7 +128,7 @@ export default function AdminSidebar({ isOpen = false, onClose, user, onLogout }
           </div>
           <div>
             <p style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.90)', lineHeight: 1, letterSpacing: '-0.02em' }}>
-              Haum
+              VybSpaces
             </p>
             <p style={{ fontSize: '10px', fontWeight: 500, color: TEAL, opacity: 0.6, marginTop: '3px', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               Admin

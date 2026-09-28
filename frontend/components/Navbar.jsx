@@ -125,12 +125,12 @@ export default function Navbar() {
           {/* ── Logo ─────────────────────────────────────────── */}
           <Link href="/" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
             <Image
-              src="/headerlogo.png"
-              alt="Haum — the verified vibe"
+              src="/vybspaces-logo.webp"
+              alt="VybSpaces"
               width={150}
               height={56}
               priority
-              style={{ height: '28px', width: 'auto', objectFit: 'contain' }}
+              style={{ height: '42px', width: 'auto', objectFit: 'contain' }}
             />
           </Link>
 

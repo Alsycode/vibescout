@@ -16,7 +16,7 @@ import { trackReportGenerated, trackFunnelAbandon } from '../services/analytics.
 import { callGroq } from '../services/groq.service.js';
 import { validateGroqOutput } from '../services/groqValidator.service.js';
 import { buildTemplateReport, NEWS_TEMPLATES } from '../services/reportTemplates.service.js';
-import { compareRentToBaseline } from '../services/baselineResolver.service.js';
+import { compareRentToBaseline, compareSalePriceToBaseline } from '../services/baselineResolver.service.js';
 
 const router = Router();
 
@@ -91,7 +91,7 @@ export function computeFinancialScores(userProvidedSpecs, preferences, location)
     };
   }
 
-  const price = SALE_PRICE_MIDPOINTS[budgetBracket] ?? 8000000;
+  const price = userProvidedSpecs.actualAmount ?? SALE_PRICE_MIDPOINTS[budgetBracket] ?? 8000000;
   // Use the user's actual down payment bracket instead of assuming a flat 20%.
   const rawDownPayment = DOWN_PAYMENT_MIDPOINTS[preferences.step7?.downPaymentBracket] ?? Math.round(price * 0.20);
   const downPayment = Math.min(rawDownPayment, price);
@@ -100,6 +100,18 @@ export function computeFinancialScores(userProvidedSpecs, preferences, location)
   const emiPercent = income > 0 ? Math.round((emi / income) * 100) : 0;
   const downPaymentPercent = Math.round((downPayment / price) * 100);
   const stressFreeScore = Math.max(0, Math.min(100, Math.round(100 - (emiPercent / 80) * 100)));
+
+  let salePriceBaseline = null;
+  if (userProvidedSpecs.actualAmount && userProvidedSpecs.sqft) {
+    salePriceBaseline = compareSalePriceToBaseline({
+      cityName: location?.cityName,
+      suburb: location?.locationCascade?.[0],
+      bhk: userProvidedSpecs.bhk,
+      actualAmount: userProvidedSpecs.actualAmount,
+      sqft: userProvidedSpecs.sqft,
+    });
+  }
+
   return {
     // existing fields (kept for compatibility + GROQ fact sheet)
     emiPercent,
@@ -113,6 +125,7 @@ export function computeFinancialScores(userProvidedSpecs, preferences, location)
     downPaymentPercent,
     downPayment,
     loanAmount: loan,
+    salePriceBaseline,
   };
 }
 

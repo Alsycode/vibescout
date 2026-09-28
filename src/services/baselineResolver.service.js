@@ -255,3 +255,177 @@ export function compareRentToBaseline({ cityName, suburb, bhk, actualRent }) {
     matchedLabel: baseline.matchedLabel,
   };
 }
+
+// ─── Sale-price-per-sqft baseline (mirrors the rentPerMonth resolution above) ───
+
+// Nearest available BHK within the same property type for salePricePerSqft (nearestBhkEntry
+// above only checks the rent field, so sale needs its own walk).
+function nearestSaleBhkEntry(block, propertyType, bhkKey) {
+  if (!bhkKey || !block?.[propertyType]) return null;
+  const idx = BHK_ORDER.indexOf(bhkKey);
+  if (idx === -1) return null;
+  for (let dist = 1; dist < BHK_ORDER.length; dist++) {
+    for (const dir of [-1, 1]) {
+      const candidate = BHK_ORDER[idx + dist * dir];
+      if (candidate && block[propertyType][candidate]?.salePricePerSqft) {
+        return { entry: block[propertyType][candidate], steps: dist };
+      }
+    }
+  }
+  return null;
+}
+
+function estimateOtherPropertyTypeSale(block, propertyType, bhkKey) {
+  const otherType = propertyType === 'villa' ? 'apartment' : 'villa';
+  const otherEntry = entryFor(block, otherType, bhkKey) ?? nearestSaleBhkEntry(block, otherType, bhkKey)?.entry;
+  const other = otherEntry?.salePricePerSqft;
+  // No villa salePricePerSqft exists anywhere in the seed data (see meta.notes) — this
+  // path can only ever resolve villa-from-apartment, never apartment-from-villa, and
+  // there is no sourced villa/apartment sale-price premium to apply, unlike rent's
+  // villaApartmentPremium(). Use the apartment figure as-is rather than inventing a ratio.
+  if (!other) return null;
+  return { salePricePerSqft: other };
+}
+
+function saleFromCitywide(cityKey, propertyType, bhkKey) {
+  const city = CITIES[cityKey];
+  if (!city) return null;
+  const direct = entryFor(city.citywide, propertyType, bhkKey);
+  if (direct?.salePricePerSqft) {
+    return { salePricePerSqft: direct.salePricePerSqft, basis: 'citywide', label: city.displayName };
+  }
+  const nearest = nearestSaleBhkEntry(city.citywide, propertyType, bhkKey);
+  if (nearest?.entry?.salePricePerSqft) {
+    return {
+      salePricePerSqft: nearest.entry.salePricePerSqft,
+      basis: 'estimated_adjacent_bhk',
+      label: city.displayName,
+    };
+  }
+  const estimated = estimateOtherPropertyTypeSale(city.citywide, propertyType, bhkKey);
+  if (estimated?.salePricePerSqft) {
+    return { salePricePerSqft: estimated.salePricePerSqft, basis: 'estimated_multiplier', label: city.displayName };
+  }
+  return null;
+}
+
+function averageSaleAcross(cityKeys, propertyType, bhkKey) {
+  const samples = [];
+  for (const key of cityKeys) {
+    const r = saleFromCitywide(key, propertyType, bhkKey);
+    if (r?.salePricePerSqft) samples.push(r.salePricePerSqft);
+  }
+  if (!samples.length) return null;
+  const avgOf = (field) => Math.round(samples.reduce((s, r) => s + r[field], 0) / samples.length / 100) * 100;
+  return { low: avgOf('low'), avg: avgOf('avg'), high: avgOf('high') };
+}
+
+/**
+ * Resolve a sale-price-per-sqft baseline for a property. Structurally identical to
+ * resolveRentBaseline() (locality → citywide → adjacent BHK → apartment/villa
+ * estimate → tier average → national average).
+ * @param {object} params
+ * @param {string} params.cityName - city as resolved by reverse geocoding (ShadowProperty.location.cityName)
+ * @param {string} [params.suburb] - most-specific locality, e.g. location.locationCascade[0]
+ * @param {string} params.bhk      - funnel bhk enum value ('1BHK'..'4BHK+', 'Villa', etc.)
+ * @returns {object|null} { salePricePerSqft: {low,avg,high}, basis, matchedLabel } or null if unsupported/unavailable
+ */
+export function resolveSalePriceBaseline({ cityName, suburb, bhk }) {
+  const mapped = mapBhkToPropertyType(bhk);
+  if (!mapped) return null; // Studio/Plot/PG — no comparable baseline concept
+  const { propertyType, bhkKey } = mapped;
+
+  const cityKey = resolveCityKey(cityName);
+
+  if (cityKey) {
+    const city = CITIES[cityKey];
+    const localityKey = resolveLocalityKey(cityKey, suburb);
+    if (localityKey) {
+      const direct = entryFor(city.localities[localityKey], propertyType, bhkKey);
+      if (direct?.salePricePerSqft) {
+        return {
+          salePricePerSqft: direct.salePricePerSqft,
+          basis: 'locality',
+          matchedLabel: `${city.displayName} — ${localityKey.replace(/-/g, ' ')}`,
+        };
+      }
+      const nearest = nearestSaleBhkEntry(city.localities[localityKey], propertyType, bhkKey);
+      if (nearest?.entry?.salePricePerSqft) {
+        return {
+          salePricePerSqft: nearest.entry.salePricePerSqft,
+          basis: 'estimated_adjacent_bhk',
+          matchedLabel: `${city.displayName} — ${localityKey.replace(/-/g, ' ')}`,
+        };
+      }
+    }
+    const citywide = saleFromCitywide(cityKey, propertyType, bhkKey);
+    if (citywide) {
+      return { salePricePerSqft: citywide.salePricePerSqft, basis: citywide.basis, matchedLabel: citywide.label };
+    }
+  }
+
+  const tier = cityKey ? tierForCity(cityKey) : 3;
+  if (tier <= 2) {
+    const tierCities = CITY_KEYS.filter((k) => tierForCity(k) === tier && k !== cityKey);
+    const tierAvg = averageSaleAcross(tierCities, propertyType, bhkKey);
+    if (tierAvg) {
+      return { salePricePerSqft: tierAvg, basis: 'tier_estimate', matchedLabel: `Tier ${tier} city average` };
+    }
+  }
+
+  const nationalAvg = averageSaleAcross(CITY_KEYS, propertyType, bhkKey);
+  if (nationalAvg) {
+    return { salePricePerSqft: nationalAvg, basis: 'national_estimate', matchedLabel: 'National average' };
+  }
+
+  return null;
+}
+
+/**
+ * Full sale-price comparison: resolves the per-sqft baseline and scores the user's
+ * actual price-per-sqft (actualAmount / sqft) against it. Mirrors compareRentToBaseline().
+ * @param {number} actualAmount - the exact asking/purchase price the user entered
+ * @param {number} sqft         - built-up area in sqft. Note: the seed data's own sourcing
+ *                                 does not consistently state carpet vs. built-up vs. super
+ *                                 built-up area, so this comparison should be read as
+ *                                 indicative, not exact.
+ */
+export function compareSalePriceToBaseline({ cityName, suburb, bhk, actualAmount, sqft }) {
+  if (!actualAmount || !sqft) return null;
+  const baseline = resolveSalePriceBaseline({ cityName, suburb, bhk });
+  if (!baseline) return null;
+
+  const actualPricePerSqft = Math.round(actualAmount / sqft);
+  const { avg } = baseline.salePricePerSqft;
+  const deltaPercent = Math.round(((actualPricePerSqft - avg) / avg) * 100);
+
+  let verdict = 'pass';
+  let label;
+  if (deltaPercent <= -10) {
+    verdict = 'pass';
+    label = 'Below market average — a good deal';
+  } else if (deltaPercent <= 10) {
+    verdict = 'pass';
+    label = 'In line with the market average';
+  } else if (deltaPercent <= 25) {
+    verdict = 'caution';
+    label = 'Above the market average';
+  } else {
+    verdict = 'red_flag';
+    label = 'Significantly above the market average';
+  }
+
+  return {
+    actualAmount,
+    sqft,
+    actualPricePerSqft,
+    baselineAvgPerSqft: avg,
+    baselineRangePerSqft: baseline.salePricePerSqft,
+    deltaPercent,
+    verdict,
+    label,
+    basis: baseline.basis,
+    confidence: BASIS_CONFIDENCE[baseline.basis] ?? 'low',
+    matchedLabel: baseline.matchedLabel,
+  };
+}

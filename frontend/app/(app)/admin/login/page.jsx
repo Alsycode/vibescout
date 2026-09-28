@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
             ◆ RESTRICTED ACCESS
           </p>
           <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: '22px', fontWeight: 500, color: 'rgba(255,255,255,0.92)', margin: '0 0 6px', letterSpacing: '-0.01em' }}>
-            Haum Admin
+            VybSpaces Admin
           </h1>
           <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.38)', margin: 0 }}>
             Sign in with your admin account
@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
               id="email" type="email" required autoComplete="email"
               value={email} onChange={(e) => setEmail(e.target.value)}
               onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)}
-              placeholder="admin@haum.com"
+              placeholder="admin@vybspaces.com"
               style={{
                 fontFamily: "'Inter', sans-serif", fontSize: '14px', padding: '12px 16px',
                 background: 'rgba(255,255,255,0.04)',

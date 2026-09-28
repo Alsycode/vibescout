@@ -25,6 +25,11 @@ const ShadowPropertySchema = new mongoose.Schema({
   userProvidedSpecs: {
     budgetBracket: { type: String },
     actualAmount: { type: Number },
+    // Built-up area in sqft — required for sale listings so actualAmount can be
+    // converted to a per-sqft figure comparable against the seed data's
+    // salePricePerSqft baseline. Not collected for rent (rentPerMonth baselines
+    // don't need a size normalization).
+    sqft: { type: Number },
     bhk: {
       type: String,
       enum: ['1BHK', '2BHK', '3BHK', '4BHK+', 'Studio', 'Villa', 'Plot', 'PG'],

@@ -211,6 +211,7 @@ export default function ShadowPropertyDetail({ params }) {
         <SignalRow label="Budget bracket" value={specs.budgetBracket} />
         <SignalRow label="BHK" value={specs.bhk} />
         <SignalRow label="Floor" value={specs.floor} />
+        <SignalRow label="Built-up area (sqft)" value={specs.sqft} />
         <SignalRow
           label="Created"
           value={property.createdAt ? new Date(property.createdAt).toLocaleString('en-IN') : null}

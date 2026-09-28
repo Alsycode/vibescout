@@ -162,7 +162,7 @@ export default function AdminBlogPage() {
             Blog Posts
           </h1>
           <p style={{ fontSize: '13px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
-            Content marketing for the Haum audience.
+            Content marketing for the VybSpaces audience.
           </p>
         </div>
         <Link href="/admin/blog/new" style={{ textDecoration: 'none' }}>

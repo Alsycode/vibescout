@@ -9,7 +9,7 @@ const redis = new Redis({
 });
 
 // Optional namespace for every key written through redisGet/redisSet.
-// Empty in dev/prod (no behaviour change); set to e.g. "haum_test:" so test
+// Empty in dev/prod (no behaviour change); set to e.g. "vybspaces_test:" so test
 // runs sharing a dev Upstash DB never collide with real cache entries.
 // NOTE: the raw `redis` client export (used by apiUsage.service.js) is NOT
 // prefixed — mock outbound HTTP in tests or use a dedicated test Upstash DB.

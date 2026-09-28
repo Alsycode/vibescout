@@ -115,4 +115,37 @@ describe('computeFinancialScores — sale', () => {
     const result = computeFinancialScores(specs, prefs, {});
     expect(result.propertyPrice).toBe(8000000);
   });
+
+  it('prefers actualAmount over the bracket midpoint when provided (regression — previously always used the midpoint)', () => {
+    const specs = { listingType: 'sale', budgetBracket: '60L–1Cr', actualAmount: 12000000 }; // bracket midpoint would be 8,000,000
+    const prefs = { step7: { monthlyHouseholdIncome: '1L–2L', downPaymentBracket: '10L–20L' } };
+    const result = computeFinancialScores(specs, prefs, {});
+    expect(result.propertyPrice).toBe(12000000);
+    expect(result.loanAmount).toBe(12000000 - 1500000);
+  });
+
+  it('only resolves a salePriceBaseline comparison when both actualAmount and sqft are set', () => {
+    const prefs = { step7: { monthlyHouseholdIncome: '1L–2L' } };
+    const location = { cityName: 'Mumbai', locationCascade: ['Andheri West'] };
+
+    const missingSqft = computeFinancialScores(
+      { listingType: 'sale', budgetBracket: '60L–1Cr', bhk: '2BHK', actualAmount: 46500000 },
+      prefs, location,
+    );
+    expect(missingSqft.salePriceBaseline).toBeNull();
+
+    const missingAmount = computeFinancialScores(
+      { listingType: 'sale', budgetBracket: '60L–1Cr', bhk: '2BHK', sqft: 1000 },
+      prefs, location,
+    );
+    expect(missingAmount.salePriceBaseline).toBeNull();
+
+    const both = computeFinancialScores(
+      { listingType: 'sale', budgetBracket: '60L–1Cr', bhk: '2BHK', actualAmount: 46500000, sqft: 1000 },
+      prefs, location,
+    );
+    expect(both.salePriceBaseline).not.toBeNull();
+    expect(both.salePriceBaseline.actualPricePerSqft).toBe(46500);
+    expect(both.salePriceBaseline.verdict).toBe('pass');
+  });
 });

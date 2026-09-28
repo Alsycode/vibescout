@@ -279,18 +279,15 @@ export default function Footer() {
             <div>
               {/* Brand logo */}
               <Image
-                src="/haum-logo.png"
-                alt="Haum"
+                src="/vybspaces-logo.webp"
+                alt="VybSpaces"
                 width={240}
-                height={118}
+                height={80}
                 style={{
-                  height: '60px',
+                  height: '40px',
                   width: 'auto',
                   objectFit: 'contain',
                   marginBottom: '12px',
-                  // haum-logo.png ships with a near-black background; `screen`
-                  // knocks it out against the footer's dark ground.
-                  mixBlendMode: 'screen',
                 }}
               />
               <p style={{
@@ -417,7 +414,7 @@ export default function Footer() {
             letterSpacing: '0.04em',
             margin:     0,
           }}>
-            © 2026 Haum · All rights reserved
+            © 2026 VybSpaces · All rights reserved
           </p>
 
           {/* Social icons — funnel step completed circle style */}
@@ -473,7 +470,7 @@ export default function Footer() {
         }}
         className="footer-hover-text"
       >
-        <TextHoverEffect text="Haum" />
+        <TextHoverEffect text="VybSpaces" />
       </div>
 
       <style>{`

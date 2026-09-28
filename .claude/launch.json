@@ -4,7 +4,7 @@
     {
       "name": "vibescout-backend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "start"],
       "port": 3001
     },
     {

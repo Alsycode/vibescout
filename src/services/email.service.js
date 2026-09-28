@@ -38,20 +38,20 @@ export async function sendPasswordResetEmail(toEmail, resetToken) {
   }
 
   await transporter.sendMail({
-    from: process.env.EMAIL_FROM ?? `Haum <${process.env.EMAIL_USER}>`,
+    from: process.env.EMAIL_FROM ?? `VybSpaces <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: 'Reset your Haum password',
+    subject: 'Reset your VybSpaces password',
     html: `
       <div style="font-family: 'Inter', sans-serif; max-width: 520px; margin: 0 auto; background: #080812; color: #fff; border-radius: 12px; padding: 40px 32px;">
         <div style="margin-bottom: 28px;">
           <p style="font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #0DD8C0; margin: 0 0 12px;">
-            HAUM INTELLIGENCE
+            VYBSPACES INTELLIGENCE
           </p>
           <h1 style="font-size: 24px; font-weight: 500; color: rgba(255,255,255,0.92); margin: 0 0 8px;">
             Reset your password
           </h1>
           <p style="font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; margin: 0;">
-            We received a request to reset the password for your Haum account.
+            We received a request to reset the password for your VybSpaces account.
           </p>
         </div>
 
@@ -71,7 +71,7 @@ export async function sendPasswordResetEmail(toEmail, resetToken) {
         </p>
       </div>
     `,
-    text: `Reset your Haum password\n\nLink: ${resetUrl}\n\nExpires in 1 hour. Ignore if you didn't request this.`,
+    text: `Reset your VybSpaces password\n\nLink: ${resetUrl}\n\nExpires in 1 hour. Ignore if you didn't request this.`,
   });
 
   return { ok: true };

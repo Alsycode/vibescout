@@ -84,10 +84,17 @@ function MetricBlock({ label, value, unit, sublabel }) {
   );
 }
 
+const BASELINE_CONFIDENCE_LABELS = {
+  high: 'Based on sourced market data',
+  medium: 'Estimated — limited local data available',
+  low: 'Estimated — regional/national average used, no local data',
+};
+
 export default function FinancialCard({ budget, financial, financialNote }) {
   const affordabilityRatio = financial?.affordabilityRatio ?? null;
   const emiEstimate = financial?.emiEstimate ?? null;
   const downPaymentPercent = financial?.downPaymentPercent ?? null;
+  const salePriceBaseline = financial?.salePriceBaseline ?? null;
 
   return (
     <div
@@ -247,6 +254,64 @@ export default function FinancialCard({ budget, financial, financialNote }) {
             value={downPaymentPercent != null ? `${downPaymentPercent}%` : null}
             sublabel="Of asking price"
           />
+        </div>
+      )}
+
+      {/* Market baseline comparison */}
+      {salePriceBaseline && (
+        <div
+          style={{
+            padding: '16px 18px',
+            background: 'rgba(11,11,11,0.55)',
+            border: '1px solid rgba(13,216,192,0.07)',
+            borderRadius: '12px',
+            marginBottom: '12px',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: '10px',
+              marginBottom: '8px',
+            }}
+          >
+            <p
+              style={{
+                fontSize: '9px',
+                fontWeight: 500,
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                color: 'rgba(13,216,192,0.45)',
+              }}
+            >
+              Vs. Market Baseline{salePriceBaseline.matchedLabel ? ` — ${salePriceBaseline.matchedLabel}` : ''}
+            </p>
+            <VerdictBadge verdict={salePriceBaseline.verdict} />
+          </div>
+          <p
+            style={{
+              fontSize: '13px',
+              fontWeight: 400,
+              color: 'rgba(255,255,255,0.8)',
+              marginBottom: '4px',
+            }}
+          >
+            Your price (₹{salePriceBaseline.actualPricePerSqft.toLocaleString('en-IN')}/sqft) is{' '}
+            {salePriceBaseline.deltaPercent > 0 ? `${salePriceBaseline.deltaPercent}% above` : `${Math.abs(salePriceBaseline.deltaPercent)}% below`}{' '}
+            the average of ₹{salePriceBaseline.baselineAvgPerSqft.toLocaleString('en-IN')}/sqft
+          </p>
+          <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.4)' }}>
+            {salePriceBaseline.label}
+          </p>
+          <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.28)', marginTop: '6px' }}>
+            {BASELINE_CONFIDENCE_LABELS[salePriceBaseline.confidence]}
+          </p>
+          <p style={{ fontSize: '10px', fontWeight: 300, color: 'rgba(255,255,255,0.28)', marginTop: '4px' }}>
+            Assumes built-up area — market source data doesn't always specify carpet vs. built-up vs. super built-up, so treat this as indicative.
+          </p>
         </div>
       )}
 

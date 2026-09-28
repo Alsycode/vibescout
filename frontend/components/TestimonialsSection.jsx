@@ -4,56 +4,56 @@ import { useRef, useEffect } from 'react';
 
 const testimonials = [
   {
-    text: "I was about to sign a lease in a noisy neighbourhood near a highway. Haum flagged it immediately. Saved me from a decision I would have regretted.",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=80&h=80",
+    text: "I was about to sign a lease in a noisy neighbourhood near a highway. VybSpaces flagged it immediately. Saved me from a decision I would have regretted.",
+    img: "https://images.unsplash.com/photo-1590650153855-d9e808231d41?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Priya Nair",
     role: "Renter, Bengaluru",
   },
   {
     text: "The AQI report showed the area I was eyeing had consistently poor air quality. As someone with allergies, that was exactly what I needed to know.",
-    img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=80&h=80",
+    img: "https://images.unsplash.com/photo-1589386417686-0d34b5903d23?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Arjun Mehta",
     role: "Buyer, Pune",
   },
   {
     text: "The commute score calculated my exact travel time to office using my preferred mode. No other tool does this. Completely changed how I shortlist properties.",
-    img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=80&h=80",
+    img: "https://images.unsplash.com/photo-1590649613897-1d5c44ca3409?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Ritu Sharma",
     role: "IT Professional, Hyderabad",
   },
   {
-    text: "Sunlight analysis was a feature I didn't know I needed. West-facing flat with afternoon glare — Haum flagged it before I wasted a site visit.",
-    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=80&h=80",
+    text: "Sunlight analysis was a feature I didn't know I needed. West-facing flat with afternoon glare — VybSpaces flagged it before I wasted a site visit.",
+    img: "https://images.unsplash.com/photo-1637589274892-9bc2d5200eab?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Kabir Desai",
     role: "First-time Buyer, Mumbai",
   },
   {
     text: "I compared three flats in the same area. The budget fitness score helped me understand which one actually fits my income. Genuinely useful.",
-    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=80&h=80",
+    img: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Ananya Iyer",
     role: "Renter, Chennai",
   },
   {
-    text: "The local news section surfaced a planned industrial project near the plot I was considering. Nothing on the listing mentioned it. Haum did.",
-    img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=80&h=80",
+    text: "The local news section surfaced a planned industrial project near the plot I was considering. Nothing on the listing mentioned it. VybSpaces did.",
+    img: "https://images.unsplash.com/photo-1584554376766-ac0f2c65e949?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Siddharth Rao",
     role: "Investor, NCR",
   },
   {
     text: "Got the full report for ₹99. That report saved me from an overpriced flat in a flood-prone zone. Worth every rupee, a hundred times over.",
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=80&h=80",
+    img: "https://images.unsplash.com/photo-1749700332258-775b1b6b9cd5?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Meera Pillai",
     role: "Buyer, Kochi",
   },
   {
-    text: "Most property tools show you listings. Haum shows you the truth about what living there actually feels like. That's a completely different product.",
-    img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=80&h=80",
+    text: "Most property tools show you listings. VybSpaces shows you the truth about what living there actually feels like. That's a completely different product.",
+    img: "https://images.unsplash.com/photo-1659353220482-554773c2f7fa?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Nikhil Saxena",
     role: "Renter, Ahmedabad",
   },
   {
     text: "The amenities score matched my priorities exactly — schools and hospitals scored high for the area. We moved in two months ago. Couldn't be happier.",
-    img: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=80&h=80",
+    img: "https://images.unsplash.com/photo-1533128361669-69c065857a13?auto=format&fit=crop&q=80&w=80&h=80",
     name: "Deepa Krishnan",
     role: "Family Buyer, Coimbatore",
   },
@@ -385,7 +385,7 @@ export default function TestimonialsSection() {
           </h2>
           <p className="vs-t-subtitle">
             From noise and air quality to commute and budget fit — people use
-            Haum to know what a property is really like before they commit.
+            VybSpaces to know what a property is really like before they commit.
           </p>
         </div>
 

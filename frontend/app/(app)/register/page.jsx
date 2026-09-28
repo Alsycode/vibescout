@@ -144,7 +144,7 @@ export default function RegisterPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
             <div style={{ width: '18px', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(13,216,192,0.7))' }} />
             <p style={{ fontFamily: "'Inter', sans-serif", fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#0DD8C0', margin: 0 }}>
-              HAUM INTELLIGENCE
+              VYBSPACES INTELLIGENCE
             </p>
             <div style={{ height: '1px', width: '40px', background: 'linear-gradient(90deg, rgba(13,216,192,0.55), transparent)' }} />
           </div>

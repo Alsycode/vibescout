@@ -46,6 +46,15 @@ const COLUMNS = [
     ),
   },
   {
+    header: 'Locality',
+    accessor: 'locality',
+    render: (row) => (
+      <span style={{ fontWeight: 300, color: 'rgba(255,255,255,0.50)', fontSize: '12px' }}>
+        {row.locality ?? '—'}
+      </span>
+    ),
+  },
+  {
     header: 'Score',
     accessor: 'compositeScore',
     render: (row) => (

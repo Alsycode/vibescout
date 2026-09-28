@@ -333,7 +333,7 @@ export default function LocationIntelligence() {
               margin:     '0 0 44px',
             }}
           >
-            Haum is the independent intelligence layer between a property
+            VybSpaces is the independent intelligence layer between a property
             buyer and the information ecosystem that profits from their
             uncertainty. Six signals pulled directly from the source — no broker
             incentives, no sponsored placements.

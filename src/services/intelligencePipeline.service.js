@@ -3,7 +3,10 @@
 
 import Cluster from '../models/Cluster.js';
 import ShadowProperty from '../models/ShadowProperty.js';
+import Lead from '../models/Lead.js';
 import { redisGet, redisSet } from '../lib/redis.js';
+import { computeAllVerdicts } from './verdictEngine.service.js';
+import { computeLeadScore } from './leadScore.service.js';
 import { fetchAQI } from './aqi.service.js';
 import { fetchNoise } from './noise.service.js';
 import { fetchSolar } from './solar.service.js';
@@ -281,5 +284,30 @@ export async function runPipeline(shadowPropertyId, lat, lng, clusterId, cityNam
     } catch (innerErr) {
       console.error(`[Pipeline] Could not set failed status:`, innerErr.message);
     }
+    return;
+  }
+
+  // RACE-02: funnel.routes.js computes and permanently saves Lead.verdictObject
+  // at funnel-completion time, which can race ahead of this job — if the user
+  // finishes the funnel before the pipeline lands, that snapshot reads an
+  // empty `intelligence` and silently nulls noise/AQI/solar/amenities (commute
+  // and budget are unaffected — they never read `intelligence`). Refresh the
+  // Lead now that intelligence is complete; a no-op if no Lead exists yet.
+  try {
+    const lead = await Lead.findOne({ shadowPropertyId });
+    if (lead) {
+      const freshSp = await ShadowProperty.findById(shadowPropertyId);
+      const verdictObject = computeAllVerdicts(freshSp, lead.preferences);
+      const { compositeScore, tier, breakdown } = computeLeadScore(lead.preferences, freshSp, verdictObject);
+      await Lead.findByIdAndUpdate(lead._id, {
+        verdictObject,
+        compositeScore,
+        scoreTier: tier,
+        scoreBreakdown: breakdown,
+        dataSource: freshSp.dataSource,
+      });
+    }
+  } catch (err) {
+    console.error(`[Pipeline] Lead verdict refresh failed for ${shadowPropertyId}:`, err.message);
   }
 }

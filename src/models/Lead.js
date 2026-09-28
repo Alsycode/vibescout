@@ -13,6 +13,9 @@ const LeadSchema = new mongoose.Schema({
   clusterId: { type: String, required: true },
   listingType: { type: String, enum: ['sale', 'rent'], required: true },
   propertyName: { type: String, default: null }, // copied from ShadowProperty.name at creation
+  // Denormalized (not populated) — ShadowProperty has a 24h TTL and is deleted
+  // long before brokers see this lead, so locality must be a copy, not a ref lookup.
+  locality: { type: String, default: null }, // copied from ShadowProperty.location at creation
   // Full snapshot copied from ShadowProperty at lead creation
   // ShadowProperty expires in 24h — Lead is permanent record
   preferences: Object, // full copy of user.preferences at lead creation

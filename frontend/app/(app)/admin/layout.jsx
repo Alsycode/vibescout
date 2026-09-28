@@ -110,7 +110,7 @@ export default function AdminLayout({ children }) {
             </svg>
           </button>
           <span style={{ fontSize: '13px', fontWeight: 500, color: 'rgba(255,255,255,0.45)', letterSpacing: '-0.01em' }}>
-            Haum{' '}
+            VybSpaces{' '}
             <span style={{ color: '#0DD8C0', opacity: 0.85 }}>Admin</span>
           </span>
         </div>

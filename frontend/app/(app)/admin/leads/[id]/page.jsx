@@ -633,7 +633,7 @@ export default function LeadDetail({ params }) {
               {lead.propertyName ?? lead.shadowPropertyId?.name ?? 'Property Lead'}
             </h1>
             <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.32)', fontWeight: 300 }}>
-              Session: {lead.sessionId}&nbsp;•&nbsp;Type: {lead.listingType}&nbsp;•&nbsp;Stage: {lead.stage ?? 'new'}
+              Session: {lead.sessionId}&nbsp;•&nbsp;Type: {lead.listingType}&nbsp;•&nbsp;Stage: {lead.stage ?? 'new'}&nbsp;•&nbsp;Locality: {lead.locality ?? 'Unknown'}
             </p>
           </div>
 

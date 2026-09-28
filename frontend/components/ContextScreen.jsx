@@ -144,6 +144,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
   const [listingType, setListingType] = useState('sale');
   const [budgetBracket, setBudgetBracket] = useState('');
   const [actualAmount, setActualAmount] = useState('');
+  const [sqft, setSqft] = useState('');
   const [bhk, setBhk] = useState('');
   const [floor, setFloor] = useState('');
   const [loading, setLoading] = useState(false);
@@ -152,7 +153,9 @@ export default function ContextScreen({ sessionId, onComplete }) {
   const brackets = listingType === 'sale' ? SALE_BRACKETS : RENT_BRACKETS;
   const parsedAmount = Number(actualAmount);
   const amountValid = actualAmount !== '' && Number.isFinite(parsedAmount) && parsedAmount > 0;
-  const allFilled = budgetBracket && bhk && floor && amountValid;
+  const parsedSqft = Number(sqft);
+  const sqftValid = listingType !== 'sale' || (sqft !== '' && Number.isFinite(parsedSqft) && parsedSqft > 0);
+  const allFilled = budgetBracket && bhk && floor && amountValid && sqftValid;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -164,6 +167,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
         listingType,
         budgetBracket,
         actualAmount: parsedAmount,
+        sqft: listingType === 'sale' ? parsedSqft : undefined,
         bhk,
         floor,
       });
@@ -258,7 +262,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
             <div style={{ display: 'flex', gap: '10px' }}>
               <button
                 type="button"
-                onClick={() => { setListingType('sale'); setBudgetBracket(''); setActualAmount(''); }}
+                onClick={() => { setListingType('sale'); setBudgetBracket(''); setActualAmount(''); setSqft(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -285,7 +289,7 @@ export default function ContextScreen({ sessionId, onComplete }) {
               </button>
               <button
                 type="button"
-                onClick={() => { setListingType('rent'); setBudgetBracket(''); setActualAmount(''); }}
+                onClick={() => { setListingType('rent'); setBudgetBracket(''); setActualAmount(''); setSqft(''); }}
                 style={{
                   flex: 1,
                   padding: '11px 0',
@@ -369,6 +373,35 @@ export default function ContextScreen({ sessionId, onComplete }) {
                 : 'We compare this against typical rents for the area in your report.'}
             </p>
           </div>
+
+          {/* Built-up area — sale only, needed to compare price against the market's per-sqft baseline */}
+          {listingType === 'sale' && (
+            <div>
+              <label htmlFor="sqft" style={labelStyle}>Built-up Area (sqft)</label>
+              <input
+                id="sqft"
+                type="number"
+                min="1"
+                inputMode="numeric"
+                placeholder="e.g. 1200"
+                value={sqft}
+                onChange={(e) => setSqft(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  fontSize: '14px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.09)',
+                  borderRadius: '10px',
+                  color: 'rgba(255,255,255,0.88)',
+                  boxSizing: 'border-box',
+                }}
+              />
+              <p style={{ fontSize: '11px', fontWeight: 300, color: 'rgba(255,255,255,0.32)', marginTop: '6px' }}>
+                Used to compare the asking price per sqft against market rates for the area.
+              </p>
+            </div>
+          )}
 
           {/* BHK — full width */}
           <div>

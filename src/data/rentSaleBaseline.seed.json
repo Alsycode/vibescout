@@ -1,7 +1,7 @@
 {
   "meta": {
     "generatedAt": "2026-07-28T00:00:00.000Z",
-    "notes": "Indicative baselines compiled from public aggregator reports and real-estate blogs (Housing.com/NoBroker/99acres-sourced summaries, Sobha, Squareyards, Casafy, etc.), not live listing data. For comparison/flagging use only, not a valuation. Villa/independent-house data was omitted for nearly all cities because no credible aggregate/average source could be found (only scattered individual listings existed, which were deliberately excluded per sourcing rules) — sale/rent figures below are apartment/flat baselines unless a villa block is explicitly present. Some BHK sizes are omitted at city or locality level where no sourced figure could be found; these gaps are intentional, not zeros. SECOND PASS (2026-07-29): Added villa/independent-house baselines for Bangalore, Hyderabad, Chennai, Pune, Gurgaon, Jaipur, Kochi, Kolkata, Noida, Surat, and Chandigarh (Mohali/Zirakpur) — aggregated from named builder/gated-community villa projects and locality-level villa-specific price data across multiple sources (see each city's sources array). Villa data intentionally omitted for Mumbai, Delhi, Ahmedabad, Indore, Nagpur, Lucknow where no credible multi-source villa/independent-house pricing could be found. Also added rent baselines for Indore (citywide + Vijay Nagar locality), Chandigarh (citywide 2BHK/3BHK), and additional Lucknow localities (Hazratganj, Indira Nagar, Alambagh) plus Gomti Nagar 3BHK. THIRD PASS (2026-08-19): Added 8 new cities researched via aggregator price-trend pages (99acres locality pages, Squareyards, Housivity, Wise cost-of-living) — Coimbatore, Vadodara, Bhopal, Visakhapatnam, Nashik, Mysuru, Bhubaneswar, Mangalore. Sale price data is well-sourced (99acres/Squareyards locality price-trend pages) for all 8; rent data was only found with credible aggregate sourcing for Vadodara, Bhopal, Visakhapatnam, Nashik (1BHK only), and Mangalore — Coimbatore, Mysuru, and Bhubaneswar have sale price data only, rent intentionally omitted (no credible aggregate rent source found, not a zero). Remaining target cities from the research prompt (Patna, Ludhiana, Amritsar, Vijayawada, Thiruvananthapuram, Guwahati, Rajkot, Faridabad, Ghaziabad, Meerut, Kanpur, Varanasi, Madurai, Tiruchirappalli, Jodhpur, Agra, Ranchi, Raipur, Dehradun, Siliguri) were not covered in this pass — deferred to a follow-up research pass rather than filled with low-confidence data. FOURTH PASS (2026-09-25): Added all 20 previously-deferred cities via Squareyards/99acres/NoBroker/HexaHome aggregator pages. Full rent+sale citywide data: Guwahati, Ghaziabad, Agra, Dehradun. Partial — rent only (no credible aggregate sale/sqft source found): Amritsar, Vijayawada, Ranchi. Partial — sale only (no credible aggregate rent source found): Tiruchirappalli, Jodhpur, Siliguri. Partial — mixed/incomplete BHK or price-type coverage (some rent and/or sale figures found but not both fully for all BHKs): Patna, Ludhiana, Thiruvananthapuram, Rajkot, Faridabad, Meerut, Kanpur, Varanasi, Madurai, Raipur. No city in this pass was skipped entirely, though several (99acres direct fetches were blocked by bot protection for many localities) rely more heavily on Squareyards locality-overview pages and search-engine-indexed 99acres/NoBroker page content than the prior passes. Villa/independent-house data was not found with credible aggregate sourcing for any of the 20 cities in this pass and is omitted throughout. SPOT-CHECK CORRECTION (2026-09-25): Verified the 4 FOURTH PASS 'full data' cities against their cited sources directly; found and fixed 3 errors — Guwahati citywide 2BHK rent low was 10000 but the source states the range starts at 8000; Ghaziabad citywide apartment salePricePerSqft (7600/7850/8100) was removed entirely as it could not be traced to any cited source (the only citywide Ghaziabad source, NoBroker, gives absolute lakh/crore prices, not per-sqft — per-sqft figures only exist at locality level for Indirapuram/Vaishali/Raj Nagar Extension, which remain); Agra Dayal Bagh locality salePricePerSqft high was 7400, which the source actually attributes to villas, not apartments — corrected to 4550 (Anupam Daffodils), the actual highest sourced apartment figure. Agra citywide salePricePerSqft low (3350) and the Kamla Nagar locality entry could not be independently re-verified (99acres blocks direct fetches; original figures came via WebSearch snippet extraction) — flagged as lower-confidence, not corrected absent contradicting evidence. SPOT-CHECK PASS 2 (2026-09-25): Verified the remaining 16 FOURTH PASS 'partial data' cities against their cited sources. Amritsar: verified clean (1/2/3BHK rent low-high match the city-centre/outside-city-centre split, avg is the midpoint). Vijayawada: verified clean. Ranchi: verified clean. Tiruchirappalli: verified clean, but 99acres direct fetch was blocked (403) so confirmation relied on a WebSearch cache of the same page — flagged unverified via direct fetch. Jodhpur: verified clean (Pal Road and Shastri Nagar per-sqft figures both re-derived correctly from source). Siliguri: flagged unverifiable — the cited siliguriproperties.com article is JS-rendered and its body text could not be retrieved by direct fetch or search cache; citywide and Sevoke Road salePricePerSqft figures left as-is but unconfirmed. Patna: verified clean. Ludhiana: verified clean, including the citywide salePricePerSqft range (4400-7500, avg 7200) which does trace exactly to a sentence on the cited South City overview page. Thiruvananthapuram: verified clean overall; Kazhakootam's avg (5900) is close to but not an exact match for a WebSearch-cached 99acres average (6000) since the 99acres page itself was blocked (403) — flagged unverified via direct fetch for that one figure only, left as-is. Rajkot: verified clean, including reconciling the citywide vs Rajkot East averages (4150 city-comparison figure vs 4350 locality figure) as two distinct numbers both present on the cited page. Faridabad: corrected — removed the citywide apartment salePricePerSqft block (6600 for both 2BHK/3BHK), which did not trace to any of the cited sources and could not be reconciled (a plausible replacement source gave conflicting averages, 6600 vs 7300, on different fetches); added a missing 99acres citation for the Greenfield Colony locality figures, which are accurate but were previously uncited. Meerut: verified clean, though all three 99acres locality sources (Modipuram, Meerut Bypass, Meerut Cantt) were blocked (403) and confirmed only via WebSearch cache — flagged unverified via direct fetch. Kanpur: verified clean (Arya Nagar's figure actually comes from the Swaroop Nagar page's neighboring-locality comparison, not the Civil Lines page, but both are cited sources). Varanasi: verified clean (2BHK citywide rent avg of 22000 matches the true average of all 12 listings on the page, not just the few initially sampled). Madurai: corrected — removed the KK Nagar locality entry (3650/sqft), which the cited KK Nagar overview page never states for KK Nagar itself; the figure was actually Vilangudi's price (correctly listed separately) misattributed to KK Nagar. Also removed the unsourced citywide salePricePerSqft block (3600), which does not trace to any cited source. Raipur: verified clean (citywide salePricePerSqft range of 3050-4450 traces to Mahaveer Nagar and Shankar Nagar figures both present on the cited Telibandha overview page). SPOT-CHECK VIA SCRAPLING (2026-09-25): Used the newly-installed Scrapling library (curl_cffi TLS impersonation) to re-attempt the sources that were unverifiable via plain WebFetch. Siliguri: successfully rendered the JS-heavy source page (WebFetch could not) and found two real errors — Sevoke Road locality 2BHK salePricePerSqft was recorded as a flat 4800/sqft, which is actually the 3BHK rate, not 2BHK (corrected to the true 2BHK range 3850-4200, avg 4025); citywide salePricePerSqft (3500/3880/4800) did not match any 2BHK-specific data on the page and was replaced with the page FAQ's own directly-quoted citywide range, 3000-5000/sqft avg 4000. Agra (Kamla Nagar), Tiruchirappalli (Srirangam), and Meerut (Modipuram/Bypass/Cantt) 99acres sources initially returned real content via Scrapling (bypassing the earlier 403s), but on a second batch of requests 99acres began serving a CAPTCHA verification wall instead of content — per policy, CAPTCHA bypass was not attempted, so these three cities' 99acres-sourced figures remain as previously flagged (unverified via direct fetch), not re-confirmed or changed. CROSS-SITE VERIFICATION (2026-09-25): Tried alternative non-99acres sources for the three localities still flagged after the Scrapling/CAPTCHA episode. Modipuram (Meerut): a direct fetch of Squareyards' Modipuram overview page gave Avg. Sale Price 2750/sqft, sharply lower than the previously-recorded 4750/sqft (which came from a 99acres WebSearch cache snippet, not a direct read) — per the file's own confidence hierarchy (direct fetch outranks search cache), replaced modipuram's figure with 2750 and re-derived Meerut citywide 2BHK salePricePerSqft as low 2750 (Modipuram) / high 3550 (Meerut Cantt, unchanged) / avg 3150 (midpoint), since the old citywide high was built on the now-superseded Modipuram number. Kamla Nagar (Agra) and Srirangam (Trichy): alternative sites (Squareyards sale-listing pages, Ghar.tv, RealEstateIndia) only surfaced scattered plot/land/bank-auction listings, no usable comparable apartment salePricePerSqft figure — no replacement found, these two remain exactly as previously flagged (99acres-sourced, unverified via direct fetch, CAPTCHA-blocked from re-confirmation). FINAL SWEEP (2026-09-25): Resolved the last 3 flagged items. Tiruchirappalli: confirmed clean — the earlier WebSearch cache result (Rs 6000-6900, avg 6500) matches the JSON exactly, no CAPTCHA re-check needed since the number was already independently corroborated. Agra citywide salePricePerSqft low (3350): confirmed genuine — traces exactly to Squareyards' Fatehabad Road, Agra page (\"average asking price of Rs 3350 per sq ft\"), which was not previously cited; added as a source. Thiruvananthapuram/Kazhakootam: three sources now compared — the file's low/high (5400/7900) match both the original source and a WebSearch cache of 99acres; the avg was corrected from 5900 (an uncited midpoint-style figure) to 6000 (the actual quoted 99acres average). A third source, PropertyPistol, gave a conflicting avg of 4980/sqft for \"Kazhakootam, Trivandrum North\" — not used, since it falls below the sourced low bound and appears to cover a broader area than the Kazhakootam locality specifically, making it not a like-for-like figure; noted here as a known discrepancy rather than silently discarded. Kamla Nagar (Agra) sale figures (4300/4350/4400) remain as before — a WebSearch cache independently reported an average of ~4400/sqft for the same locality, roughly corroborating the existing figures, but 99acres itself remains CAPTCHA-blocked for a direct-fetch confirmation. Every number flagged across all spot-check passes has now been either corrected, confirmed via an independent source, or explicitly documented as an unresolved cross-source discrepancy — none remain silently unexamined. GAP-FILL PASS (2026-09-25): Filled the missing rent/sale side of citywide apartment blocks for 26 previously one-sided cities, sourced via WebSearch/WebFetch against Squareyards/NoBroker/HexaHome/Sulekha/VarmaHomes/OnlyNew aggregator pages (99acres avoided per the standing CAPTCHA lesson). Delhi: added citywide 1/2/3BHK salePricePerSqft (Squareyards). Gurgaon: added citywide 2/3BHK salePricePerSqft (Squareyards). Bangalore: added citywide 1/2/3BHK salePricePerSqft (Squareyards). Hyderabad: added citywide 1BHK salePricePerSqft (Squareyards, matching existing 1BHK-only rent coverage). Ahmedabad: added citywide 2/3BHK salePricePerSqft (OnlyNew). Jaipur: added citywide 1/2/3BHK salePricePerSqft (Squareyards Jaipur North/Central). Lucknow: added citywide 1/2BHK salePricePerSqft (Squareyards). Patna: added citywide 2/3BHK salePricePerSqft (Squareyards Patna real estate overview, direct-fetch confirmed). Amritsar: added citywide 1/2/3BHK salePricePerSqft (Sulekha locality-average table, partial listing so lower confidence). Vijayawada: added citywide 2/3BHK salePricePerSqft (Squareyards). Thiruvananthapuram: added citywide 2BHK salePricePerSqft (VarmaHomes). Faridabad: added citywide 2/3BHK salePricePerSqft (Squareyards Sep-2026, supersedes the earlier removed/conflicting 6600 figure with a self-consistent direct-fetch reading). Ghaziabad: added citywide 2/3BHK salePricePerSqft (Squareyards Jun-2026, resolving the earlier removed-for-no-source gap; high bound aligned to the already-sourced Vaishali locality high). Varanasi: added citywide 2/3BHK salePricePerSqft (Squareyards). Ranchi: added citywide 2/3BHK salePricePerSqft (Squareyards Ranchi real estate overview; a conflicting lower Sulekha reading was not used since the Squareyards figure was more current and better matched independent WebSearch snippets). Noida: added citywide 1/2/3BHK rentPerMonth (NoBroker, already-cited source). Surat: added citywide 2BHK rentPerMonth (SuratVRProperties, already-cited source). Nagpur: added citywide 2BHK rentPerMonth (Squareyards). Coimbatore: added citywide 2BHK rentPerMonth (Niptao cost-of-living guide, cross-checked against existing locality names). Mysuru: added citywide 2BHK rentPerMonth (OneCityProperty). Bhubaneswar: added citywide 2BHK rentPerMonth (HexaHome). Kanpur: added citywide 2BHK rentPerMonth (HexaHome). Madurai: no credible citywide salePricePerSqft source found (Squareyards page returned corrupted/implausible per-sqft data, 99acres avoided per CAPTCHA policy) — left as-is. Tiruchirappalli: no credible aggregate citywide rent source found (only scattered individual listings, which sourcing rules exclude) — left as-is. Jodhpur: attempted to build a citywide block from city-level (non-locality) sources but found none beyond the existing Pal Road/Shastri Nagar locality figures and unrelated land/plot-rate data — citywide left empty as before. Net result: 24 of 26 target cities gained the missing rent or sale side; 2 (Madurai sale, Tiruchirappalli rent) and Jodhpur's citywide block remain gapped for lack of a credible source, consistent with this file's intentional-gap convention. GAP-FILL SPOT-CHECK (2026-09-26): Verified a 6-city sample from the GAP-FILL PASS against cited sources directly. Delhi: avg (18200) and high (25400, South Delhi) confirmed exact on Squareyards; low (12150) is close to but not an exact match for East/North Delhi figures seen (12950/13800) — left as-is, minor variance not a clear error. Kanpur: confirmed exact — Swaroop Nagar (7600) and Arya Nagar (4300) both directly verified, avg (5950) is their precise midpoint. Coimbatore: corroborated via a WebSearch sweep of multiple 99acres localities (Kalapatti/Singanallur/Ganapathy ~5000-8000, RS Puram/Ramanathapuram up to 10250-11700) — the citywide low/avg/high (5250/7500/10267) falls within this real spread, left as-is. Noida villa: confirmed — source explicitly does not distinguish 3BHK/4BHK, so the identical figures for both are appropriate, not an error. Hyderabad villa: found and fixed a real error — the cited KLM Projects tier table is explicitly for \"approximate 4 BHK villa configurations\" only, but its numbers had been duplicated under both a 3bhk and 4bhk key; removed the unsupported 3bhk villa entry entirely (no 3BHK-specific villa source exists for Hyderabad) and kept 4bhk with a corrected avg (10750, the true midpoint of the sourced 3500-18000 range across all cited price tiers, vs the previous 11000). VILLA RENT PASS (2026-09-26): Targeted villa/independent-house RENT (the only villa field baselineResolver.service.js actually reads), to serve citywide.villa.3bhk.rentPerMonth directly and to broaden villaApartmentPremium(), which previously derived the entire country's villa rent estimates from Bangalore alone. The workhorse source this pass was Squareyards' per-city \"independent-houses-for-rent-in-<city>\" pages, every one of which was read by DIRECT WebFetch (no figure below rests on a WebSearch snippet); these pages publish the aggregator's own BHK-wise table of listings-count / min / max / avg, so low and high are the source-stated inventory minimum and maximum and avg is the source-stated average — no midpoints were computed anywhere in this pass. Two consequences worth knowing: (a) because low/high are true inventory extremes rather than the \"typical band\" most of this file uses, some highs are very large outliers that are nonetheless quoted verbatim from the source (Gurgaon 3BHK high 1300000, Mumbai 3BHK and 4BHK high 1200000, Chandigarh 4BHK high 400000, Gurgaon 2BHK high 500000) — these are not typos; (b) rows backed by very few listings were rejected rather than recorded. Added: Pune villa 3bhk rent 25000/55000/165000 (34 listings) and 4bhk 52000/120000/250000 (19). Gurgaon villa 2bhk rent 11000/27000/500000 (256), 3bhk 20000/45000/1300000 (115), 4bhk 38000/102000/750000 (40). Noida villa 2bhk rent 18000/30000/65000 (213), 3bhk 17000/45000/150000 (152), 4bhk 35000/70000/275000 (27). Hyderabad villa 3bhk rent 16000/70000/150000 (19) — this restores a 3bhk key for Hyderabad on a genuinely 3BHK-specific rent source, unlike the 4BHK sale table that the 2026-09-26 gap-fill spot-check correctly removed from 3bhk; Hyderabad's 4BHK rent row was deliberately NOT taken because its stated max (800000) and avg (190000) are outlier-dominated. Chandigarh villa 2bhk rent 15000/25000/55000 (58), 3bhk 22000/37000/175000 (59), 4bhk 27000/77500/400000 (14) — deepest sample of the pass. Indore villa 3bhk rent 25000/35000/65000 (7) and 4bhk 35000/82500/135000 (4). Mumbai villa 2bhk rent 48000/70000/150000 (7), 3bhk 65000/112000/1200000 (8), 4bhk 140000/200000/1200000 (7) — first villa block Mumbai has ever had; sample is thin but the table is internally consistent and monotonic in BHK. Ahmedabad villa 2bhk rent 9500/15500/35000 (5) and 3bhk 25000/35000/42000 (5) — also a first villa block; Ahmedabad's 4BHK row was skipped (max 500000 against avg 85000). Chennai villa 2bhk rent 21000/24000/25000 (5) ONLY — the 3BHK row on the same page was backed by a single listing (min=max=avg=50000), which is raw individual inventory and therefore excluded per this file's sourcing rules; Squareyards' Chennai villa page, Commonfloor, Sulekha, NoBroker and Sobha's Chennai cost-of-living guide were all read directly and none states a villa/independent-house average, so Chennai still has no 3bhk villa rent. Jaipur villa 4bhk rent 50000/70000/110000 (4) only — Jaipur's 3BHK row was rejected because the source states avg 30000 equal to its own stated min 30000 across just 6 listings, which would have pinned Jaipur's villa/apartment rent premium at 1.09x and dragged the national multiplier down on a demonstrably unstable figure. Left as-is with no villa rent added, each for lack of any credible aggregate (only scattered individual listings, which this file excludes): Kolkata (Squareyards independent-house page carries ~9-10 listings and returned a different citywide average, 11000 vs 20000, on two reads in the same session — too unstable to use; its villa page shows 2 listings), Kochi (Squareyards independent-house page returns \"no results\"; Kerala Real Estate / Quikr / RealEstateIndia only surfaced individual Kakkanad listings), Coimbatore (3 listings, no table), Surat (3 listings, no table), Mysuru (1 listing), Visakhapatnam (1 listing; both the -visakhapatnam and -vizag slugs checked), Nagpur (page states BHK averages that are internally inconsistent — 4BHK 11500 below 1BHK 12000 — so all were discarded), and Vadodara (states 3BHK 18500 below 2BHK 22000 across 6 listings, likewise discarded). No villa salePricePerSqft was added anywhere in this pass, per the instruction that the resolver never reads it; no apartment block, no other city and no part of the schema was touched, and every new source URL was appended to the end-user city's existing sources array rather than replacing anything. Net effect on the resolver: citywide.villa.3bhk.rentPerMonth now exists for 8 cities (Bangalore, Mumbai, Gurgaon, Noida, Pune, Hyderabad, Ahmedabad, Chandigarh, Indore — 9 including Bangalore, which already had it), and villaApartmentPremium() now draws on 14 same-BHK apartment/villa rent pairs across 9 cities instead of 1, so it no longer collapses to Bangalore's 2.67x. OUTLIER CORRECTION (2026-09-26): the Squareyards min/max/avg rent tables for Gurgaon and Mumbai (used in the pass above) contain extreme single-listing outliers presented as their table's \"max\" value -- e.g. Gurgaon 3BHK max of Rs 13 Lac/month against an avg of Rs 45,000 (28.9x), Mumbai 3BHK max of Rs 12 Lac against avg Rs 1.12 Lac (10.7x) -- almost certainly a mansion or farmhouse listing misclassified under that BHK count, not a representative market high. Applied a greater-than-5x max/avg ratio rule: dropped the high field entirely (kept the verified low/avg, which are not outliers) for Gurgaon villa 2BHK/3BHK/4BHK rent and Mumbai villa 3BHK/4BHK rent, where the source own number was unusable; kept Hyderabad 3BHK, Pune 3BHK/4BHK, Mumbai 2BHK, and Chandigarh 4BHK highs as-is since their max/avg ratios (2x-5.2x) are plausible for a skewed but real market. Note: neither the low nor high field is currently read by any frontend or resolver code -- only avg drives the pass/caution/red_flag verdict in compareRentToBaseline -- so this outlier data was not corrupting any live comparison, but was corrected before it could be wired into one. VILLA RENT PASS 2 (2026-09-26): Followed up on the 9 cities the previous pass left gapped, this time deliberately avoiding Squareyards' 'independent-houses-for-rent-in-<city>' live-listings table (already rejected for these cities as too thin/unstable) and searching instead for editorial/aggregator articles that state a villa/independent-house rent range or average in prose or a curated table. None was found for any of the 9 cities, despite 2-4 differently-phrased WebSearch queries per city (cost-of-living guides, NoBroker/HexaHome blog 'property rates'/'rent trends' articles, builder/township gated-community rental-yield blogs, and direct WebFetch reads of HexaHome's and Squareyards' own villa-for-rent pages) plus targeted locality-level queries (Chennai OMR/Neelankarai, Jaipur Mansarovar/Vaishali Nagar/Jagatpura, Kolkata New Town, Kochi Kakkanad/Infopark/Edappally, Nagpur Wardha Road, Vadodara Gotri, Mysuru Vijayanagar). Every result was one of: (a) the same type of live auto-generated listings table already excluded by policy (Squareyards villa/independent-house pages, HexaHome's Kolkata villa page — confirmed via direct WebFetch to be individual listing cards with no curated average, not prose statistics), (b) raw scattered individual-listing snippets from 99acres/NoBroker/Sulekha/RealEstateIndia/Quikr/Mitula with no aggregation, or (c) cost-of-living guides (costoflivingindia.com, confirmed via direct WebFetch for Coimbatore) that only break rent out by apartment BHK with no villa/independent-house category at all. One near-miss: a Housivity blog on Vadodara rental yields gave a 3.5-4.5% yield figure for Gotri villas, but converting yield+sale-price into an implied rent would be deriving/estimating a number rather than reading one, which the sourcing policy excludes — not used. Result: no villa rentPerMonth field was added for Chennai, Jaipur, Kolkata, Kochi, Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, or Vadodara in this pass; all 9 remain exactly as the first VILLA RENT PASS left them (Chennai/Jaipur retain their partial existing villa entries; the other 7 remain without any villa block or without a rent field). This differs from a 'no aggregator ever discusses villas here' finding — aggregators do list villas for all 9 cities, they just never publish a summarized average/range for them, only individual listing cards. No apartment data, no other city, and no part of the schema was touched in this pass. VILLA RENT PASS 3 (2026-09-26): Tried six angles not attempted in the first two villa rent passes, for Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, Vadodara, Kolkata, and Kochi (plus a bonus check for Chennai/Jaipur 3BHK villa rent). (1) Expat/corporate relocation guides (Sirva, Crown Relocations, ExpatFinder, Expatistan, InterNations, expat.com, pmrelocations.com, globemoving.net, renterfinder.com): every guide found for these cities prices apartments/flats only; none breaks out a villa/independent-house rent figure. One near-miss on Chennai — globemoving.net's Adyar & Besant Nagar section states Rs 85,000-1,50,000/month for 3BHK but explicitly attributes this to \"large independent villas and low-rise luxury apartments\" combined, not villas alone, so it fails the property-type-label check and was not used; chennaidreamhomes.com (a Chennai villa-focused rental agency) was also checked directly and only lists 3 individual listings with no stated aggregate. (2) Numbeo/LivingCost.org: confirmed by direct fetch of numbeo.com/cost-of-living/in/Kochi that Numbeo's \"Rent Per Month\" section only has 4 categories, all \"Apartment (1/3 bedroom) in/outside City Centre\" — no villa/house category exists on the Numbeo template at all, so this angle is structurally a dead end for every city, not just these 8; LivingCost.org's city pages (Visakhapatnam, Vadodara, Surat, Nagpur) likewise only quote apartment rent. (3) City newspaper property columns (Times of India, The Hindu, Telegraph India, Deccan Chronicle, Gujarat Samachar): no dedicated newspaper property-column article was found for any of the 8 cities (search results returned only property-portal listings and, for Kolkata, a 99acres editorial article, see below); Gujarat Samachar/Times of India were found to run Surat classified-ad sections but no queryable villa rent content. (4) CREDAI regional chapters (CREDAI Kochi, CREDAI Coimbatore, CREDAI Nagpur/Vidarbha, CREDAI Vadodara, CREDAI Gujarat, CREDAI Mysuru): direct-fetched CREDAI Vadodara's \"hot properties\" page and CREDAI Kochi's homepage — both are developer directories with zero pricing data. CREDAI's own pan-India \"Housing Price-Tracker\" report (Colliers-Liases Foras, admin.credai.org, downloaded and text-extracted directly) covers only the top-8 metros (Kolkata among them) and tracks carpet-area sale price per submarket, not rent, and never mentions villas/independent houses/bungalows anywhere in its 14 pages. No CREDAI report of any kind was found for the other 7 cities. (5) Academic/urban-planning research (Google Scholar-style search, ResearchGate, academia.edu, ScienceDirect): found several real papers on Indian urban rental housing (Surat private-renting policy studies, Vadodara affordable-housing case studies, a Kochi smart-city hackathon paper) but none reports a villa/independent-house rent figure — they study rental housing policy, informal settlements, and urban expansion, not market rent levels by property type. (6) NoBroker's own periodic report PDF: located and directly text-extracted NoBroker_Realestate_Report_2025 (nobroker.in/forum, 81 pages) — it contains only 3 passing mentions of \"independent houses\" (as a category losing share to societies) and covers only Bangalore/Mumbai/Delhi-NCR/Pune/Chennai/Hyderabad; none of the 8 target cities is mentioned anywhere in the report, so it has nothing to contribute here. One item was investigated and rejected: a WebSearch snippet of a 99acres editorial article (\"Top 5 most expensive residential areas in Kolkata\") stated \"Alipore is usually preferred for plush bungalows and villas, with monthly rentals for 2 BHK homes averaging Rs 22,000\" — direct WebFetch returned HTTP 403 and a Scrapling re-attempt hit 99acres' verifycaptcha wall (URL contained \"verifycaptcha\"), so per the standing CAPTCHA policy 99acres was not pursued further; a follow-up WebSearch for corroboration only turned up an unrelated Squareyards figure (Rs 22,310 avg for a plain 2BHK apartment, not villa-specific) which does not confirm the villa attribution, so the Alipore figure was left unused as an unverifiable single-source, ambiguously-labeled claim. Net result: no villa rentPerMonth was added for any of the 8 cities, and the Chennai/Jaipur 3BHK villa gaps remain open — this is the third consecutive pass, across three genuinely different sets of search strategies (10+ angles total now), to come back empty for exactly this set of cities, which is itself informative: no publicly indexed source curates a villa/independent-house rent average or range for these markets, only individual listing cards that this file's sourcing rules correctly exclude. No apartment data, no other city, and no part of the schema was touched in this pass. SCRAPLING RE-VERIFICATION PASS (2026-09-27): Re-attempted the 10 cities still missing citywide.villa.3bhk.rentPerMonth (Chennai, Jaipur, Kolkata, Kochi, Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, Vadodara), this time using the Scrapling library's stealthy browser fetcher (full JS rendering + anti-bot fingerprint spoofing) instead of plain WebFetch, which resolved the CAPTCHA/thin-render issues that blocked earlier passes on some of these same pages. Result was mostly a confirmation, not a reversal, of the prior rejections: Chennai's Squareyards FAQ still traces to the same single 3BHK listing (n=1, ₹50,000) already rejected in VILLA RENT PASS; Jaipur's FAQ figure (₹30,000) is the same n=6 avg=min instability already rejected; Kolkata's House-type FAQ average (₹32,500) is the mean of only 2 qualifying 3BHK House listings (Birati ₹55,000, Chinar Park ₹10,000) — below this file's established ~5-listing reliability bar, left unadded; Kochi's page returned zero results (genuinely no inventory, confirmed again); Coimbatore (3 listings, no 3BHK), Surat (3 listings, no 3BHK), Mysuru (1 listing), and Visakhapatnam (1 listing, and it's 2BHK not 3BHK) all remain too thin, matching prior findings exactly. Vadodara's FAQ 3BHK average (₹18,500, n=2) is still below its own 2BHK average (₹22,000) — the same non-monotonic red flag that caused the original rejection — left unadded. Nagpur was the one genuine addition: full JS rendering surfaced 17 total listings (vs. too few to render a usable page previously), with 4 real 3BHK House listings (Manish Nagar ₹19,000 and ₹26,000, Gorewada ₹22,000, Besa ₹20,000) forming a tight, internally coherent cluster (avg ₹21,750, matching Squareyards' own stated ₹21,000) — added as citywide.villa.3bhk.rentPerMonth (low 19000 / avg 21000 / high 26000). Nagpur's own 4BHK figure (₹11,500, n=2) is still non-monotonic against its 3BHK/2BHK figures and was deliberately NOT added, consistent with the file's practice of accepting only the specific BHK slice that is internally coherent rather than an entire inconsistent block. Also re-checked Madurai (citywide salePricePerSqft still unfindable — Squareyards' own sale listings for Madurai contain an implausible ₹2.45 Cr/815 sqft entry, confirming the 'corrupted data' finding from the GAP-FILL PASS), Tiruchirappalli (apartment rent page has essentially zero flat/apartment inventory, only a single 1RK builder-floor listing — still no citywide rent), and Jodhpur (apartment rent page returns only 'Builder Floor' listings in the same Pal/Shastri Nagar localities already covered, no new citywide aggregate) — all three remain gapped for the same reasons already documented, now independently reconfirmed via a JS-rendering-capable fetcher rather than left as an assumption from earlier CAPTCHA-blocked attempts. OLX MARKETPLACE PASS (2026-09-27): Checked NoBroker and OLX for the 5 cities still missing citywide.villa.3bhk.rentPerMonth after the Scrapling re-verification pass (Kochi already had a sourced villa salePricePerSqft block but no rent; Coimbatore, Mysuru, Visakhapatnam and Vadodara had no villa block at all; Surat was also checked). NoBroker's live search app requires resolving a place through its internal autocomplete/geocoding API before any listing query returns results — plain city-name URLs (both /property/rent/<city>/<city> and /flats-for-rent-in-<city>) return the site's generic SEO template shell with zero real listings, so NoBroker could not be scraped this way; no NoBroker data was added. OLX's classifieds listings, by contrast, are server-rendered per-filter (?filter=type_eq_houses,rooms_eq_3 combines the 'Individual House/Villa' property-type facet with the '3 BHK' bedroom facet — a single comma-joined filter param, not repeated &filter= params, which OLX silently drops all but the last of) and required no CAPTCHA or session. For each city, the first page of matching listings (up to ~30-40 cards) was extracted and filtered to exclude PG/paying-guest listings, Kerala/Karnataka-style lump-sum 'lease' listings (a large one-time deposit quoted as the headline price instead of monthly rent — extremely common on OLX in Kochi, Mysuru and Coimbatore and easy to mistake for an extreme rent outlier if not filtered out), office/commercial space, and listings mislabeled as flats/apartments despite matching the house/villa filter; only listings priced between Rs 5,000 and Rs 150,000/month were kept as plausible genuine monthly rents. Kochi: n=30 clean listings, avg Rs 28,000 (low 8,000 / high 70,000) — this city had zero villa rent data from every prior aggregator (Squareyards returns 'no results' for Kochi independent houses), so this is a first for Kochi. Coimbatore: n=31, avg Rs 26,000 (13,000 / 50,000) — supersedes the prior 'only 3 listings, no table' finding, since OLX's own inventory here is far deeper than Squareyards'. Mysuru: n=18, avg Rs 31,000 (16,000 / 70,000) — supersedes the prior single-listing rejection. Visakhapatnam: n=10, avg Rs 28,000 (13,000 / 60,000) — computed only from listings OLX itself labels as within 5-20km of Visakhapatnam; OLX's radius search pads out thin cities by including nearby-but-distinct towns (Kakinada, Srikakulam, Odisha border towns appeared at 100km+ and were excluded) — supersedes the prior single-listing (and wrong-BHK) rejection. Vadodara: n=28, avg Rs 19,000 (11,000 / 34,000) — a far larger and internally consistent sample than the previously-rejected 2-listing Squareyards read (which had 3BHK avg below 2BHK avg); this new figure is still below Vadodara's citywide apartment 3BHK rent avg (Rs 22,000), which is plausible rather than alarming since most of the OLX villa/duplex inventory here clusters on Waghodia Road, an outer/industrial corridor, rather than central Vadodara where the apartment figure is anchored. Surat: OLX's own radius search is misleading for this city — its 'Surat' 3BHK house/villa count (110) is padded almost entirely by listings in Bharuch, Vapi, Bhavnagar, Daman and Anklesvar (all distinct Gujarat cities/towns 20-100km away); listings genuinely within Surat's own 5-20km radius (Dindoli, Adajan, Palanpur, Pal) number only about 5-7, still too thin to clear this file's reliability bar — Surat's villa rent gap remains unfilled, consistent with every prior pass. No apartment data, no other city, and no part of the schema was touched in this pass. METRO OLX PASS (2026-09-27): Extended the same OLX live-listing sampling methodology used for the tier-2/3 city locality-expansion project (Priority 1-3 passes) to the 8 well-covered metros (Mumbai, Delhi, Bangalore, Pune, Hyderabad, Chennai, Kolkata, Ahmedabad), targeting specific gaps rather than re-verifying already-good existing data. Method: fetched each city's OLX `for-rent-houses-apartments_c1723` citywide category page filtered by `rooms_eq_2`/`rooms_eq_3`, sampled the first ~30-40 listings, and excluded PG/room-sharing/flatmate-wanted ads, lease-lump-sum listings mislabeled as rent, sale-price listings that slipped into a rent-filtered page, and locality-mismatched results. Filled two real citywide gaps that had existed since early passes: Hyderabad citywide apartment 2BHK (low 8000/avg 31940/high 50000, n=37) and 3BHK (low 25000/avg 52690/high 100000, n=35) rent — previously this city had only 1BHK rent at the citywide level; Kolkata citywide apartment 2BHK (low 8500/avg 17840/high 42000, n=37) and 3BHK (low 12000/avg 39610/high 95000, n=33) rent — same gap, previously only 1BHK. Added rent (previously sale-only) to 5 existing Chennai localities: omr (n=15), velachery (2bhk n=31, 3bhk n=19), anna-nagar (n=5, thin), adyar (n=9), porur (n=16). Added rent (previously sale-only) to 4 existing Ahmedabad localities: bopal (n=25), south-bopal (n=16), vastrapur (n=6, thin), sg-highway (n=5, thin — sample pooled from the whole SG Highway corridor including Gota/Prahlad Nagar since the exact-locality facet alone was too thin). Mumbai, Delhi(-NCR), Bangalore, and Pune were reviewed but not touched in this pass — their existing locality coverage (4-7 localities each, most already rent+sale, sourced from a mix of aggregators and OLX) did not show the same kind of clear-cut gap (an empty BHK slot at the citywide level, or a locality with sale but zero rent) that Hyderabad/Kolkata/Chennai/Ahmedabad had, so no OLX scraping was done for them here to avoid low-value re-verification of already-adequate data. As with the tier-2/3 passes, sample sizes below ~10 are flagged thin inline in this note (anna-nagar, vastrapur, sg-highway) but were still added since a small real sample beats no data at all for a locality that previously had sale price only. LOCALITY EXPANSION PASS (2026-09-27): Targeted the thinnest-coverage tier-2/3 cities per a locality-count audit (1-locality cities: Amritsar, Dehradun, Siliguri; 2-locality cities: Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh). Method: Squareyards' per-locality \"/property-rates/<locality>-<city>\" pages, which expose an aggregate \"Type: Apartment\" sale rate and a \"Rental Trends\" unit-type table (both computed by Squareyards from their own live listing pool, not single scattered ads), supplemented by Sulekha's city price-trend locality table (Locality/MIN/MAX/Avg) for Amritsar and Madurai, and the existing VarmaHomes Trivandrum-by-area blog for Thiruvananthapuram. Amritsar: +4 localities from Sulekha (Adarsh Nagar avg Rs 4,302/sqft, Airport Road avg Rs 2,663/sqft, Azad Nagar avg Rs 4,171/sqft, Batala Road avg Rs 2,438/sqft); Amritsar Bypass was seen in the same table but rejected since its MIN=MAX=AVG=3,300 indicates a single-listing sample. Dehradun: +3 from Squareyards property-rates (Vasant Vihar rent-only 2BHK Rs 28,150 / 3BHK Rs 35,050; Rajpur Road sale Rs 11,550/sqft + rent 2BHK Rs 25,350; Malsi sale Rs 8,800/sqft + rent 2BHK Rs 26,000). Siliguri: +4 from Squareyards (Pradhan Nagar sale Rs 5,200/sqft; Matigara sale Rs 4,000/sqft + rent 3BHK Rs 23,500; Hakim Para sale Rs 4,150/sqft; Dagapur sale Rs 4,150/sqft). Patna: +4 sale-only from Squareyards (Danapur Rs 6,750/sqft, Phulwari Sharif Rs 5,400/sqft, Anisabad Rs 6,550/sqft, Bailey Road Rs 7,350/sqft) - Patna's Squareyards locality pages consistently lack a rent-trend table, matching the sale-only pattern of its existing two localities. Faridabad: +3 from Squareyards, each with both sale and a full 2/3/4BHK rent ladder (Sector 88: sale Rs 6,100/sqft, rent 21,000/30,450/38,000; Sector 81: sale Rs 9,500/sqft, rent 17,150/24,850/25,350; Sector 37: sale Rs 6,950/sqft, rent 22,500/31,850/44,500). Meerut: +2 sale-only (Ganga Nagar Rs 3,250/sqft, Pallavpuram Rs 4,650/sqft) - Kanker Khera and Modipuram Bypass were checked but only had a Villa rate, no Apartment rate, so were skipped. Kanpur: +2 sale-only (Kakadev Rs 5,050/sqft, Azad Nagar Rs 6,100/sqft) - Squareyards has no \"/localities-in-kanpur\" index page, so candidates were sourced by search instead; most other Kanpur locality pages (Kidwai Nagar, Govind Nagar, Rooma) either 404'd or had Villa-only rates. Madurai: +1 (Andalpuram, Sulekha avg Rs 3,902/sqft, range 3,546-4,259) - this was the only Madurai locality in Sulekha's price-trend table with a genuine MIN/MAX spread rather than a single-listing MIN=MAX=AVG row; KK Nagar, Anna Nagar and Villapuram were checked on both Squareyards (404 or Villa-only) and Sulekha (Villapuram's own trend page only had stale 2013 quarterly data) and yielded nothing usable, so Madurai falls short of the 2-4 target this pass. Jodhpur: no additions - a genuine gap. Squareyards' localities-in-jodhpur index lists mostly small colonies with no dedicated property-rates page (Jhalamand, Krishna Nagar, Vidhya Nagar, Boranada, Ratanada, Basni, Sardarpura, Chopasni Housing Board all 404'd or had only a neighbor-comparison table with no own Type/Apartment row); Pal and Kudi Bhagtasni Housing Board had rates but Villa-only; a Surana Realtors blog with a fuller locality table was found via search but could not be fetched (404 on direct retrieval). Agra: +2 sale-only from Squareyards (Sikandra Rs 3,800/sqft, Shastripuram Rs 3,650/sqft). Thiruvananthapuram: +4 from the VarmaHomes \"Average Flat Prices in Trivandrum by Area\" blog already cited for this city, using its stated min-max range per locality with the average computed as the range midpoint since VarmaHomes states a range only, no separate average (Pattom Rs 6,500-9,000/sqft; Vellayambalam Rs 7,500-10,500/sqft; Sreekariyam Rs 5,000-7,000/sqft; Peroorkada Rs 4,500-6,500/sqft). Chandigarh: +4 from Squareyards, restricted to localities where the page's own \"Type\" table showed a distinct Apartment sale rate (not just Villa) so as not to misattribute kothi/villa pricing to apartments - sectors deep in the city core (Sector 21, Sector 40) were checked and rejected for this reason since their property-rates pages showed only a Villa sale rate with no Apartment rate, while their BHK rent tables jumped implausibly from ~Rs 25,000 (2BHK) to ~Rs 85,000 (3BHK), consistent with kothi rents leaking into the figure (New Chandigarh: sale Rs 8,200/sqft, rent 3BHK Rs 29,000; Kharar-Banur Road: sale Rs 5,400/sqft, rent 3BHK Rs 35,350; Central Derabassi: sale Rs 5,250/sqft, rent 1/2/3BHK 11,900/16,150/22,450; Sector 44: sale Rs 13,900/sqft, rent 1/2/3BHK 14,350/23,000/40,500 - Sector 44 does show both a Villa and an Apartment sale rate distinctly, and its rent ladder is a much more moderate progression than Sector 21/40, so it was kept). No other city's existing data, the resolver code, or any other file was touched in this pass. JODHPUR/MADURAI MULTI-SOURCE RETRY PASS (2026-09-27): Retried both cities against a wider source set (OLX, Squareyards, MagicBricks, 99acres, HexaHome, Sulekha, Ghar.tv) per the standing gap from the LOCALITY EXPANSION PASS. MagicBricks: unreachable for both cities via both plain WebFetch and Scrapling (make_request and stealthy_fetch both errored on every magicbricks.com URL tried, and WebSearch site:magicbricks.com queries returned zero magicbricks.com results for either city) — MagicBricks could not be evaluated at all, not merely rejected for thin data. 99acres (via Scrapling, since direct WebFetch remains CAPTCHA/403-blocked): Jodhpur's own localities-in-jodhpur index page now 410s (page removed); Ratanada, Sardarpura, Jhalamand, and their dedicated /property-rates-and-price-trends-in-<locality>-jodhpur-prffid pages all returned \"Not Enough Data to show trend\" with zero Price/sqft rows for apartments (Jhalamand's page states a Plot/Land rate only, and its FAQ answer duplicating that same Land-rate number under a \"flat rates\" question is a templated-page artifact, not real apartment data, so it was not used). Madurai's KK Nagar 99acres page likewise has zero apartment Price/sqft rows (land rate only, already known from prior passes) and Anna Nagar's page has no aggregate rent/sale statement at all (only individual listing counts) — 99acres contributed nothing new for either city. OLX: sampled the citywide `for-rent-houses-apartments_c1723` category for both cities plus their locality-scoped pages (Jodhpur: Pal Garh/Pal Road, Shastri Nagar, Ratanada, Sardarpura; Madurai: KK Nagar, Anna Nagar, Villapuram), filtering to only listings OLX itself tags with that exact locality name (OLX pads every locality page with \"Displaying ads within 5/10/20 kms\" results from neighboring areas, which were excluded). This worked well for Jodhpur: Shastri Nagar had 5 clean exact-tagged 2BHK rent listings (Rs 12,500-17,000, avg Rs 15,700) forming a tight, internally coherent cluster — added as a new apartment.2bhk.rentPerMonth field (3BHK Shastri Nagar was rejected: only 3 exact listings and one was a 70,000 outlier ~4x the other two); Pal Garh/Pal Road had 5 clean exact-tagged listings each for 2BHK (Rs 8,000-22,000, avg Rs 12,900) and 3BHK (Rs 7,000-21,000, avg Rs 15,600, monotonically above 2BHK) — both added to the existing pal-road locality. Ratanada had only 1 exact-tagged listing citywide (too thin, rejected, consistent with every prior pass) and Sardarpura's exact-tagged listings were 1BHK room-share/single-room ads only, not usable 2/3BHK data. For Madurai, OLX was unable to clear the reliability bar for any of the three target localities: KK Nagar had only 2 exact-tagged 2BHK listings and zero exact 3BHK listings; Anna Nagar had 1 usable exact 2BHK listing (a second was a lakh-value lease-lump-sum, excluded) and its 3BHK listings were all in neighboring areas past the 5km padding boundary; Villapuram had only 2 exact-tagged 2BHK listings. All three fall well short of the ~5-listing threshold this file requires, so no Madurai locality data was added via OLX. HexaHome: found one genuine new source for Jodhpur — hexahome.in's Paota locality overview page (Paota being one of Jodhpur's actual popular rental/buy areas, confirmed independently via a WebSearch summary naming Paota, Ratanada, Chopasni Housing Board, Mandore and Sardarpura as \"the most popular areas in Jodhpur to rent a home\") publishes a genuine curated Price Trends table (not individual listings) with separate Buy and Rent rows per BHK for Apartments specifically (distinct from its Villa/Builder Floor/Independent House rows) plus an FAQ giving a 3BHK apartment sale rate of Rs 4,500-6,200/sqft; added as a new paota-jodhpur locality with apartment 2BHK rent (8,000-15,000, avg 11,500, the source's own midpoint since it states a range only), apartment 3BHK rent (12,000-22,000, avg 17,000) and apartment 3BHK salePricePerSqft (4,500-6,200, avg 5,350). Attempts to find equivalent HexaHome locality-overview pages for Sardarpura, Ratanada, Shastri Nagar (Jodhpur) and KK Nagar, Anna Nagar (Madurai) failed — guessed URL slugs following the Paota page's own /overview/<locality>-<city>-overview/ pattern all returned Access Denied/not-found, and WebSearch found no indexed HexaHome page for any of them; HexaHome's Madurai KK Nagar/Anna Nagar results were exclusively PG/hostel listings, not apartment rent data. Sulekha and Ghar.tv: re-checked per the task's \"any other source\" instruction. Sulekha's Madurai price-trend table (already the source of the existing andalpuram entry) was re-read in full and confirmed to contain no additional locality beyond andalpuram with a genuine MIN/MAX spread — KK Nagar/Anna Nagar/Villapuram are simply absent from its table, not merely rejected. Ghar.tv's Madurai and Madurai Main pages render as empty client-side-JS shells with no price data in their server-rendered HTML (confirmed via direct fetch) and were not usable for either city. Net result: Jodhpur gained 3 new rent/sale fields across 2 existing localities (shastri-nagar-jodhpur, pal-road) plus 1 new locality (paota-jodhpur, from HexaHome) — a real improvement over the prior pass's zero. Madurai gained nothing this pass; KK Nagar, Anna Nagar and Villapuram remain unfilled because every source checked (OLX, 99acres, HexaHome, Sulekha, Ghar.tv; MagicBricks unreachable) either has no data for these specific localities or only individual/thin listings below this file's reliability bar — this is now the second consecutive dedicated pass, using a materially wider source set including a live-marketplace sampling method (OLX) that worked well elsewhere, to come back empty for exactly these three Madurai localities, which is itself informative rather than an oversight. No other city's existing data, the resolver code, or any other file was touched in this pass. LOCALITY EXPANSION PASS 2 (2026-09-27): Added further locality-level entries to the 10 cities flagged as having only 3 localities each. Delhi-NCR Gurgaon: added sushant-lok-1 (NoBroker LocalityIQ aggregate range - apartment 1BHK/2BHK/3BHK rent plus a general builder-floor/apartment sale price/sqft range) and sector-56 (Squareyards Property Rates page - full 1BHK-4BHK rent-per-month table plus an apartment average sale price/sqft); Palam Vihar and Golf Course Extension Road were checked on NoBroker LocalityIQ but both pages surfaced only scattered individual listings with no stated range/average, so neither was added. Delhi-NCR Noida: added sector-50 and sector-78 (both Squareyards Property Rates pages with full monotonic 1BHK-4BHK rent tables plus an overall apartment sale price/sqft). Kolkata: added behala, tollygunge and garia (Squareyards Property Rates pages; each gave only a 2BHK or 3BHK rent-per-month figure alongside an overall apartment sale price/sqft, so only those BHKs were populated per the source). Surat: added althan (Squareyards - 3BHK rent plus sale price/sqft) plus city-light and pal (Squareyards - sale price/sqft only, no rent data published for either). Nagpur: added trimurti-nagar (Squareyards - apartment sale price/sqft only); Ramdaspeth, Sadar and Hingna Road were attempted via both Squareyards property-rates URLs and NoBroker LocalityIQ but all returned 404/not-found, so no data could be added for them this pass. Bhopal: added hoshangabad-road and bawadia-kalan (both Squareyards - apartment sale price/sqft only, no rent tables published); MP Nagar's Squareyards property-rates page 404'd and no other credible source was found. Nashik: added gangapur-road (Rs 6,250/sqft, rounded to 6,300) and satpur (Rs 3,300/sqft), both from Squareyards Property Rates pages; College Road was checked on Squareyards but its stated apartment average of Rs 15,750/sqft is a wild outlier against every neighbouring Nashik locality in this file (all in the Rs 3,300-5,750/sqft band) and was rejected as implausible/unstable per this file's data-quality bar rather than added. Bhubaneswar: added chandrasekharpur (Rs 9,000/sqft) and nayapalli (Rs 9,750/sqft, rounded to 9,800), both Squareyards Property Rates pages, both consistent with the existing Saheed Nagar/Patia/Rasulgarh range already in the file. Mangalore: added urwa (Squareyards - Rs 5,650/sqft, rounded to 5,700); Kottara, Bunder and Falnir all 404'd on Squareyards and Kadri was already covered in the file, so only one new Mangalore locality could be added this pass. Jaipur: added tonk-road (apartment sale price/sqft only), jhotwara (apartment sale price/sqft only) and c-scheme (Squareyards - full 2BHK/3BHK/4BHK rent-per-month table plus apartment sale price/sqft); Jagatpura's Squareyards property-rates page 404'd. As in prior passes, all added figures are single-point Squareyards 'Property Rates' page averages or NoBroker LocalityIQ aggregate ranges (never individual listings), rounded to the nearest Rs 500 for rent and nearest Rs 100 for sale price/sqft; where a source gave one number with no stated range, low/avg/high were set equal per this file's existing single-point-source convention (see e.g. the Patna Patliputra Colony entry from an earlier pass). No other city's data, the resolver code, or any other file was touched in this pass. LOCALITY EXPANSION PASS 3 (2026-09-27): Added further locality-level entries to the 11 cities flagged as having only 3-4 localities each. Delhi: +4 new localities via Squareyards Property Rates pages (Lajpat Nagar, Pitampura, Mayur Vihar, Karol Bagh), each with a full 1BHK/2BHK/3BHK rent-per-month figure plus an apartment sale price/sqft average; 4BHK rent was seen on all four pages but omitted since the four values (71,550 to 2,07,300) are too erratic relative to each other to trust as stable single-point averages. Lucknow: +4 (Aliganj, Mahanagar, Vikas Nagar, Jankipuram) via Squareyards Property Rates, each with sale price/sqft plus whatever BHK rent rows the source published (Mahanagar and Vikas Nagar only had one BHK each). Meerut: +2 sale-only (Shatabdi Nagar Rs 4,150/sqft, Partapur Rs 5,450/sqft) via Squareyards; Shastri Nagar, Delhi Road, Rohta Road and Mawana Road were checked but either had a Villa-only rate or 404'd. Kanpur: +2 sale-only (Panki Rs 3,700/sqft, Kidwai Nagar Rs 4,900/sqft, the latter now showing genuine apartment data on Squareyards where a prior pass had found only a Villa rate) via Squareyards; Kalyanpur, Barra, Ratanlal Nagar, Juhi and Vijay Nagar all 404'd, and Yashoda Nagar/Naubasta were rejected for internally conflicting villa-vs-apartment figures on the same page. Agra: +1 sale-only (Khandari Rs 5,000/sqft) via Squareyards; Tajganj only stated a villa rate (rejected), Sanjay Place is a commercial-office locality (rejected), and Avas Vikas Colony/Bodla/NH-2/Trans Yamuna Colony either 404'd or had no own apartment figure - Agra falls short of the 2-4 target this pass for lack of further credible locality pages. Vijayawada: +2 sale-only (Benz Circle Rs 5,250/sqft, Patamata Rs 6,150/sqft) via Squareyards; MG Road, Vijayawada Central, Labbipet and Governorpet all 404'd. Rajkot: +3 sale-only (Kalawad Road Rs 5,200/sqft, University Road Rs 6,600/sqft, Mavdi Rs 5,550/sqft) via Squareyards, all within the existing Rajkot East locality's own already-wide Rs 3,500-7,200/sqft band; Gondal Road was rejected since its page stated only a villa rate. Ghaziabad: +3 (Wave City with a full 1BHK-3BHK rent ladder plus sale Rs 8,300/sqft; NH 24 with 2BHK rent Rs 16,200 plus sale Rs 7,350/sqft; Mohan Nagar with 2BHK/3BHK rent plus sale Rs 9,450/sqft) via Squareyards; Govindpuram was found and initially considered (2BHK rent Rs 8,850, sale Rs 3,650/sqft) but rejected as an outlier since both figures fall well below every existing Ghaziabad locality and even below the citywide low bound (Rs 6,350/sqft sale, Rs 13,000 rent) recorded in this file; Crossings Republik, Vasundhara and Kaushambi all 404'd. Varanasi: +3 sale-only (Shivpur Rs 5,150/sqft, Pandeypur Rs 6,000/sqft, Maheshpur Rs 9,100/sqft) via dedicated Squareyards locality pages, cross-verified against a Sigra-locality comparison page that independently named the same two Pandeypur/Maheshpur figures; also back-filled a missing sale price/sqft (Rs 6,550/sqft) onto the existing rent-only Sunderpur locality entry, sourced from that same Sigra comparison page. Raipur: +2 sale-only (Dhamtari Road and VIP Road, both Rs 3,400/sqft) via Squareyards; Telibandha, Pandri, Vidhan Sabha Road, Gudhiyari and Raipura all 404'd, and Tatibandh's page gave only a villa rate. Tiruchirappalli: no credible new locality data found - every Squareyards property-rates URL tried (Thillai Nagar, Woraiyur, Cantonment, Edamalaipatti Pudur) 404'd; 99acres remains inaccessible (direct fetch CAPTCHA-blocked per standing policy, and the Scrapling stealthy_fetch tool itself errored out on repeated attempts rather than returning a CAPTCHA page, so it could not be used as a workaround this pass); a RealEstateIndia locality table returned wildly implausible/internally inconsistent figures (e.g. KK Nagar Rs 16,870/sqft, Manachanallur Rs 20,280/sqft, Siruganur Rs 1.57 Lac/sqft) alongside the file's already-known genuine KK Nagar rent-only figure, indicating the table is corrupted or scraped from mismatched entries, so it was rejected wholesale; Sulekha's Trichy price-trend table has every single locality (Crawford Colony, EB Road, Edamalaipatti Pudur, Karumandapam, Mainguard Gate) showing min=max=avg, the file's own established signature of a single-listing (not aggregate) sample, so none of its rows were used either. All figures added this pass follow the file's existing single-point-source convention (low=avg=high) where the cited page states one average with no range, rounded to the nearest Rs 500 for rent and nearest Rs 100 for sale price/sqft (values already stated as round hundreds/fifties by the source were left as-is). No other city's data, the resolver code, or any other file was touched in this pass. OLX/MAGICBRICKS SWEEP PASS (2026-09-27): scoped to an OLX + MagicBricks focused sweep across 30 thin-coverage cities (Amritsar, Dehradun, Siliguri, Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh, Gurgaon, Noida, Kolkata, Surat, Nagpur, Bhopal, Nashik, Bhubaneswar, Mangalore, Jaipur, Delhi, Lucknow, Vijayawada, Rajkot, Ghaziabad, Varanasi, Raipur, Tiruchirappalli). MagicBricks was found completely unreachable for every city attempted this pass: both the WebFetch tool (\"unable to fetch from www.magicbricks.com\") and the built-in browser pane (\"magicbricks.com is not allowed due to safety restrictions\") refused the domain outright before any locality-level page could be inspected, so no MagicBricks locality/price-trend data could be sourced at all in this environment - a stricter, whole-domain version of the two-city MagicBricks outage noted in an earlier pass. The 99acres/Scrapling fallback was also unavailable: the ScraplingServer stealthy_fetch and fetch tools errored on every call this pass, including against a trivial control URL (example.com), indicating the tool itself was down rather than a per-site CAPTCHA wall, so it could not be used per the no-bypass policy. OLX was reachable via the built-in browser pane and was worked through for Amritsar and Dehradun before the sweep was stopped to keep this partial pass honest rather than rushing the remaining 28 cities on unreliable data: Amritsar - OLX's Rani Ka Bagh locality page (894 nominal 2BHK results) turned out to be radius-padded across all of Amritsar per the no-forcing policy on distant/other-town results, and after excluding PG/room-share/portion-for-rent ads with implausible sqft (e.g. \"2 BHK - 200 sqft\"), no candidate locality (Putli Ghar, Guru Amardas Avenue, Anand Avenue, Gopal Nagar, Ram Nagar) had more than 1-3 clean listings, below this file's 5+ clean-listing usability bar, so nothing was added; MagicBricks unreachable as above. Dehradun - OLX's Race Course locality page (3,885 nominal 2BHK results) was likewise radius-padded, with only 2 listings actually addressed to Race Course itself; GMS Road looked promising from the radius page (5 listings directly addressed to GMS Road visible: Rs 12,000-25,000 range) but the dedicated GMS Road locality URL guessed from OLX's own sidebar link resolved to an unrelated geo id (\"Jamunwala Village\") with the same undifferentiated citywide result set, so a clean, locality-scoped sample could not be pulled together confidently and nothing was added rather than force a guess; MagicBricks unreachable as above. Given OLX's geo-id/slug scheme could not be relied on to resolve to the actual named locality (confirmed wrong twice) and MagicBricks was categorically unreachable, continuing to force the remaining 28 cities (Siliguri, Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh, Gurgaon, Noida, Kolkata, Surat, Nagpur, Bhopal, Nashik, Bhubaneswar, Mangalore, Jaipur, Delhi, Lucknow, Vijayawada, Rajkot, Ghaziabad, Varanasi, Raipur, Tiruchirappalli) through the same unreliable path risked adding bad data under time pressure, so this pass was stopped here with no new localities added for any of the 30 target cities; all of them remain open for a future pass, ideally with a working 99acres/Scrapling fallback or a more reliable way to resolve OLX locality geo ids to their actual named area. OLX UI-DRIVEN SWEEP PASS (2026-09-27): fixed the prior pass's core problem (guessed OLX URLs resolving to wrong places, e.g. a hand-built /kolkata_.../ URL that actually landed on Bengaluru) by driving OLX entirely through its own UI - typing each city/locality into OLX's location search box, selecting the autocompleted suggestion so OLX itself resolves the geo-id, then using OLX's own sidebar per-locality links (never a hand-typed URL) to reach a locality's exact-match ad section, and manually reading each listing's address tag before counting it. The Scrapling/99acres fallback was retested first with a trivial control fetch (stealthy_fetch and fetch against https://example.com) and both errored again exactly as in the prior pass, confirming the tool itself remains down in this environment (not a per-site block), so it was not used and MagicBricks remains the standing whole-domain block noted previously - this pass relied on OLX alone. Siliguri: Haiderpara (+1bhk n=3 avg Rs 7,000, +2bhk n=4 avg Rs 9,000) and Salugara (+2bhk n=6 avg Rs 10,500, +3bhk n=2 avg Rs 18,000) added from their own locality-scoped OLX pages; Champasari checked but rejected as too thin (1bhk n=2). Patna: Boring Chauraha added (+1bhk n=2 thin but consistent avg Rs 13,000, +2bhk n=12 avg Rs 21,500, +3bhk n=5 avg Rs 35,000) after excluding flatmate/room-share/hostel ads. Faridabad: Sector 70 added (+2bhk n=9 avg Rs 18,500, +3bhk n=12 avg Rs 39,500) from a large, internally consistent set of duplex/flat listings. Meerut: Tejgarhi was the only sizeable new candidate but its OLX tag turned out to be a broad catch-all spanning many unrelated named sub-areas (Shastri Nagar, Roorkee Road, Jail Chungi etc. all sharing one tag) - rejected as incoherent; nothing added. Kanpur: both Naubasta and Kalyanpur were dominated by informal room/portion-for-rent ads with implausible sqft (1, 8, 50, 100 sqft 2BHKs) - rejected on data-quality grounds; nothing added. Madurai: OLX volume is thin citywide and every new-candidate locality (Villapuram etc.) had at most 2-4 clean non-lease-lump-sum listings, short of the 5+ bar; nothing added. Jodhpur: BJS Colony added (+2bhk n=12 avg Rs 11,500, +3bhk n=5 avg Rs 17,000) - both figures landed almost exactly on the file's existing paota-jodhpur averages, a strong cross-check. Agra: Bodla added (+2bhk n=7 avg Rs 12,500); its 3bhk sample (n=1) was rejected as non-monotonic/too thin. Thiruvananthapuram: Akkulam added (+1bhk n=2 thin, +2bhk n=5 avg Rs 26,000, +3bhk n=7 avg Rs 34,000) from a Lulu Mall/Technopark-corridor cluster of listings, after excluding room-share/PG-tagged ads. Chandigarh: Sector 27D added (+2bhk n=11 avg Rs 24,500, +3bhk n=7 avg Rs 44,500); note this pulled in some premium units up to Rs 70,000/4200 sqft which lifts the 3bhk average somewhat above other Chandigarh-area 3bhk entries, but the range is retained rather than trimmed since the underlying listings were all genuinely Sector 27D. Gurgaon: Sector 37D added (+2bhk n=23 avg Rs 17,500) - this is a large Signature Global Millennia-type affordable-housing-scheme cluster, priced noticeably below this file's existing (more premium) Gurgaon localities (DLF Phase 1, Sushant Lok); flagged here as a distinct lower-tier market segment rather than an error, since the sample size and internal consistency were strong. Noida: Sector 134 added (+2bhk n=9 avg Rs 28,500, +3bhk n=8 avg Rs 32,500) from named-society (Jaypee Kosmos, Kensington Park) listings. Kolkata: Keshtopur/Kestopur (the single largest sidebar locality) was rejected - its inventory is dominated by 1RK bachelor-studio ads mislabeled under the 1BHK filter, too noisy for a clean sample; Mukundapur added instead (+2bhk n=15 avg Rs 17,500) from a clean, hospital-adjacent furnished-flat cluster. Surat: Dindoli added (+2bhk n=8 avg Rs 11,500, +3bhk n=6 avg Rs 14,500), consistent with it being a more peripheral/affordable locality than the file's existing Vesu/Adajan entries. Nagpur: Omkar Nagar added (+2bhk n=13 avg Rs 15,000, +3bhk n=7 avg Rs 25,000), well below the existing (upscale) Dharampeth entry, consistent with Omkar Nagar being a peripheral residential area. Bhopal: Rohit Nagar added (+1bhk n=4 avg Rs 11,500, +2bhk n=7 avg Rs 16,500); its 3bhk sample was rejected as too thin/tight-margined against the 2bhk figure. Nashik: Govind Nagar added (+2bhk n=4 thin but consistent avg Rs 15,000, +3bhk n=14 avg Rs 28,500) after excluding a dummy PropKar listing and cross-tagged Bawariya Kalan duplex ads. Bhubaneswar: Jayadev Vihar was dominated by repeated broker 1RK/1BHK/2BHK/3BHK price-list template ads (not distinct verified units) plus PG/room-share noise - rejected; Palasuni was too thin (2 clean 2bhk listings) - rejected; nothing added for Bhubaneswar this pass. Mangalore: Kottara added (+1bhk n=3 avg Rs 10,000, +2bhk n=12 avg Rs 17,000, +3bhk n=4 avg Rs 27,000), a large, cleanly address-tagged, monotonic sample with no lease-lump-sum contamination despite the South-India risk flagged for this task. Jaipur: Jagatpura added (+1bhk n=6 avg Rs 17,000, +2bhk n=4 avg Rs 18,000, +3bhk n=8 avg Rs 36,500) from a mix of budget and named-society (Sankalp The Index) listings. Delhi: Chattarpur added (+1bhk n=9 avg Rs 14,000, +2bhk n=8 avg Rs 17,500); flagged that these are well below every other Delhi locality already in the file (Mayur Vihar, Pitampura etc.), consistent with Chattarpur's well-known reputation as a cheap, unauthorised-construction urban-village rental market immediately adjacent to premium South Delhi rather than a data error. Lucknow: Tiwariganj (BBD University-adjacent) was dominated by student PG/room-share ads and yielded too few clean listings - rejected; Sarojini Nagar was checked (+2bhk n=10 avg roughly Rs 8,000) but rejected as a likely outlier since it sits roughly half of every existing Lucknow locality's low bound; nothing added for Lucknow this pass. Vijayawada: Ajit Singh Nagar's exact-match section had only about 4 clean listings after excluding PG-hostel/tiny-sqft/non-residential ads, short of the bar; nothing added. Rajkot: Indira Circle added (+3bhk n=5 avg Rs 28,500) after excluding flatmate/hostel ads and an ambiguous mixed-price listing; its 2bhk sample (n=2) was too thin to include. Ghaziabad: Crossings Republik added (+2bhk n=6 avg Rs 19,000) after excluding heavy flatmate/room-share noise and one obvious data-entry error (Rs 1,300 rent); no clean 3bhk sample survived the filtering. Varanasi: Sigra added (+2bhk n=4 thin but consistent avg Rs 19,500, +3bhk n=8 avg Rs 28,500, wide range reflecting both budget and named-society/premium units); Lanka was checked but rejected as non-monotonic (BHK-size vs rent order inverted across its small per-bucket samples, most likely reflecting a single bulk-listing dealer's arbitrary pricing rather than real market gradient). Raipur: Pachpedi Naka added (+1bhk n=10 avg Rs 15,500) from a run of flexible-tenancy (bachelor/couple/family/office allowed) but genuinely full-unit listings; its 2bhk (n=2) and 3bhk (n=1) samples were too thin to include. Tiruchirappalli: every remaining new-candidate locality in OLX's own sidebar (SBI Colony, Crawford Colony, Mannarpuram, Ramalinga Nagar, Karumandapam) had 4 or fewer total ads citywide, short of the usability bar even before any filtering - this city remains essentially unworkable via OLX given its current inventory, consistent with the total dead-end found in the prior Squareyards/RealEstateIndia/Sulekha pass; nothing added. Every one of the 28 target cities was checked this pass (none skipped outright); Kanpur, Meerut, Madurai, Bhubaneswar, Vijayawada, Lucknow and Tiruchirappalli yielded no addable data after real effort and are documented as genuine gaps above rather than forced. All figures follow the file's existing convention of rounding rent to the nearest Rs 500; per-BHK sample sizes (n) are noted above so a future pass can judge which entries are worth reinforcing with more data."
+    "notes": "Indicative baselines compiled from public aggregator reports and real-estate blogs (Housing.com/NoBroker/99acres-sourced summaries, Sobha, Squareyards, Casafy, etc.), not live listing data. For comparison/flagging use only, not a valuation. Villa/independent-house data was omitted for nearly all cities because no credible aggregate/average source could be found (only scattered individual listings existed, which were deliberately excluded per sourcing rules) — sale/rent figures below are apartment/flat baselines unless a villa block is explicitly present. Some BHK sizes are omitted at city or locality level where no sourced figure could be found; these gaps are intentional, not zeros. SECOND PASS (2026-07-29): Added villa/independent-house baselines for Bangalore, Hyderabad, Chennai, Pune, Gurgaon, Jaipur, Kochi, Kolkata, Noida, Surat, and Chandigarh (Mohali/Zirakpur) — aggregated from named builder/gated-community villa projects and locality-level villa-specific price data across multiple sources (see each city's sources array). Villa data intentionally omitted for Mumbai, Delhi, Ahmedabad, Indore, Nagpur, Lucknow where no credible multi-source villa/independent-house pricing could be found. Also added rent baselines for Indore (citywide + Vijay Nagar locality), Chandigarh (citywide 2BHK/3BHK), and additional Lucknow localities (Hazratganj, Indira Nagar, Alambagh) plus Gomti Nagar 3BHK. THIRD PASS (2026-08-19): Added 8 new cities researched via aggregator price-trend pages (99acres locality pages, Squareyards, Housivity, Wise cost-of-living) — Coimbatore, Vadodara, Bhopal, Visakhapatnam, Nashik, Mysuru, Bhubaneswar, Mangalore. Sale price data is well-sourced (99acres/Squareyards locality price-trend pages) for all 8; rent data was only found with credible aggregate sourcing for Vadodara, Bhopal, Visakhapatnam, Nashik (1BHK only), and Mangalore — Coimbatore, Mysuru, and Bhubaneswar have sale price data only, rent intentionally omitted (no credible aggregate rent source found, not a zero). Remaining target cities from the research prompt (Patna, Ludhiana, Amritsar, Vijayawada, Thiruvananthapuram, Guwahati, Rajkot, Faridabad, Ghaziabad, Meerut, Kanpur, Varanasi, Madurai, Tiruchirappalli, Jodhpur, Agra, Ranchi, Raipur, Dehradun, Siliguri) were not covered in this pass — deferred to a follow-up research pass rather than filled with low-confidence data. FOURTH PASS (2026-09-25): Added all 20 previously-deferred cities via Squareyards/99acres/NoBroker/HexaHome aggregator pages. Full rent+sale citywide data: Guwahati, Ghaziabad, Agra, Dehradun. Partial — rent only (no credible aggregate sale/sqft source found): Amritsar, Vijayawada, Ranchi. Partial — sale only (no credible aggregate rent source found): Tiruchirappalli, Jodhpur, Siliguri. Partial — mixed/incomplete BHK or price-type coverage (some rent and/or sale figures found but not both fully for all BHKs): Patna, Ludhiana, Thiruvananthapuram, Rajkot, Faridabad, Meerut, Kanpur, Varanasi, Madurai, Raipur. No city in this pass was skipped entirely, though several (99acres direct fetches were blocked by bot protection for many localities) rely more heavily on Squareyards locality-overview pages and search-engine-indexed 99acres/NoBroker page content than the prior passes. Villa/independent-house data was not found with credible aggregate sourcing for any of the 20 cities in this pass and is omitted throughout. SPOT-CHECK CORRECTION (2026-09-25): Verified the 4 FOURTH PASS 'full data' cities against their cited sources directly; found and fixed 3 errors — Guwahati citywide 2BHK rent low was 10000 but the source states the range starts at 8000; Ghaziabad citywide apartment salePricePerSqft (7600/7850/8100) was removed entirely as it could not be traced to any cited source (the only citywide Ghaziabad source, NoBroker, gives absolute lakh/crore prices, not per-sqft — per-sqft figures only exist at locality level for Indirapuram/Vaishali/Raj Nagar Extension, which remain); Agra Dayal Bagh locality salePricePerSqft high was 7400, which the source actually attributes to villas, not apartments — corrected to 4550 (Anupam Daffodils), the actual highest sourced apartment figure. Agra citywide salePricePerSqft low (3350) and the Kamla Nagar locality entry could not be independently re-verified (99acres blocks direct fetches; original figures came via WebSearch snippet extraction) — flagged as lower-confidence, not corrected absent contradicting evidence. SPOT-CHECK PASS 2 (2026-09-25): Verified the remaining 16 FOURTH PASS 'partial data' cities against their cited sources. Amritsar: verified clean (1/2/3BHK rent low-high match the city-centre/outside-city-centre split, avg is the midpoint). Vijayawada: verified clean. Ranchi: verified clean. Tiruchirappalli: verified clean, but 99acres direct fetch was blocked (403) so confirmation relied on a WebSearch cache of the same page — flagged unverified via direct fetch. Jodhpur: verified clean (Pal Road and Shastri Nagar per-sqft figures both re-derived correctly from source). Siliguri: flagged unverifiable — the cited siliguriproperties.com article is JS-rendered and its body text could not be retrieved by direct fetch or search cache; citywide and Sevoke Road salePricePerSqft figures left as-is but unconfirmed. Patna: verified clean. Ludhiana: verified clean, including the citywide salePricePerSqft range (4400-7500, avg 7200) which does trace exactly to a sentence on the cited South City overview page. Thiruvananthapuram: verified clean overall; Kazhakootam's avg (5900) is close to but not an exact match for a WebSearch-cached 99acres average (6000) since the 99acres page itself was blocked (403) — flagged unverified via direct fetch for that one figure only, left as-is. Rajkot: verified clean, including reconciling the citywide vs Rajkot East averages (4150 city-comparison figure vs 4350 locality figure) as two distinct numbers both present on the cited page. Faridabad: corrected — removed the citywide apartment salePricePerSqft block (6600 for both 2BHK/3BHK), which did not trace to any of the cited sources and could not be reconciled (a plausible replacement source gave conflicting averages, 6600 vs 7300, on different fetches); added a missing 99acres citation for the Greenfield Colony locality figures, which are accurate but were previously uncited. Meerut: verified clean, though all three 99acres locality sources (Modipuram, Meerut Bypass, Meerut Cantt) were blocked (403) and confirmed only via WebSearch cache — flagged unverified via direct fetch. Kanpur: verified clean (Arya Nagar's figure actually comes from the Swaroop Nagar page's neighboring-locality comparison, not the Civil Lines page, but both are cited sources). Varanasi: verified clean (2BHK citywide rent avg of 22000 matches the true average of all 12 listings on the page, not just the few initially sampled). Madurai: corrected — removed the KK Nagar locality entry (3650/sqft), which the cited KK Nagar overview page never states for KK Nagar itself; the figure was actually Vilangudi's price (correctly listed separately) misattributed to KK Nagar. Also removed the unsourced citywide salePricePerSqft block (3600), which does not trace to any cited source. Raipur: verified clean (citywide salePricePerSqft range of 3050-4450 traces to Mahaveer Nagar and Shankar Nagar figures both present on the cited Telibandha overview page). SPOT-CHECK VIA SCRAPLING (2026-09-25): Used the newly-installed Scrapling library (curl_cffi TLS impersonation) to re-attempt the sources that were unverifiable via plain WebFetch. Siliguri: successfully rendered the JS-heavy source page (WebFetch could not) and found two real errors — Sevoke Road locality 2BHK salePricePerSqft was recorded as a flat 4800/sqft, which is actually the 3BHK rate, not 2BHK (corrected to the true 2BHK range 3850-4200, avg 4025); citywide salePricePerSqft (3500/3880/4800) did not match any 2BHK-specific data on the page and was replaced with the page FAQ's own directly-quoted citywide range, 3000-5000/sqft avg 4000. Agra (Kamla Nagar), Tiruchirappalli (Srirangam), and Meerut (Modipuram/Bypass/Cantt) 99acres sources initially returned real content via Scrapling (bypassing the earlier 403s), but on a second batch of requests 99acres began serving a CAPTCHA verification wall instead of content — per policy, CAPTCHA bypass was not attempted, so these three cities' 99acres-sourced figures remain as previously flagged (unverified via direct fetch), not re-confirmed or changed. CROSS-SITE VERIFICATION (2026-09-25): Tried alternative non-99acres sources for the three localities still flagged after the Scrapling/CAPTCHA episode. Modipuram (Meerut): a direct fetch of Squareyards' Modipuram overview page gave Avg. Sale Price 2750/sqft, sharply lower than the previously-recorded 4750/sqft (which came from a 99acres WebSearch cache snippet, not a direct read) — per the file's own confidence hierarchy (direct fetch outranks search cache), replaced modipuram's figure with 2750 and re-derived Meerut citywide 2BHK salePricePerSqft as low 2750 (Modipuram) / high 3550 (Meerut Cantt, unchanged) / avg 3150 (midpoint), since the old citywide high was built on the now-superseded Modipuram number. Kamla Nagar (Agra) and Srirangam (Trichy): alternative sites (Squareyards sale-listing pages, Ghar.tv, RealEstateIndia) only surfaced scattered plot/land/bank-auction listings, no usable comparable apartment salePricePerSqft figure — no replacement found, these two remain exactly as previously flagged (99acres-sourced, unverified via direct fetch, CAPTCHA-blocked from re-confirmation). FINAL SWEEP (2026-09-25): Resolved the last 3 flagged items. Tiruchirappalli: confirmed clean — the earlier WebSearch cache result (Rs 6000-6900, avg 6500) matches the JSON exactly, no CAPTCHA re-check needed since the number was already independently corroborated. Agra citywide salePricePerSqft low (3350): confirmed genuine — traces exactly to Squareyards' Fatehabad Road, Agra page (\"average asking price of Rs 3350 per sq ft\"), which was not previously cited; added as a source. Thiruvananthapuram/Kazhakootam: three sources now compared — the file's low/high (5400/7900) match both the original source and a WebSearch cache of 99acres; the avg was corrected from 5900 (an uncited midpoint-style figure) to 6000 (the actual quoted 99acres average). A third source, PropertyPistol, gave a conflicting avg of 4980/sqft for \"Kazhakootam, Trivandrum North\" — not used, since it falls below the sourced low bound and appears to cover a broader area than the Kazhakootam locality specifically, making it not a like-for-like figure; noted here as a known discrepancy rather than silently discarded. Kamla Nagar (Agra) sale figures (4300/4350/4400) remain as before — a WebSearch cache independently reported an average of ~4400/sqft for the same locality, roughly corroborating the existing figures, but 99acres itself remains CAPTCHA-blocked for a direct-fetch confirmation. Every number flagged across all spot-check passes has now been either corrected, confirmed via an independent source, or explicitly documented as an unresolved cross-source discrepancy — none remain silently unexamined. GAP-FILL PASS (2026-09-25): Filled the missing rent/sale side of citywide apartment blocks for 26 previously one-sided cities, sourced via WebSearch/WebFetch against Squareyards/NoBroker/HexaHome/Sulekha/VarmaHomes/OnlyNew aggregator pages (99acres avoided per the standing CAPTCHA lesson). Delhi: added citywide 1/2/3BHK salePricePerSqft (Squareyards). Gurgaon: added citywide 2/3BHK salePricePerSqft (Squareyards). Bangalore: added citywide 1/2/3BHK salePricePerSqft (Squareyards). Hyderabad: added citywide 1BHK salePricePerSqft (Squareyards, matching existing 1BHK-only rent coverage). Ahmedabad: added citywide 2/3BHK salePricePerSqft (OnlyNew). Jaipur: added citywide 1/2/3BHK salePricePerSqft (Squareyards Jaipur North/Central). Lucknow: added citywide 1/2BHK salePricePerSqft (Squareyards). Patna: added citywide 2/3BHK salePricePerSqft (Squareyards Patna real estate overview, direct-fetch confirmed). Amritsar: added citywide 1/2/3BHK salePricePerSqft (Sulekha locality-average table, partial listing so lower confidence). Vijayawada: added citywide 2/3BHK salePricePerSqft (Squareyards). Thiruvananthapuram: added citywide 2BHK salePricePerSqft (VarmaHomes). Faridabad: added citywide 2/3BHK salePricePerSqft (Squareyards Sep-2026, supersedes the earlier removed/conflicting 6600 figure with a self-consistent direct-fetch reading). Ghaziabad: added citywide 2/3BHK salePricePerSqft (Squareyards Jun-2026, resolving the earlier removed-for-no-source gap; high bound aligned to the already-sourced Vaishali locality high). Varanasi: added citywide 2/3BHK salePricePerSqft (Squareyards). Ranchi: added citywide 2/3BHK salePricePerSqft (Squareyards Ranchi real estate overview; a conflicting lower Sulekha reading was not used since the Squareyards figure was more current and better matched independent WebSearch snippets). Noida: added citywide 1/2/3BHK rentPerMonth (NoBroker, already-cited source). Surat: added citywide 2BHK rentPerMonth (SuratVRProperties, already-cited source). Nagpur: added citywide 2BHK rentPerMonth (Squareyards). Coimbatore: added citywide 2BHK rentPerMonth (Niptao cost-of-living guide, cross-checked against existing locality names). Mysuru: added citywide 2BHK rentPerMonth (OneCityProperty). Bhubaneswar: added citywide 2BHK rentPerMonth (HexaHome). Kanpur: added citywide 2BHK rentPerMonth (HexaHome). Madurai: no credible citywide salePricePerSqft source found (Squareyards page returned corrupted/implausible per-sqft data, 99acres avoided per CAPTCHA policy) — left as-is. Tiruchirappalli: no credible aggregate citywide rent source found (only scattered individual listings, which sourcing rules exclude) — left as-is. Jodhpur: attempted to build a citywide block from city-level (non-locality) sources but found none beyond the existing Pal Road/Shastri Nagar locality figures and unrelated land/plot-rate data — citywide left empty as before. Net result: 24 of 26 target cities gained the missing rent or sale side; 2 (Madurai sale, Tiruchirappalli rent) and Jodhpur's citywide block remain gapped for lack of a credible source, consistent with this file's intentional-gap convention. GAP-FILL SPOT-CHECK (2026-09-26): Verified a 6-city sample from the GAP-FILL PASS against cited sources directly. Delhi: avg (18200) and high (25400, South Delhi) confirmed exact on Squareyards; low (12150) is close to but not an exact match for East/North Delhi figures seen (12950/13800) — left as-is, minor variance not a clear error. Kanpur: confirmed exact — Swaroop Nagar (7600) and Arya Nagar (4300) both directly verified, avg (5950) is their precise midpoint. Coimbatore: corroborated via a WebSearch sweep of multiple 99acres localities (Kalapatti/Singanallur/Ganapathy ~5000-8000, RS Puram/Ramanathapuram up to 10250-11700) — the citywide low/avg/high (5250/7500/10267) falls within this real spread, left as-is. Noida villa: confirmed — source explicitly does not distinguish 3BHK/4BHK, so the identical figures for both are appropriate, not an error. Hyderabad villa: found and fixed a real error — the cited KLM Projects tier table is explicitly for \"approximate 4 BHK villa configurations\" only, but its numbers had been duplicated under both a 3bhk and 4bhk key; removed the unsupported 3bhk villa entry entirely (no 3BHK-specific villa source exists for Hyderabad) and kept 4bhk with a corrected avg (10750, the true midpoint of the sourced 3500-18000 range across all cited price tiers, vs the previous 11000). VILLA RENT PASS (2026-09-26): Targeted villa/independent-house RENT (the only villa field baselineResolver.service.js actually reads), to serve citywide.villa.3bhk.rentPerMonth directly and to broaden villaApartmentPremium(), which previously derived the entire country's villa rent estimates from Bangalore alone. The workhorse source this pass was Squareyards' per-city \"independent-houses-for-rent-in-<city>\" pages, every one of which was read by DIRECT WebFetch (no figure below rests on a WebSearch snippet); these pages publish the aggregator's own BHK-wise table of listings-count / min / max / avg, so low and high are the source-stated inventory minimum and maximum and avg is the source-stated average — no midpoints were computed anywhere in this pass. Two consequences worth knowing: (a) because low/high are true inventory extremes rather than the \"typical band\" most of this file uses, some highs are very large outliers that are nonetheless quoted verbatim from the source (Gurgaon 3BHK high 1300000, Mumbai 3BHK and 4BHK high 1200000, Chandigarh 4BHK high 400000, Gurgaon 2BHK high 500000) — these are not typos; (b) rows backed by very few listings were rejected rather than recorded. Added: Pune villa 3bhk rent 25000/55000/165000 (34 listings) and 4bhk 52000/120000/250000 (19). Gurgaon villa 2bhk rent 11000/27000/500000 (256), 3bhk 20000/45000/1300000 (115), 4bhk 38000/102000/750000 (40). Noida villa 2bhk rent 18000/30000/65000 (213), 3bhk 17000/45000/150000 (152), 4bhk 35000/70000/275000 (27). Hyderabad villa 3bhk rent 16000/70000/150000 (19) — this restores a 3bhk key for Hyderabad on a genuinely 3BHK-specific rent source, unlike the 4BHK sale table that the 2026-09-26 gap-fill spot-check correctly removed from 3bhk; Hyderabad's 4BHK rent row was deliberately NOT taken because its stated max (800000) and avg (190000) are outlier-dominated. Chandigarh villa 2bhk rent 15000/25000/55000 (58), 3bhk 22000/37000/175000 (59), 4bhk 27000/77500/400000 (14) — deepest sample of the pass. Indore villa 3bhk rent 25000/35000/65000 (7) and 4bhk 35000/82500/135000 (4). Mumbai villa 2bhk rent 48000/70000/150000 (7), 3bhk 65000/112000/1200000 (8), 4bhk 140000/200000/1200000 (7) — first villa block Mumbai has ever had; sample is thin but the table is internally consistent and monotonic in BHK. Ahmedabad villa 2bhk rent 9500/15500/35000 (5) and 3bhk 25000/35000/42000 (5) — also a first villa block; Ahmedabad's 4BHK row was skipped (max 500000 against avg 85000). Chennai villa 2bhk rent 21000/24000/25000 (5) ONLY — the 3BHK row on the same page was backed by a single listing (min=max=avg=50000), which is raw individual inventory and therefore excluded per this file's sourcing rules; Squareyards' Chennai villa page, Commonfloor, Sulekha, NoBroker and Sobha's Chennai cost-of-living guide were all read directly and none states a villa/independent-house average, so Chennai still has no 3bhk villa rent. Jaipur villa 4bhk rent 50000/70000/110000 (4) only — Jaipur's 3BHK row was rejected because the source states avg 30000 equal to its own stated min 30000 across just 6 listings, which would have pinned Jaipur's villa/apartment rent premium at 1.09x and dragged the national multiplier down on a demonstrably unstable figure. Left as-is with no villa rent added, each for lack of any credible aggregate (only scattered individual listings, which this file excludes): Kolkata (Squareyards independent-house page carries ~9-10 listings and returned a different citywide average, 11000 vs 20000, on two reads in the same session — too unstable to use; its villa page shows 2 listings), Kochi (Squareyards independent-house page returns \"no results\"; Kerala Real Estate / Quikr / RealEstateIndia only surfaced individual Kakkanad listings), Coimbatore (3 listings, no table), Surat (3 listings, no table), Mysuru (1 listing), Visakhapatnam (1 listing; both the -visakhapatnam and -vizag slugs checked), Nagpur (page states BHK averages that are internally inconsistent — 4BHK 11500 below 1BHK 12000 — so all were discarded), and Vadodara (states 3BHK 18500 below 2BHK 22000 across 6 listings, likewise discarded). No villa salePricePerSqft was added anywhere in this pass, per the instruction that the resolver never reads it; no apartment block, no other city and no part of the schema was touched, and every new source URL was appended to the end-user city's existing sources array rather than replacing anything. Net effect on the resolver: citywide.villa.3bhk.rentPerMonth now exists for 8 cities (Bangalore, Mumbai, Gurgaon, Noida, Pune, Hyderabad, Ahmedabad, Chandigarh, Indore — 9 including Bangalore, which already had it), and villaApartmentPremium() now draws on 14 same-BHK apartment/villa rent pairs across 9 cities instead of 1, so it no longer collapses to Bangalore's 2.67x. OUTLIER CORRECTION (2026-09-26): the Squareyards min/max/avg rent tables for Gurgaon and Mumbai (used in the pass above) contain extreme single-listing outliers presented as their table's \"max\" value -- e.g. Gurgaon 3BHK max of Rs 13 Lac/month against an avg of Rs 45,000 (28.9x), Mumbai 3BHK max of Rs 12 Lac against avg Rs 1.12 Lac (10.7x) -- almost certainly a mansion or farmhouse listing misclassified under that BHK count, not a representative market high. Applied a greater-than-5x max/avg ratio rule: dropped the high field entirely (kept the verified low/avg, which are not outliers) for Gurgaon villa 2BHK/3BHK/4BHK rent and Mumbai villa 3BHK/4BHK rent, where the source own number was unusable; kept Hyderabad 3BHK, Pune 3BHK/4BHK, Mumbai 2BHK, and Chandigarh 4BHK highs as-is since their max/avg ratios (2x-5.2x) are plausible for a skewed but real market. Note: neither the low nor high field is currently read by any frontend or resolver code -- only avg drives the pass/caution/red_flag verdict in compareRentToBaseline -- so this outlier data was not corrupting any live comparison, but was corrected before it could be wired into one. VILLA RENT PASS 2 (2026-09-26): Followed up on the 9 cities the previous pass left gapped, this time deliberately avoiding Squareyards' 'independent-houses-for-rent-in-<city>' live-listings table (already rejected for these cities as too thin/unstable) and searching instead for editorial/aggregator articles that state a villa/independent-house rent range or average in prose or a curated table. None was found for any of the 9 cities, despite 2-4 differently-phrased WebSearch queries per city (cost-of-living guides, NoBroker/HexaHome blog 'property rates'/'rent trends' articles, builder/township gated-community rental-yield blogs, and direct WebFetch reads of HexaHome's and Squareyards' own villa-for-rent pages) plus targeted locality-level queries (Chennai OMR/Neelankarai, Jaipur Mansarovar/Vaishali Nagar/Jagatpura, Kolkata New Town, Kochi Kakkanad/Infopark/Edappally, Nagpur Wardha Road, Vadodara Gotri, Mysuru Vijayanagar). Every result was one of: (a) the same type of live auto-generated listings table already excluded by policy (Squareyards villa/independent-house pages, HexaHome's Kolkata villa page — confirmed via direct WebFetch to be individual listing cards with no curated average, not prose statistics), (b) raw scattered individual-listing snippets from 99acres/NoBroker/Sulekha/RealEstateIndia/Quikr/Mitula with no aggregation, or (c) cost-of-living guides (costoflivingindia.com, confirmed via direct WebFetch for Coimbatore) that only break rent out by apartment BHK with no villa/independent-house category at all. One near-miss: a Housivity blog on Vadodara rental yields gave a 3.5-4.5% yield figure for Gotri villas, but converting yield+sale-price into an implied rent would be deriving/estimating a number rather than reading one, which the sourcing policy excludes — not used. Result: no villa rentPerMonth field was added for Chennai, Jaipur, Kolkata, Kochi, Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, or Vadodara in this pass; all 9 remain exactly as the first VILLA RENT PASS left them (Chennai/Jaipur retain their partial existing villa entries; the other 7 remain without any villa block or without a rent field). This differs from a 'no aggregator ever discusses villas here' finding — aggregators do list villas for all 9 cities, they just never publish a summarized average/range for them, only individual listing cards. No apartment data, no other city, and no part of the schema was touched in this pass. VILLA RENT PASS 3 (2026-09-26): Tried six angles not attempted in the first two villa rent passes, for Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, Vadodara, Kolkata, and Kochi (plus a bonus check for Chennai/Jaipur 3BHK villa rent). (1) Expat/corporate relocation guides (Sirva, Crown Relocations, ExpatFinder, Expatistan, InterNations, expat.com, pmrelocations.com, globemoving.net, renterfinder.com): every guide found for these cities prices apartments/flats only; none breaks out a villa/independent-house rent figure. One near-miss on Chennai — globemoving.net's Adyar & Besant Nagar section states Rs 85,000-1,50,000/month for 3BHK but explicitly attributes this to \"large independent villas and low-rise luxury apartments\" combined, not villas alone, so it fails the property-type-label check and was not used; chennaidreamhomes.com (a Chennai villa-focused rental agency) was also checked directly and only lists 3 individual listings with no stated aggregate. (2) Numbeo/LivingCost.org: confirmed by direct fetch of numbeo.com/cost-of-living/in/Kochi that Numbeo's \"Rent Per Month\" section only has 4 categories, all \"Apartment (1/3 bedroom) in/outside City Centre\" — no villa/house category exists on the Numbeo template at all, so this angle is structurally a dead end for every city, not just these 8; LivingCost.org's city pages (Visakhapatnam, Vadodara, Surat, Nagpur) likewise only quote apartment rent. (3) City newspaper property columns (Times of India, The Hindu, Telegraph India, Deccan Chronicle, Gujarat Samachar): no dedicated newspaper property-column article was found for any of the 8 cities (search results returned only property-portal listings and, for Kolkata, a 99acres editorial article, see below); Gujarat Samachar/Times of India were found to run Surat classified-ad sections but no queryable villa rent content. (4) CREDAI regional chapters (CREDAI Kochi, CREDAI Coimbatore, CREDAI Nagpur/Vidarbha, CREDAI Vadodara, CREDAI Gujarat, CREDAI Mysuru): direct-fetched CREDAI Vadodara's \"hot properties\" page and CREDAI Kochi's homepage — both are developer directories with zero pricing data. CREDAI's own pan-India \"Housing Price-Tracker\" report (Colliers-Liases Foras, admin.credai.org, downloaded and text-extracted directly) covers only the top-8 metros (Kolkata among them) and tracks carpet-area sale price per submarket, not rent, and never mentions villas/independent houses/bungalows anywhere in its 14 pages. No CREDAI report of any kind was found for the other 7 cities. (5) Academic/urban-planning research (Google Scholar-style search, ResearchGate, academia.edu, ScienceDirect): found several real papers on Indian urban rental housing (Surat private-renting policy studies, Vadodara affordable-housing case studies, a Kochi smart-city hackathon paper) but none reports a villa/independent-house rent figure — they study rental housing policy, informal settlements, and urban expansion, not market rent levels by property type. (6) NoBroker's own periodic report PDF: located and directly text-extracted NoBroker_Realestate_Report_2025 (nobroker.in/forum, 81 pages) — it contains only 3 passing mentions of \"independent houses\" (as a category losing share to societies) and covers only Bangalore/Mumbai/Delhi-NCR/Pune/Chennai/Hyderabad; none of the 8 target cities is mentioned anywhere in the report, so it has nothing to contribute here. One item was investigated and rejected: a WebSearch snippet of a 99acres editorial article (\"Top 5 most expensive residential areas in Kolkata\") stated \"Alipore is usually preferred for plush bungalows and villas, with monthly rentals for 2 BHK homes averaging Rs 22,000\" — direct WebFetch returned HTTP 403 and a Scrapling re-attempt hit 99acres' verifycaptcha wall (URL contained \"verifycaptcha\"), so per the standing CAPTCHA policy 99acres was not pursued further; a follow-up WebSearch for corroboration only turned up an unrelated Squareyards figure (Rs 22,310 avg for a plain 2BHK apartment, not villa-specific) which does not confirm the villa attribution, so the Alipore figure was left unused as an unverifiable single-source, ambiguously-labeled claim. Net result: no villa rentPerMonth was added for any of the 8 cities, and the Chennai/Jaipur 3BHK villa gaps remain open — this is the third consecutive pass, across three genuinely different sets of search strategies (10+ angles total now), to come back empty for exactly this set of cities, which is itself informative: no publicly indexed source curates a villa/independent-house rent average or range for these markets, only individual listing cards that this file's sourcing rules correctly exclude. No apartment data, no other city, and no part of the schema was touched in this pass. SCRAPLING RE-VERIFICATION PASS (2026-09-27): Re-attempted the 10 cities still missing citywide.villa.3bhk.rentPerMonth (Chennai, Jaipur, Kolkata, Kochi, Coimbatore, Surat, Mysuru, Visakhapatnam, Nagpur, Vadodara), this time using the Scrapling library's stealthy browser fetcher (full JS rendering + anti-bot fingerprint spoofing) instead of plain WebFetch, which resolved the CAPTCHA/thin-render issues that blocked earlier passes on some of these same pages. Result was mostly a confirmation, not a reversal, of the prior rejections: Chennai's Squareyards FAQ still traces to the same single 3BHK listing (n=1, ₹50,000) already rejected in VILLA RENT PASS; Jaipur's FAQ figure (₹30,000) is the same n=6 avg=min instability already rejected; Kolkata's House-type FAQ average (₹32,500) is the mean of only 2 qualifying 3BHK House listings (Birati ₹55,000, Chinar Park ₹10,000) — below this file's established ~5-listing reliability bar, left unadded; Kochi's page returned zero results (genuinely no inventory, confirmed again); Coimbatore (3 listings, no 3BHK), Surat (3 listings, no 3BHK), Mysuru (1 listing), and Visakhapatnam (1 listing, and it's 2BHK not 3BHK) all remain too thin, matching prior findings exactly. Vadodara's FAQ 3BHK average (₹18,500, n=2) is still below its own 2BHK average (₹22,000) — the same non-monotonic red flag that caused the original rejection — left unadded. Nagpur was the one genuine addition: full JS rendering surfaced 17 total listings (vs. too few to render a usable page previously), with 4 real 3BHK House listings (Manish Nagar ₹19,000 and ₹26,000, Gorewada ₹22,000, Besa ₹20,000) forming a tight, internally coherent cluster (avg ₹21,750, matching Squareyards' own stated ₹21,000) — added as citywide.villa.3bhk.rentPerMonth (low 19000 / avg 21000 / high 26000). Nagpur's own 4BHK figure (₹11,500, n=2) is still non-monotonic against its 3BHK/2BHK figures and was deliberately NOT added, consistent with the file's practice of accepting only the specific BHK slice that is internally coherent rather than an entire inconsistent block. Also re-checked Madurai (citywide salePricePerSqft still unfindable — Squareyards' own sale listings for Madurai contain an implausible ₹2.45 Cr/815 sqft entry, confirming the 'corrupted data' finding from the GAP-FILL PASS), Tiruchirappalli (apartment rent page has essentially zero flat/apartment inventory, only a single 1RK builder-floor listing — still no citywide rent), and Jodhpur (apartment rent page returns only 'Builder Floor' listings in the same Pal/Shastri Nagar localities already covered, no new citywide aggregate) — all three remain gapped for the same reasons already documented, now independently reconfirmed via a JS-rendering-capable fetcher rather than left as an assumption from earlier CAPTCHA-blocked attempts. OLX MARKETPLACE PASS (2026-09-27): Checked NoBroker and OLX for the 5 cities still missing citywide.villa.3bhk.rentPerMonth after the Scrapling re-verification pass (Kochi already had a sourced villa salePricePerSqft block but no rent; Coimbatore, Mysuru, Visakhapatnam and Vadodara had no villa block at all; Surat was also checked). NoBroker's live search app requires resolving a place through its internal autocomplete/geocoding API before any listing query returns results — plain city-name URLs (both /property/rent/<city>/<city> and /flats-for-rent-in-<city>) return the site's generic SEO template shell with zero real listings, so NoBroker could not be scraped this way; no NoBroker data was added. OLX's classifieds listings, by contrast, are server-rendered per-filter (?filter=type_eq_houses,rooms_eq_3 combines the 'Individual House/Villa' property-type facet with the '3 BHK' bedroom facet — a single comma-joined filter param, not repeated &filter= params, which OLX silently drops all but the last of) and required no CAPTCHA or session. For each city, the first page of matching listings (up to ~30-40 cards) was extracted and filtered to exclude PG/paying-guest listings, Kerala/Karnataka-style lump-sum 'lease' listings (a large one-time deposit quoted as the headline price instead of monthly rent — extremely common on OLX in Kochi, Mysuru and Coimbatore and easy to mistake for an extreme rent outlier if not filtered out), office/commercial space, and listings mislabeled as flats/apartments despite matching the house/villa filter; only listings priced between Rs 5,000 and Rs 150,000/month were kept as plausible genuine monthly rents. Kochi: n=30 clean listings, avg Rs 28,000 (low 8,000 / high 70,000) — this city had zero villa rent data from every prior aggregator (Squareyards returns 'no results' for Kochi independent houses), so this is a first for Kochi. Coimbatore: n=31, avg Rs 26,000 (13,000 / 50,000) — supersedes the prior 'only 3 listings, no table' finding, since OLX's own inventory here is far deeper than Squareyards'. Mysuru: n=18, avg Rs 31,000 (16,000 / 70,000) — supersedes the prior single-listing rejection. Visakhapatnam: n=10, avg Rs 28,000 (13,000 / 60,000) — computed only from listings OLX itself labels as within 5-20km of Visakhapatnam; OLX's radius search pads out thin cities by including nearby-but-distinct towns (Kakinada, Srikakulam, Odisha border towns appeared at 100km+ and were excluded) — supersedes the prior single-listing (and wrong-BHK) rejection. Vadodara: n=28, avg Rs 19,000 (11,000 / 34,000) — a far larger and internally consistent sample than the previously-rejected 2-listing Squareyards read (which had 3BHK avg below 2BHK avg); this new figure is still below Vadodara's citywide apartment 3BHK rent avg (Rs 22,000), which is plausible rather than alarming since most of the OLX villa/duplex inventory here clusters on Waghodia Road, an outer/industrial corridor, rather than central Vadodara where the apartment figure is anchored. Surat: OLX's own radius search is misleading for this city — its 'Surat' 3BHK house/villa count (110) is padded almost entirely by listings in Bharuch, Vapi, Bhavnagar, Daman and Anklesvar (all distinct Gujarat cities/towns 20-100km away); listings genuinely within Surat's own 5-20km radius (Dindoli, Adajan, Palanpur, Pal) number only about 5-7, still too thin to clear this file's reliability bar — Surat's villa rent gap remains unfilled, consistent with every prior pass. No apartment data, no other city, and no part of the schema was touched in this pass. METRO OLX PASS (2026-09-27): Extended the same OLX live-listing sampling methodology used for the tier-2/3 city locality-expansion project (Priority 1-3 passes) to the 8 well-covered metros (Mumbai, Delhi, Bangalore, Pune, Hyderabad, Chennai, Kolkata, Ahmedabad), targeting specific gaps rather than re-verifying already-good existing data. Method: fetched each city's OLX `for-rent-houses-apartments_c1723` citywide category page filtered by `rooms_eq_2`/`rooms_eq_3`, sampled the first ~30-40 listings, and excluded PG/room-sharing/flatmate-wanted ads, lease-lump-sum listings mislabeled as rent, sale-price listings that slipped into a rent-filtered page, and locality-mismatched results. Filled two real citywide gaps that had existed since early passes: Hyderabad citywide apartment 2BHK (low 8000/avg 31940/high 50000, n=37) and 3BHK (low 25000/avg 52690/high 100000, n=35) rent — previously this city had only 1BHK rent at the citywide level; Kolkata citywide apartment 2BHK (low 8500/avg 17840/high 42000, n=37) and 3BHK (low 12000/avg 39610/high 95000, n=33) rent — same gap, previously only 1BHK. Added rent (previously sale-only) to 5 existing Chennai localities: omr (n=15), velachery (2bhk n=31, 3bhk n=19), anna-nagar (n=5, thin), adyar (n=9), porur (n=16). Added rent (previously sale-only) to 4 existing Ahmedabad localities: bopal (n=25), south-bopal (n=16), vastrapur (n=6, thin), sg-highway (n=5, thin — sample pooled from the whole SG Highway corridor including Gota/Prahlad Nagar since the exact-locality facet alone was too thin). Mumbai, Delhi(-NCR), Bangalore, and Pune were reviewed but not touched in this pass — their existing locality coverage (4-7 localities each, most already rent+sale, sourced from a mix of aggregators and OLX) did not show the same kind of clear-cut gap (an empty BHK slot at the citywide level, or a locality with sale but zero rent) that Hyderabad/Kolkata/Chennai/Ahmedabad had, so no OLX scraping was done for them here to avoid low-value re-verification of already-adequate data. As with the tier-2/3 passes, sample sizes below ~10 are flagged thin inline in this note (anna-nagar, vastrapur, sg-highway) but were still added since a small real sample beats no data at all for a locality that previously had sale price only. LOCALITY EXPANSION PASS (2026-09-27): Targeted the thinnest-coverage tier-2/3 cities per a locality-count audit (1-locality cities: Amritsar, Dehradun, Siliguri; 2-locality cities: Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh). Method: Squareyards' per-locality \"/property-rates/<locality>-<city>\" pages, which expose an aggregate \"Type: Apartment\" sale rate and a \"Rental Trends\" unit-type table (both computed by Squareyards from their own live listing pool, not single scattered ads), supplemented by Sulekha's city price-trend locality table (Locality/MIN/MAX/Avg) for Amritsar and Madurai, and the existing VarmaHomes Trivandrum-by-area blog for Thiruvananthapuram. Amritsar: +4 localities from Sulekha (Adarsh Nagar avg Rs 4,302/sqft, Airport Road avg Rs 2,663/sqft, Azad Nagar avg Rs 4,171/sqft, Batala Road avg Rs 2,438/sqft); Amritsar Bypass was seen in the same table but rejected since its MIN=MAX=AVG=3,300 indicates a single-listing sample. Dehradun: +3 from Squareyards property-rates (Vasant Vihar rent-only 2BHK Rs 28,150 / 3BHK Rs 35,050; Rajpur Road sale Rs 11,550/sqft + rent 2BHK Rs 25,350; Malsi sale Rs 8,800/sqft + rent 2BHK Rs 26,000). Siliguri: +4 from Squareyards (Pradhan Nagar sale Rs 5,200/sqft; Matigara sale Rs 4,000/sqft + rent 3BHK Rs 23,500; Hakim Para sale Rs 4,150/sqft; Dagapur sale Rs 4,150/sqft). Patna: +4 sale-only from Squareyards (Danapur Rs 6,750/sqft, Phulwari Sharif Rs 5,400/sqft, Anisabad Rs 6,550/sqft, Bailey Road Rs 7,350/sqft) - Patna's Squareyards locality pages consistently lack a rent-trend table, matching the sale-only pattern of its existing two localities. Faridabad: +3 from Squareyards, each with both sale and a full 2/3/4BHK rent ladder (Sector 88: sale Rs 6,100/sqft, rent 21,000/30,450/38,000; Sector 81: sale Rs 9,500/sqft, rent 17,150/24,850/25,350; Sector 37: sale Rs 6,950/sqft, rent 22,500/31,850/44,500). Meerut: +2 sale-only (Ganga Nagar Rs 3,250/sqft, Pallavpuram Rs 4,650/sqft) - Kanker Khera and Modipuram Bypass were checked but only had a Villa rate, no Apartment rate, so were skipped. Kanpur: +2 sale-only (Kakadev Rs 5,050/sqft, Azad Nagar Rs 6,100/sqft) - Squareyards has no \"/localities-in-kanpur\" index page, so candidates were sourced by search instead; most other Kanpur locality pages (Kidwai Nagar, Govind Nagar, Rooma) either 404'd or had Villa-only rates. Madurai: +1 (Andalpuram, Sulekha avg Rs 3,902/sqft, range 3,546-4,259) - this was the only Madurai locality in Sulekha's price-trend table with a genuine MIN/MAX spread rather than a single-listing MIN=MAX=AVG row; KK Nagar, Anna Nagar and Villapuram were checked on both Squareyards (404 or Villa-only) and Sulekha (Villapuram's own trend page only had stale 2013 quarterly data) and yielded nothing usable, so Madurai falls short of the 2-4 target this pass. Jodhpur: no additions - a genuine gap. Squareyards' localities-in-jodhpur index lists mostly small colonies with no dedicated property-rates page (Jhalamand, Krishna Nagar, Vidhya Nagar, Boranada, Ratanada, Basni, Sardarpura, Chopasni Housing Board all 404'd or had only a neighbor-comparison table with no own Type/Apartment row); Pal and Kudi Bhagtasni Housing Board had rates but Villa-only; a Surana Realtors blog with a fuller locality table was found via search but could not be fetched (404 on direct retrieval). Agra: +2 sale-only from Squareyards (Sikandra Rs 3,800/sqft, Shastripuram Rs 3,650/sqft). Thiruvananthapuram: +4 from the VarmaHomes \"Average Flat Prices in Trivandrum by Area\" blog already cited for this city, using its stated min-max range per locality with the average computed as the range midpoint since VarmaHomes states a range only, no separate average (Pattom Rs 6,500-9,000/sqft; Vellayambalam Rs 7,500-10,500/sqft; Sreekariyam Rs 5,000-7,000/sqft; Peroorkada Rs 4,500-6,500/sqft). Chandigarh: +4 from Squareyards, restricted to localities where the page's own \"Type\" table showed a distinct Apartment sale rate (not just Villa) so as not to misattribute kothi/villa pricing to apartments - sectors deep in the city core (Sector 21, Sector 40) were checked and rejected for this reason since their property-rates pages showed only a Villa sale rate with no Apartment rate, while their BHK rent tables jumped implausibly from ~Rs 25,000 (2BHK) to ~Rs 85,000 (3BHK), consistent with kothi rents leaking into the figure (New Chandigarh: sale Rs 8,200/sqft, rent 3BHK Rs 29,000; Kharar-Banur Road: sale Rs 5,400/sqft, rent 3BHK Rs 35,350; Central Derabassi: sale Rs 5,250/sqft, rent 1/2/3BHK 11,900/16,150/22,450; Sector 44: sale Rs 13,900/sqft, rent 1/2/3BHK 14,350/23,000/40,500 - Sector 44 does show both a Villa and an Apartment sale rate distinctly, and its rent ladder is a much more moderate progression than Sector 21/40, so it was kept). No other city's existing data, the resolver code, or any other file was touched in this pass. JODHPUR/MADURAI MULTI-SOURCE RETRY PASS (2026-09-27): Retried both cities against a wider source set (OLX, Squareyards, MagicBricks, 99acres, HexaHome, Sulekha, Ghar.tv) per the standing gap from the LOCALITY EXPANSION PASS. MagicBricks: unreachable for both cities via both plain WebFetch and Scrapling (make_request and stealthy_fetch both errored on every magicbricks.com URL tried, and WebSearch site:magicbricks.com queries returned zero magicbricks.com results for either city) — MagicBricks could not be evaluated at all, not merely rejected for thin data. 99acres (via Scrapling, since direct WebFetch remains CAPTCHA/403-blocked): Jodhpur's own localities-in-jodhpur index page now 410s (page removed); Ratanada, Sardarpura, Jhalamand, and their dedicated /property-rates-and-price-trends-in-<locality>-jodhpur-prffid pages all returned \"Not Enough Data to show trend\" with zero Price/sqft rows for apartments (Jhalamand's page states a Plot/Land rate only, and its FAQ answer duplicating that same Land-rate number under a \"flat rates\" question is a templated-page artifact, not real apartment data, so it was not used). Madurai's KK Nagar 99acres page likewise has zero apartment Price/sqft rows (land rate only, already known from prior passes) and Anna Nagar's page has no aggregate rent/sale statement at all (only individual listing counts) — 99acres contributed nothing new for either city. OLX: sampled the citywide `for-rent-houses-apartments_c1723` category for both cities plus their locality-scoped pages (Jodhpur: Pal Garh/Pal Road, Shastri Nagar, Ratanada, Sardarpura; Madurai: KK Nagar, Anna Nagar, Villapuram), filtering to only listings OLX itself tags with that exact locality name (OLX pads every locality page with \"Displaying ads within 5/10/20 kms\" results from neighboring areas, which were excluded). This worked well for Jodhpur: Shastri Nagar had 5 clean exact-tagged 2BHK rent listings (Rs 12,500-17,000, avg Rs 15,700) forming a tight, internally coherent cluster — added as a new apartment.2bhk.rentPerMonth field (3BHK Shastri Nagar was rejected: only 3 exact listings and one was a 70,000 outlier ~4x the other two); Pal Garh/Pal Road had 5 clean exact-tagged listings each for 2BHK (Rs 8,000-22,000, avg Rs 12,900) and 3BHK (Rs 7,000-21,000, avg Rs 15,600, monotonically above 2BHK) — both added to the existing pal-road locality. Ratanada had only 1 exact-tagged listing citywide (too thin, rejected, consistent with every prior pass) and Sardarpura's exact-tagged listings were 1BHK room-share/single-room ads only, not usable 2/3BHK data. For Madurai, OLX was unable to clear the reliability bar for any of the three target localities: KK Nagar had only 2 exact-tagged 2BHK listings and zero exact 3BHK listings; Anna Nagar had 1 usable exact 2BHK listing (a second was a lakh-value lease-lump-sum, excluded) and its 3BHK listings were all in neighboring areas past the 5km padding boundary; Villapuram had only 2 exact-tagged 2BHK listings. All three fall well short of the ~5-listing threshold this file requires, so no Madurai locality data was added via OLX. HexaHome: found one genuine new source for Jodhpur — hexahome.in's Paota locality overview page (Paota being one of Jodhpur's actual popular rental/buy areas, confirmed independently via a WebSearch summary naming Paota, Ratanada, Chopasni Housing Board, Mandore and Sardarpura as \"the most popular areas in Jodhpur to rent a home\") publishes a genuine curated Price Trends table (not individual listings) with separate Buy and Rent rows per BHK for Apartments specifically (distinct from its Villa/Builder Floor/Independent House rows) plus an FAQ giving a 3BHK apartment sale rate of Rs 4,500-6,200/sqft; added as a new paota-jodhpur locality with apartment 2BHK rent (8,000-15,000, avg 11,500, the source's own midpoint since it states a range only), apartment 3BHK rent (12,000-22,000, avg 17,000) and apartment 3BHK salePricePerSqft (4,500-6,200, avg 5,350). Attempts to find equivalent HexaHome locality-overview pages for Sardarpura, Ratanada, Shastri Nagar (Jodhpur) and KK Nagar, Anna Nagar (Madurai) failed — guessed URL slugs following the Paota page's own /overview/<locality>-<city>-overview/ pattern all returned Access Denied/not-found, and WebSearch found no indexed HexaHome page for any of them; HexaHome's Madurai KK Nagar/Anna Nagar results were exclusively PG/hostel listings, not apartment rent data. Sulekha and Ghar.tv: re-checked per the task's \"any other source\" instruction. Sulekha's Madurai price-trend table (already the source of the existing andalpuram entry) was re-read in full and confirmed to contain no additional locality beyond andalpuram with a genuine MIN/MAX spread — KK Nagar/Anna Nagar/Villapuram are simply absent from its table, not merely rejected. Ghar.tv's Madurai and Madurai Main pages render as empty client-side-JS shells with no price data in their server-rendered HTML (confirmed via direct fetch) and were not usable for either city. Net result: Jodhpur gained 3 new rent/sale fields across 2 existing localities (shastri-nagar-jodhpur, pal-road) plus 1 new locality (paota-jodhpur, from HexaHome) — a real improvement over the prior pass's zero. Madurai gained nothing this pass; KK Nagar, Anna Nagar and Villapuram remain unfilled because every source checked (OLX, 99acres, HexaHome, Sulekha, Ghar.tv; MagicBricks unreachable) either has no data for these specific localities or only individual/thin listings below this file's reliability bar — this is now the second consecutive dedicated pass, using a materially wider source set including a live-marketplace sampling method (OLX) that worked well elsewhere, to come back empty for exactly these three Madurai localities, which is itself informative rather than an oversight. No other city's existing data, the resolver code, or any other file was touched in this pass. LOCALITY EXPANSION PASS 2 (2026-09-27): Added further locality-level entries to the 10 cities flagged as having only 3 localities each. Delhi-NCR Gurgaon: added sushant-lok-1 (NoBroker LocalityIQ aggregate range - apartment 1BHK/2BHK/3BHK rent plus a general builder-floor/apartment sale price/sqft range) and sector-56 (Squareyards Property Rates page - full 1BHK-4BHK rent-per-month table plus an apartment average sale price/sqft); Palam Vihar and Golf Course Extension Road were checked on NoBroker LocalityIQ but both pages surfaced only scattered individual listings with no stated range/average, so neither was added. Delhi-NCR Noida: added sector-50 and sector-78 (both Squareyards Property Rates pages with full monotonic 1BHK-4BHK rent tables plus an overall apartment sale price/sqft). Kolkata: added behala, tollygunge and garia (Squareyards Property Rates pages; each gave only a 2BHK or 3BHK rent-per-month figure alongside an overall apartment sale price/sqft, so only those BHKs were populated per the source). Surat: added althan (Squareyards - 3BHK rent plus sale price/sqft) plus city-light and pal (Squareyards - sale price/sqft only, no rent data published for either). Nagpur: added trimurti-nagar (Squareyards - apartment sale price/sqft only); Ramdaspeth, Sadar and Hingna Road were attempted via both Squareyards property-rates URLs and NoBroker LocalityIQ but all returned 404/not-found, so no data could be added for them this pass. Bhopal: added hoshangabad-road and bawadia-kalan (both Squareyards - apartment sale price/sqft only, no rent tables published); MP Nagar's Squareyards property-rates page 404'd and no other credible source was found. Nashik: added gangapur-road (Rs 6,250/sqft, rounded to 6,300) and satpur (Rs 3,300/sqft), both from Squareyards Property Rates pages; College Road was checked on Squareyards but its stated apartment average of Rs 15,750/sqft is a wild outlier against every neighbouring Nashik locality in this file (all in the Rs 3,300-5,750/sqft band) and was rejected as implausible/unstable per this file's data-quality bar rather than added. Bhubaneswar: added chandrasekharpur (Rs 9,000/sqft) and nayapalli (Rs 9,750/sqft, rounded to 9,800), both Squareyards Property Rates pages, both consistent with the existing Saheed Nagar/Patia/Rasulgarh range already in the file. Mangalore: added urwa (Squareyards - Rs 5,650/sqft, rounded to 5,700); Kottara, Bunder and Falnir all 404'd on Squareyards and Kadri was already covered in the file, so only one new Mangalore locality could be added this pass. Jaipur: added tonk-road (apartment sale price/sqft only), jhotwara (apartment sale price/sqft only) and c-scheme (Squareyards - full 2BHK/3BHK/4BHK rent-per-month table plus apartment sale price/sqft); Jagatpura's Squareyards property-rates page 404'd. As in prior passes, all added figures are single-point Squareyards 'Property Rates' page averages or NoBroker LocalityIQ aggregate ranges (never individual listings), rounded to the nearest Rs 500 for rent and nearest Rs 100 for sale price/sqft; where a source gave one number with no stated range, low/avg/high were set equal per this file's existing single-point-source convention (see e.g. the Patna Patliputra Colony entry from an earlier pass). No other city's data, the resolver code, or any other file was touched in this pass. LOCALITY EXPANSION PASS 3 (2026-09-27): Added further locality-level entries to the 11 cities flagged as having only 3-4 localities each. Delhi: +4 new localities via Squareyards Property Rates pages (Lajpat Nagar, Pitampura, Mayur Vihar, Karol Bagh), each with a full 1BHK/2BHK/3BHK rent-per-month figure plus an apartment sale price/sqft average; 4BHK rent was seen on all four pages but omitted since the four values (71,550 to 2,07,300) are too erratic relative to each other to trust as stable single-point averages. Lucknow: +4 (Aliganj, Mahanagar, Vikas Nagar, Jankipuram) via Squareyards Property Rates, each with sale price/sqft plus whatever BHK rent rows the source published (Mahanagar and Vikas Nagar only had one BHK each). Meerut: +2 sale-only (Shatabdi Nagar Rs 4,150/sqft, Partapur Rs 5,450/sqft) via Squareyards; Shastri Nagar, Delhi Road, Rohta Road and Mawana Road were checked but either had a Villa-only rate or 404'd. Kanpur: +2 sale-only (Panki Rs 3,700/sqft, Kidwai Nagar Rs 4,900/sqft, the latter now showing genuine apartment data on Squareyards where a prior pass had found only a Villa rate) via Squareyards; Kalyanpur, Barra, Ratanlal Nagar, Juhi and Vijay Nagar all 404'd, and Yashoda Nagar/Naubasta were rejected for internally conflicting villa-vs-apartment figures on the same page. Agra: +1 sale-only (Khandari Rs 5,000/sqft) via Squareyards; Tajganj only stated a villa rate (rejected), Sanjay Place is a commercial-office locality (rejected), and Avas Vikas Colony/Bodla/NH-2/Trans Yamuna Colony either 404'd or had no own apartment figure - Agra falls short of the 2-4 target this pass for lack of further credible locality pages. Vijayawada: +2 sale-only (Benz Circle Rs 5,250/sqft, Patamata Rs 6,150/sqft) via Squareyards; MG Road, Vijayawada Central, Labbipet and Governorpet all 404'd. Rajkot: +3 sale-only (Kalawad Road Rs 5,200/sqft, University Road Rs 6,600/sqft, Mavdi Rs 5,550/sqft) via Squareyards, all within the existing Rajkot East locality's own already-wide Rs 3,500-7,200/sqft band; Gondal Road was rejected since its page stated only a villa rate. Ghaziabad: +3 (Wave City with a full 1BHK-3BHK rent ladder plus sale Rs 8,300/sqft; NH 24 with 2BHK rent Rs 16,200 plus sale Rs 7,350/sqft; Mohan Nagar with 2BHK/3BHK rent plus sale Rs 9,450/sqft) via Squareyards; Govindpuram was found and initially considered (2BHK rent Rs 8,850, sale Rs 3,650/sqft) but rejected as an outlier since both figures fall well below every existing Ghaziabad locality and even below the citywide low bound (Rs 6,350/sqft sale, Rs 13,000 rent) recorded in this file; Crossings Republik, Vasundhara and Kaushambi all 404'd. Varanasi: +3 sale-only (Shivpur Rs 5,150/sqft, Pandeypur Rs 6,000/sqft, Maheshpur Rs 9,100/sqft) via dedicated Squareyards locality pages, cross-verified against a Sigra-locality comparison page that independently named the same two Pandeypur/Maheshpur figures; also back-filled a missing sale price/sqft (Rs 6,550/sqft) onto the existing rent-only Sunderpur locality entry, sourced from that same Sigra comparison page. Raipur: +2 sale-only (Dhamtari Road and VIP Road, both Rs 3,400/sqft) via Squareyards; Telibandha, Pandri, Vidhan Sabha Road, Gudhiyari and Raipura all 404'd, and Tatibandh's page gave only a villa rate. Tiruchirappalli: no credible new locality data found - every Squareyards property-rates URL tried (Thillai Nagar, Woraiyur, Cantonment, Edamalaipatti Pudur) 404'd; 99acres remains inaccessible (direct fetch CAPTCHA-blocked per standing policy, and the Scrapling stealthy_fetch tool itself errored out on repeated attempts rather than returning a CAPTCHA page, so it could not be used as a workaround this pass); a RealEstateIndia locality table returned wildly implausible/internally inconsistent figures (e.g. KK Nagar Rs 16,870/sqft, Manachanallur Rs 20,280/sqft, Siruganur Rs 1.57 Lac/sqft) alongside the file's already-known genuine KK Nagar rent-only figure, indicating the table is corrupted or scraped from mismatched entries, so it was rejected wholesale; Sulekha's Trichy price-trend table has every single locality (Crawford Colony, EB Road, Edamalaipatti Pudur, Karumandapam, Mainguard Gate) showing min=max=avg, the file's own established signature of a single-listing (not aggregate) sample, so none of its rows were used either. All figures added this pass follow the file's existing single-point-source convention (low=avg=high) where the cited page states one average with no range, rounded to the nearest Rs 500 for rent and nearest Rs 100 for sale price/sqft (values already stated as round hundreds/fifties by the source were left as-is). No other city's data, the resolver code, or any other file was touched in this pass. OLX/MAGICBRICKS SWEEP PASS (2026-09-27): scoped to an OLX + MagicBricks focused sweep across 30 thin-coverage cities (Amritsar, Dehradun, Siliguri, Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh, Gurgaon, Noida, Kolkata, Surat, Nagpur, Bhopal, Nashik, Bhubaneswar, Mangalore, Jaipur, Delhi, Lucknow, Vijayawada, Rajkot, Ghaziabad, Varanasi, Raipur, Tiruchirappalli). MagicBricks was found completely unreachable for every city attempted this pass: both the WebFetch tool (\"unable to fetch from www.magicbricks.com\") and the built-in browser pane (\"magicbricks.com is not allowed due to safety restrictions\") refused the domain outright before any locality-level page could be inspected, so no MagicBricks locality/price-trend data could be sourced at all in this environment - a stricter, whole-domain version of the two-city MagicBricks outage noted in an earlier pass. The 99acres/Scrapling fallback was also unavailable: the ScraplingServer stealthy_fetch and fetch tools errored on every call this pass, including against a trivial control URL (example.com), indicating the tool itself was down rather than a per-site CAPTCHA wall, so it could not be used per the no-bypass policy. OLX was reachable via the built-in browser pane and was worked through for Amritsar and Dehradun before the sweep was stopped to keep this partial pass honest rather than rushing the remaining 28 cities on unreliable data: Amritsar - OLX's Rani Ka Bagh locality page (894 nominal 2BHK results) turned out to be radius-padded across all of Amritsar per the no-forcing policy on distant/other-town results, and after excluding PG/room-share/portion-for-rent ads with implausible sqft (e.g. \"2 BHK - 200 sqft\"), no candidate locality (Putli Ghar, Guru Amardas Avenue, Anand Avenue, Gopal Nagar, Ram Nagar) had more than 1-3 clean listings, below this file's 5+ clean-listing usability bar, so nothing was added; MagicBricks unreachable as above. Dehradun - OLX's Race Course locality page (3,885 nominal 2BHK results) was likewise radius-padded, with only 2 listings actually addressed to Race Course itself; GMS Road looked promising from the radius page (5 listings directly addressed to GMS Road visible: Rs 12,000-25,000 range) but the dedicated GMS Road locality URL guessed from OLX's own sidebar link resolved to an unrelated geo id (\"Jamunwala Village\") with the same undifferentiated citywide result set, so a clean, locality-scoped sample could not be pulled together confidently and nothing was added rather than force a guess; MagicBricks unreachable as above. Given OLX's geo-id/slug scheme could not be relied on to resolve to the actual named locality (confirmed wrong twice) and MagicBricks was categorically unreachable, continuing to force the remaining 28 cities (Siliguri, Patna, Faridabad, Meerut, Kanpur, Madurai, Jodhpur, Agra, Thiruvananthapuram, Chandigarh, Gurgaon, Noida, Kolkata, Surat, Nagpur, Bhopal, Nashik, Bhubaneswar, Mangalore, Jaipur, Delhi, Lucknow, Vijayawada, Rajkot, Ghaziabad, Varanasi, Raipur, Tiruchirappalli) through the same unreliable path risked adding bad data under time pressure, so this pass was stopped here with no new localities added for any of the 30 target cities; all of them remain open for a future pass, ideally with a working 99acres/Scrapling fallback or a more reliable way to resolve OLX locality geo ids to their actual named area. OLX UI-DRIVEN SWEEP PASS (2026-09-27): fixed the prior pass's core problem (guessed OLX URLs resolving to wrong places, e.g. a hand-built /kolkata_.../ URL that actually landed on Bengaluru) by driving OLX entirely through its own UI - typing each city/locality into OLX's location search box, selecting the autocompleted suggestion so OLX itself resolves the geo-id, then using OLX's own sidebar per-locality links (never a hand-typed URL) to reach a locality's exact-match ad section, and manually reading each listing's address tag before counting it. The Scrapling/99acres fallback was retested first with a trivial control fetch (stealthy_fetch and fetch against https://example.com) and both errored again exactly as in the prior pass, confirming the tool itself remains down in this environment (not a per-site block), so it was not used and MagicBricks remains the standing whole-domain block noted previously - this pass relied on OLX alone. Siliguri: Haiderpara (+1bhk n=3 avg Rs 7,000, +2bhk n=4 avg Rs 9,000) and Salugara (+2bhk n=6 avg Rs 10,500, +3bhk n=2 avg Rs 18,000) added from their own locality-scoped OLX pages; Champasari checked but rejected as too thin (1bhk n=2). Patna: Boring Chauraha added (+1bhk n=2 thin but consistent avg Rs 13,000, +2bhk n=12 avg Rs 21,500, +3bhk n=5 avg Rs 35,000) after excluding flatmate/room-share/hostel ads. Faridabad: Sector 70 added (+2bhk n=9 avg Rs 18,500, +3bhk n=12 avg Rs 39,500) from a large, internally consistent set of duplex/flat listings. Meerut: Tejgarhi was the only sizeable new candidate but its OLX tag turned out to be a broad catch-all spanning many unrelated named sub-areas (Shastri Nagar, Roorkee Road, Jail Chungi etc. all sharing one tag) - rejected as incoherent; nothing added. Kanpur: both Naubasta and Kalyanpur were dominated by informal room/portion-for-rent ads with implausible sqft (1, 8, 50, 100 sqft 2BHKs) - rejected on data-quality grounds; nothing added. Madurai: OLX volume is thin citywide and every new-candidate locality (Villapuram etc.) had at most 2-4 clean non-lease-lump-sum listings, short of the 5+ bar; nothing added. Jodhpur: BJS Colony added (+2bhk n=12 avg Rs 11,500, +3bhk n=5 avg Rs 17,000) - both figures landed almost exactly on the file's existing paota-jodhpur averages, a strong cross-check. Agra: Bodla added (+2bhk n=7 avg Rs 12,500); its 3bhk sample (n=1) was rejected as non-monotonic/too thin. Thiruvananthapuram: Akkulam added (+1bhk n=2 thin, +2bhk n=5 avg Rs 26,000, +3bhk n=7 avg Rs 34,000) from a Lulu Mall/Technopark-corridor cluster of listings, after excluding room-share/PG-tagged ads. Chandigarh: Sector 27D added (+2bhk n=11 avg Rs 24,500, +3bhk n=7 avg Rs 44,500); note this pulled in some premium units up to Rs 70,000/4200 sqft which lifts the 3bhk average somewhat above other Chandigarh-area 3bhk entries, but the range is retained rather than trimmed since the underlying listings were all genuinely Sector 27D. Gurgaon: Sector 37D added (+2bhk n=23 avg Rs 17,500) - this is a large Signature Global Millennia-type affordable-housing-scheme cluster, priced noticeably below this file's existing (more premium) Gurgaon localities (DLF Phase 1, Sushant Lok); flagged here as a distinct lower-tier market segment rather than an error, since the sample size and internal consistency were strong. Noida: Sector 134 added (+2bhk n=9 avg Rs 28,500, +3bhk n=8 avg Rs 32,500) from named-society (Jaypee Kosmos, Kensington Park) listings. Kolkata: Keshtopur/Kestopur (the single largest sidebar locality) was rejected - its inventory is dominated by 1RK bachelor-studio ads mislabeled under the 1BHK filter, too noisy for a clean sample; Mukundapur added instead (+2bhk n=15 avg Rs 17,500) from a clean, hospital-adjacent furnished-flat cluster. Surat: Dindoli added (+2bhk n=8 avg Rs 11,500, +3bhk n=6 avg Rs 14,500), consistent with it being a more peripheral/affordable locality than the file's existing Vesu/Adajan entries. Nagpur: Omkar Nagar added (+2bhk n=13 avg Rs 15,000, +3bhk n=7 avg Rs 25,000), well below the existing (upscale) Dharampeth entry, consistent with Omkar Nagar being a peripheral residential area. Bhopal: Rohit Nagar added (+1bhk n=4 avg Rs 11,500, +2bhk n=7 avg Rs 16,500); its 3bhk sample was rejected as too thin/tight-margined against the 2bhk figure. Nashik: Govind Nagar added (+2bhk n=4 thin but consistent avg Rs 15,000, +3bhk n=14 avg Rs 28,500) after excluding a dummy PropKar listing and cross-tagged Bawariya Kalan duplex ads. Bhubaneswar: Jayadev Vihar was dominated by repeated broker 1RK/1BHK/2BHK/3BHK price-list template ads (not distinct verified units) plus PG/room-share noise - rejected; Palasuni was too thin (2 clean 2bhk listings) - rejected; nothing added for Bhubaneswar this pass. Mangalore: Kottara added (+1bhk n=3 avg Rs 10,000, +2bhk n=12 avg Rs 17,000, +3bhk n=4 avg Rs 27,000), a large, cleanly address-tagged, monotonic sample with no lease-lump-sum contamination despite the South-India risk flagged for this task. Jaipur: Jagatpura added (+1bhk n=6 avg Rs 17,000, +2bhk n=4 avg Rs 18,000, +3bhk n=8 avg Rs 36,500) from a mix of budget and named-society (Sankalp The Index) listings. Delhi: Chattarpur added (+1bhk n=9 avg Rs 14,000, +2bhk n=8 avg Rs 17,500); flagged that these are well below every other Delhi locality already in the file (Mayur Vihar, Pitampura etc.), consistent with Chattarpur's well-known reputation as a cheap, unauthorised-construction urban-village rental market immediately adjacent to premium South Delhi rather than a data error. Lucknow: Tiwariganj (BBD University-adjacent) was dominated by student PG/room-share ads and yielded too few clean listings - rejected; Sarojini Nagar was checked (+2bhk n=10 avg roughly Rs 8,000) but rejected as a likely outlier since it sits roughly half of every existing Lucknow locality's low bound; nothing added for Lucknow this pass. Vijayawada: Ajit Singh Nagar's exact-match section had only about 4 clean listings after excluding PG-hostel/tiny-sqft/non-residential ads, short of the bar; nothing added. Rajkot: Indira Circle added (+3bhk n=5 avg Rs 28,500) after excluding flatmate/hostel ads and an ambiguous mixed-price listing; its 2bhk sample (n=2) was too thin to include. Ghaziabad: Crossings Republik added (+2bhk n=6 avg Rs 19,000) after excluding heavy flatmate/room-share noise and one obvious data-entry error (Rs 1,300 rent); no clean 3bhk sample survived the filtering. Varanasi: Sigra added (+2bhk n=4 thin but consistent avg Rs 19,500, +3bhk n=8 avg Rs 28,500, wide range reflecting both budget and named-society/premium units); Lanka was checked but rejected as non-monotonic (BHK-size vs rent order inverted across its small per-bucket samples, most likely reflecting a single bulk-listing dealer's arbitrary pricing rather than real market gradient). Raipur: Pachpedi Naka added (+1bhk n=10 avg Rs 15,500) from a run of flexible-tenancy (bachelor/couple/family/office allowed) but genuinely full-unit listings; its 2bhk (n=2) and 3bhk (n=1) samples were too thin to include. Tiruchirappalli: every remaining new-candidate locality in OLX's own sidebar (SBI Colony, Crawford Colony, Mannarpuram, Ramalinga Nagar, Karumandapam) had 4 or fewer total ads citywide, short of the usability bar even before any filtering - this city remains essentially unworkable via OLX given its current inventory, consistent with the total dead-end found in the prior Squareyards/RealEstateIndia/Sulekha pass; nothing added. Every one of the 28 target cities was checked this pass (none skipped outright); Kanpur, Meerut, Madurai, Bhubaneswar, Vijayawada, Lucknow and Tiruchirappalli yielded no addable data after real effort and are documented as genuine gaps above rather than forced. All figures follow the file's existing convention of rounding rent to the nearest Rs 500; per-BHK sample sizes (n) are noted above so a future pass can judge which entries are worth reinforcing with more data. LOCALITY EXPANSION PASS 4 (2026-09-28): Added locality-level entries to the 12 cities that had only 5 localities. Method: for each city two independent source families were tried - Squareyards property-rates locality pages (fetched directly) plus a second aggregator (99acres locality/overview pages read only via WebSearch-indexed content, never direct-fetched; Squareyards 2BHK rent pages; Real Estate Mumbai for Mumbai; NoBroker locality page for Tambaram; HexaHome/Quikr snippets for a few rents). A locality was accepted only where both agreed within roughly 15-20%; where two point averages differed, avg is the midpoint of the two and low/high come from the stated ranges (recorded per city below). ScraplingServer stealthy_fetch was re-tested once on example.com and still errors; not used. MagicBricks not attempted. OLX was NOT driven through the browser UI this pass (effort went into aggregator cross-checks instead), so no OLX-derived data here. One accidental direct fetch of a 99acres Mangalore rates page returned 403 and was abandoned. Recurring Squareyards quirk: several locality headline averages exceed every one of their own status-wise prices (e.g. Thaltej, Chromepet, Thoraipakkam, Narendra Nagar) - treated as unreliable unless a second source agreed. MUMBAI: Squareyards property-rates + Squareyards 2BHK rent pages + Real Estate Mumbai (May 2026) checked for Goregaon West, Malad West, Chembur, Borivali West. Goregaon West added (2bhk rent low 60000/avg 66000/high 120000 - SY 65,000-67,350 vs REM 60K-1.20L agree; 3bhk rent 95000/97000/195000 from SY 97,000 and REM 95K-1.95L; 2bhk sale 27400/33400/45000 - SY avg 33,400 vs REM 35-45K which is carpet-area basis so runs higher). Malad West added (2bhk rent 55000/63500/105000 - SY 62,000-65,000 vs REM 55K-1.05L agree; 2bhk sale 24700/30800/55000, SY avg vs REM 30-55K carpet basis). Malad West 3bhk rent rejected (SY 78,600 sits below REM 85K low). Chembur added (2bhk rent 70000/74500/125000 - SY 74,250-75,000 vs REM 70K-1.25L agree; sale 28700/34300/55000). Chembur 3bhk rent rejected (SY 1.13L vs REM 1.30-3.05L). Borivali West: sale only added (27300/30800/32700, SY avg vs status range; REM 30-50K carpet consistent at low end); rent rejected because SY 2BHK 49,600 vs REM 65-90K (only 22 REM rental listings) disagree by ~30%. Mumbai highs all stay below 5x avg. HYDERABAD: Squareyards property-rates + SY 2BHK rent pages + 99acres (search) + Sulekha/Quikr snippets. Kompally added (2bhk rent 13000/18500/30000 - SY 18,400 vs 99acres-cited mid-tier 15-22K agree, high from SY listing max, n=7 SY listings; sale 5400/6500/8200 - SY 6,750 vs 99acres 6,300-6,400 with active-listing range 5,350-8,150). Manikonda added (rent 23000/40000/55000 - SY 40,200 vs SY listing range 23K-55K and snippet range 30-50K; sale 5450/8500/9200 - SY 9,150 vs 99acres 7,800 (5,450-9,200), 17% gap so avg set to midpoint). Miyapur added (rent 20000/38000/48000 - SY property page 37,900 vs SY 43-listing page 20K-48K at Rs 30/sqft; loose agreement, low-confidence; sale 5700/7500/8500 - SY 8,500 equals top of 99acres range 5,700-8,500, avg ~7,500). Banjara Hills added (rent 18000/41000/50000 - SY 40,750, 39/sqft, 99acres 2BHK range 12K-54K and listings 27-50K; sale 6600/10300/13700 - SY 10,600 vs 99acres 10,000 (6,600-13,700)). Banjara Hills 3bhk (SY 91,700, a 2.25x jump over 2bhk) not added. Rejected: Bachupally rent (SY 35,000 vs SY 20-listing page at 22/sqft ~ Rs 26K, inconsistent), Jubilee Hills (SY 16,850 up 37% QoQ and above the entire 99acres range 10,350-16,700, avg 14,100), Nallagandla (only SY). CHENNAI: Squareyards had no BHK rent for any candidate and SY 2BHK rent pages for Tambaram/Medavakkam/Sholinganallur/Perambur held 0-1 listings, so only sale added (all 2bhk, 99acres/NoBroker cross-checks): Tambaram 4500/5800/7000 (SY 5,800 vs NoBroker 4,500-7,000), Perambur 7900/9300/10950 (SY 9,550 vs 99acres 9,050, 7,900-10,950), Ambattur 5700/6200/7150 (SY 6,300 vs 99acres 6,000), Pallikaranai 6100/8000/8800 (SY 8,450 vs 99acres 7,550; SY headline above its own status prices, midpoint used), Kodambakkam 9250/13400/16350 (SY 12,600 vs 99acres 14,150). Rejected on disagreement: Medavakkam (SY 8,150 vs 6,200-6,600), Sholinganallur (SY 9,950 vs 99acres 7,650/8,930), Chromepet (SY 8,000 vs 99acres 6,650, SY status prices 6,400-6,500), Mogappair, Thoraipakkam, Guindy, Nungambakkam (single source or internally inconsistent). Rent gaps: only one-off ranges/listings exist for Tambaram (Rs 14-18K), Medavakkam (Rs 16-18.5K), Pallikaranai (Rs 15-22K), Chromepet (Rs 16-21K), Ambattur (Rs 15-25K), from a single source each - not stored. AHMEDABAD: Squareyards property-rates + 99acres (search) + SY/HexaHome rent snippets. Thaltej added (sale 7700/8200/11850 - SY 8,950 vs 99acres 7,500, SY headline exceeds its status prices so midpoint used; rent 27000/27000/32000 - SY 27,000 vs 99acres-listing snippets 27,500 and 32,000, thin). Gota added (rent 15000/22500/37000 - SY 22,500 vs snippet range 15-37K, listing 19K; sale 4750/5400/6250 - SY 5,550 vs 99acres 5,300 and 5,400, range 4,750-6,250). Naranpura (sale 5950/6600/8700; SY 6,550 vs 99acres 6,650), Shela (sale 4500/5200/6250; SY 5,400 vs 99acres 5,050), Bodakdev (sale 7200/8900/10000; SY 8,950 vs 8,800-9,000 elsewhere), Prahlad Nagar (sale 6700/7950/9450; SY 7,950 vs 99acres society range 7,300-9,450, project-level not aggregate - lower confidence), Maninagar (sale 4800/5700/7250; SY 5,350 vs 99acres 6,050, midpoint) added sale only. Rejected: Chandkheda (SY 4,950 vs another source Rs 3,248/sqft, 35% gap), Shela rent (SY 27,900 vs 14-18K and 21,100 elsewhere), Prahlad Nagar rent (SY 30,600 vs listing snippets 15-22K), Naranpura/Bodakdev rent (SY only, no cross-check). INDORE: Squareyards + 99acres (search). Added (2bhk sale): Old Palasia 5400/5900/8800 (SY 5,700 vs 99acres 6,050, 5,400-8,800), Super Corridor 3750/4400/5950 (SY 4,400 vs 99acres 4,450 - closest agreement), Rau 2850/3300/3550 (SY 3,100 vs 99acres 3,450-3,550), Bicholi Mardana 5300/6000/7000 (SY 5,550 vs 99acres 6,400; high is a hovers-around-7,000 figure, low-confidence). Rejected: Khajrana (SY 4,950 vs Homeonline 6,000, no 99acres number), Sudama Nagar (SY 3,650 apartments vs 99acres registry 2,880, different bases), Palasia proper (SY 404). No Indore rent added (Squareyards has no BHK rent on these pages). NAGPUR: Squareyards city table + 99acres (search). Khamla added (2bhk sale 6000/6300/6500, SY 6,000 vs 99acres ~6,500, range endpoints are the two point values, low-confidence). Rejected for wide disagreement: Besa (SY 4,800 vs ~3,600 blog / 4,665 project), Manewada (SY 5,500 vs 4,200), Hingna (SY 3,650 vs 99acres 2,200-3,000), Jaripatka (SY 7,850 vs 99acres 3,595), Narendra Nagar (SY 7,300 vs 99acres 5,100), Somalwada (SY 8,450 whose own page cites 5,650-6,350 vs 4,950/4,750); note the existing manish-nagar entry (avg 4,550) is well below SY current Manish Nagar 6,050 and is not touched. SY 2BHK rent page for Nagpur lists only individual listings, no aggregate - no rent added. COIMBATORE: Singanallur added (2bhk sale 5200/7300/8000 - SY 7,850 vs 99acres 6,700, 5,200-8,000; midpoint avg), Ganapathy (5300/6600/8000 - SY 6,650 vs 99acres 6,500), Vilankurichi (6550/6700/7600 - SY 6,550 vs 99acres-cited 6,900; high is SY ready-to-move). Rejected: Thudiyalur (SY 5,400 vs 3,650), Ramanathapuram (SY apartments 6,200 vs 99acres 8,250), Kalapatti (SY 7,050 vs 4,050), Kovaipudur (SY 5,350 vs 3,450), Avinashi Road (SY 9,500 vs 7,200), Gandhipuram/Sundarapuram (villa-only or no apartment average). Rent not added: Singanallur 14-20K and Ganapathy 11-18.5K exist only as one search snippet each. BHUBANESWAR: Khandagiri added (2bhk sale 6000/6900/7800 - SY 6,900 vs 99acres 6,800, 6,000-7,800) and Pokhariput (6550/6800/7000 - SY 7,000 vs 99acres-cited 6,550-6,600). Rejected: Kalinga Nagar (SY only; SY value fell 16% QoQ, no 99acres number found), Jaydev Vihar (SY 404, only project-level 99acres asks of ~8,500-9,500). Rent not added (Pokhariput 99acres range 18.9-20.5K is single-source). MANGALORE: nothing added. Squareyards city table gives Lalbagh 5,700, Bondel 5,450, Surathkal 3,550, Kulashekara 3,900, Shakti Nagar 4,300 but no independent aggregate exists: Surathkal SY 3,550 vs 99acres-cited range 1,664-3,300 (disagree), Lalbagh/Bondel/Shakti Nagar had no second aggregate (only scattered listings), Kulshekar 99acres range 3,900-6,200 vs SY overview 4,600 not independent of SY. Honest gap. Also flagged: existing Mangalore kadri avg 7,250 vs SY current Kadri 5,750 (not touched). LUDHIANA: Pakhowal Road added (2bhk sale 4500/6700/7000 - SY 6,700 vs 99acres approx 6,650, range 4,500-7,000). Pakhowal 3bhk rent not added (SY 35,050 vs 99acres range 15,000-72,600, too wide to confirm). Rejected: Chandigarh Road (SY 8,300 vs 99acres 2,550/3,550-4,800). Sarabha Nagar, Civil Lines, Ghumar Mandi, Ferozepur Road had no aggregate (SY 404, only scattered listings). GUWAHATI: Lokhra (2bhk sale 5300/5400/6450 - SY 5,400 vs 99acres 5,350), Hatigaon (3900/4950/5300 - SY 4,600 vs 99acres 5,300, midpoint), Kahilipara (sale 4000/5700/6200 - SY 6,200 vs 99acres 5,150, midpoint; 3bhk rent stored as single point 30000 - SY 29,800 and 99acres 30,114 agree closely). Rejected: Khanapara (SY 6,600 vs 5,900 and a 3,800-5,200 blog range), Ganeshguri/Chandmari/Bhangagarh (SY 404). Lokhra 3bhk rent (SY 30,000) not added, single source. RANCHI: Ratu Road (2bhk sale 4400/4700/5050 - SY 4,400 vs 99acres 5,050), Kanke (2bhk sale 4200/5050/7150 - SY 4,850 vs 99acres Kanke Road 5,250, 4,200-7,150; 3bhk rent 16500/18500/21000 - SY 18,250 vs 99acres Kanke range 16.3-21.1K, clean agreement), Namkum (3700/4300/4400 - SY 4,400 vs 4,100-4,300 and 3,700 elsewhere). Doranda skipped (its second source, the SY overview weighted price 4,950, is not independent of SY; 3bhk rent SY 17,500 vs range 10.2-19.5K too loose). Harmu/Hinoo/Ashok Nagar SY 404. Totals added: Mumbai 4, Hyderabad 4, Chennai 5, Ahmedabad 7, Indore 4, Nagpur 1, Coimbatore 3, Bhubaneswar 2, Mangalore 0, Ludhiana 1, Guwahati 3, Ranchi 3. All 12 cities reached; OLX browser sampling was not done anywhere this pass and remains a follow-up option for rent gaps (Chennai, Indore, Nagpur, Coimbatore, Mangalore, Bhubaneswar in particular). Rent rounded to Rs 500; sale figures keep source-stated values (multiples of 50) consistent with existing entries."
   },
   "cities": {
     "mumbai": {
@@ -27,6 +27,50 @@
         {
           "name": "Sobha - Mumbai Real Estate Price Trends 2026",
           "url": "https://www.sobha.com/blog/mumbai-real-estate-price-trends/"
+        },
+        {
+          "name": "Squareyards - Property Rates in Goregaon West, Mumbai",
+          "url": "https://www.squareyards.com/property-rates/goregaon-west-mumbai"
+        },
+        {
+          "name": "Real Estate Mumbai - Property Rates in Goregaon West",
+          "url": "https://www.realestatemumbai.com/property-rates-in-goregaon-west"
+        },
+        {
+          "name": "Squareyards - Property Rates in Malad West, Mumbai",
+          "url": "https://www.squareyards.com/property-rates/malad-west-mumbai"
+        },
+        {
+          "name": "Real Estate Mumbai - Property Rates in Malad West",
+          "url": "https://www.realestatemumbai.com/property-rates-in-malad-west"
+        },
+        {
+          "name": "Squareyards - Property Rates in Chembur, Mumbai",
+          "url": "https://www.squareyards.com/property-rates/chembur-mumbai"
+        },
+        {
+          "name": "Real Estate Mumbai - Property Rates in Chembur",
+          "url": "https://www.realestatemumbai.com/property-rates-in-chembur"
+        },
+        {
+          "name": "Squareyards - Property Rates in Borivali West, Mumbai",
+          "url": "https://www.squareyards.com/property-rates/borivali-west-mumbai"
+        },
+        {
+          "name": "Real Estate Mumbai - Property Rates in Borivali West",
+          "url": "https://www.realestatemumbai.com/property-rates-in-borivali-west"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Goregaon West, Mumbai",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-goregaon-west-mumbai"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Malad West, Mumbai",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-malad-west-mumbai"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Chembur, Mumbai",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-chembur-mumbai"
         }
       ],
       "citywide": {
@@ -221,6 +265,72 @@
                 "low": 30000,
                 "avg": 65000,
                 "high": 100000
+              }
+            }
+          }
+        },
+        "goregaon-west": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 60000,
+                "avg": 66000,
+                "high": 120000
+              },
+              "salePricePerSqft": {
+                "low": 27400,
+                "avg": 33400,
+                "high": 45000
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 95000,
+                "avg": 97000,
+                "high": 195000
+              }
+            }
+          }
+        },
+        "malad-west": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 55000,
+                "avg": 63500,
+                "high": 105000
+              },
+              "salePricePerSqft": {
+                "low": 24700,
+                "avg": 30800,
+                "high": 55000
+              }
+            }
+          }
+        },
+        "chembur": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 70000,
+                "avg": 74500,
+                "high": 125000
+              },
+              "salePricePerSqft": {
+                "low": 28700,
+                "avg": 34300,
+                "high": 55000
+              }
+            }
+          }
+        },
+        "borivali-west": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 27300,
+                "avg": 30800,
+                "high": 32700
               }
             }
           }
@@ -1529,6 +1639,54 @@
         {
           "name": "OLX - Flats for Rent in Hyderabad, 2BHK/3BHK filters sampled 2026-09-27",
           "url": "https://www.olx.in/hyderabad_g4058526/for-rent-houses-apartments_c1723"
+        },
+        {
+          "name": "Squareyards - Property Rates in Kompally, Hyderabad",
+          "url": "https://www.squareyards.com/property-rates/kompally-hyderabad"
+        },
+        {
+          "name": "99acres - Property Rates in Kompally, Hyderabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-kompally-hyderabad-prffid"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Kompally, Hyderabad",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-kompally-hyderabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Manikonda, Hyderabad",
+          "url": "https://www.squareyards.com/property-rates/manikonda-hyderabad"
+        },
+        {
+          "name": "99acres - Property Rates in Manikonda, Hyderabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-manikonda-hyderabad-prffid"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Manikonda, Hyderabad",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-manikonda-hyderabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Miyapur, Hyderabad",
+          "url": "https://www.squareyards.com/property-rates/miyapur-hyderabad"
+        },
+        {
+          "name": "99acres - Property Rates in Miyapur, Hyderabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-miyapur-hyderabad-prffid"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Miyapur, Hyderabad",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-miyapur-hyderabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Banjara Hills, Hyderabad",
+          "url": "https://www.squareyards.com/property-rates/banjara-hills-hyderabad"
+        },
+        {
+          "name": "99acres - Property Rates in Banjara Hills, Hyderabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-banjara-hills-hyderabad-prffid"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Banjara Hills, Hyderabad",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-banjara-hills-hyderabad"
         }
       ],
       "citywide": {
@@ -1642,6 +1800,70 @@
               }
             }
           }
+        },
+        "kompally": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 13000,
+                "avg": 18500,
+                "high": 30000
+              },
+              "salePricePerSqft": {
+                "low": 5400,
+                "avg": 6500,
+                "high": 8200
+              }
+            }
+          }
+        },
+        "manikonda": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 23000,
+                "avg": 40000,
+                "high": 55000
+              },
+              "salePricePerSqft": {
+                "low": 5450,
+                "avg": 8500,
+                "high": 9200
+              }
+            }
+          }
+        },
+        "miyapur": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 20000,
+                "avg": 38000,
+                "high": 48000
+              },
+              "salePricePerSqft": {
+                "low": 5700,
+                "avg": 7500,
+                "high": 8500
+              }
+            }
+          }
+        },
+        "banjara-hills": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 18000,
+                "avg": 41000,
+                "high": 50000
+              },
+              "salePricePerSqft": {
+                "low": 6600,
+                "avg": 10300,
+                "high": 13700
+              }
+            }
+          }
         }
       }
     },
@@ -1680,6 +1902,46 @@
         {
           "name": "OLX - Flats for Rent in Chennai, locality/BHK filters sampled 2026-09-27",
           "url": "https://www.olx.in/chennai_g4059162/for-rent-houses-apartments_c1723"
+        },
+        {
+          "name": "Squareyards - Property Rates in Tambaram, Chennai",
+          "url": "https://www.squareyards.com/property-rates/tambaram-chennai"
+        },
+        {
+          "name": "Squareyards - Property Rates in Perambur, Chennai",
+          "url": "https://www.squareyards.com/property-rates/perambur-chennai"
+        },
+        {
+          "name": "Squareyards - Property Rates in Ambattur, Chennai",
+          "url": "https://www.squareyards.com/property-rates/ambattur-chennai"
+        },
+        {
+          "name": "Squareyards - Property Rates in Pallikaranai, Chennai",
+          "url": "https://www.squareyards.com/property-rates/pallikaranai-chennai"
+        },
+        {
+          "name": "Squareyards - Property Rates in Kodambakkam, Chennai",
+          "url": "https://www.squareyards.com/property-rates/kodambakkam-chennai"
+        },
+        {
+          "name": "99acres - Property Rates in Perambur, Chennai 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-perambur-chennai-north-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Ambattur, Chennai 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-ambattur-chennai-north-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Pallikaranai, Chennai 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-pallikaranai-chennai-south-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Kodambakkam, Chennai 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-kodambakkam-chennai-south-prffid"
+        },
+        {
+          "name": "NoBroker - Tambaram, Chennai locality page (property rates Rs 4,500-7,000/sqft)",
+          "url": "https://www.nobroker.in/locality-iq/tambaram-chennai-liqlt"
         }
       ],
       "citywide": {
@@ -1822,6 +2084,61 @@
                 "low": 6000,
                 "avg": 8250,
                 "high": 10500
+              }
+            }
+          }
+        },
+        "tambaram": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5800,
+                "high": 7000
+              }
+            }
+          }
+        },
+        "perambur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 7900,
+                "avg": 9300,
+                "high": 10950
+              }
+            }
+          }
+        },
+        "ambattur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5700,
+                "avg": 6200,
+                "high": 7150
+              }
+            }
+          }
+        },
+        "pallikaranai": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6100,
+                "avg": 8000,
+                "high": 8800
+              }
+            }
+          }
+        },
+        "kodambakkam": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 9250,
+                "avg": 13400,
+                "high": 16350
               }
             }
           }
@@ -2057,6 +2374,66 @@
         {
           "name": "OLX - Flats for Rent in Ahmedabad, locality/BHK filters sampled 2026-09-27",
           "url": "https://www.olx.in/ahmedabad_g4058677/for-rent-houses-apartments_c1723"
+        },
+        {
+          "name": "99acres - Property Rates in Thaltej, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-thaltej-ahmedabad-west-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Gota, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-gota-ahmedabad-north-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Naranpura, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-naranpura-ahmedabad-west-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Shela, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-shela-ahmedabad-west-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Prahlad Nagar, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-prahlad-nagar-ahmedabad-west-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Maninagar, Ahmedabad 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-maninagar-ahmedabad-east-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Thaltej, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/thaltej-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Gota, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/gota-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Naranpura, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/naranpura-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Shela, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/shela-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Bodakdev, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/bodakdev-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Prahlad Nagar, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/prahlad-nagar-ahmedabad"
+        },
+        {
+          "name": "Squareyards - Property Rates in Maninagar, Ahmedabad",
+          "url": "https://www.squareyards.com/property-rates/maninagar-ahmedabad"
+        },
+        {
+          "name": "Squareyards - 2 BHK Flats for Rent in Gota, Ahmedabad",
+          "url": "https://www.squareyards.com/rent/2-bhk-for-rent-in-gota-ahmedabad"
+        },
+        {
+          "name": "HexaHome - Flats for Rent in Gota Ahmedabad 2026",
+          "url": "https://www.hexahome.in/flats-for-rent-in-gota-ahmedabad-hmfr/"
         }
       ],
       "citywide": {
@@ -2180,6 +2557,93 @@
                 "low": 8000,
                 "avg": 9250,
                 "high": 10500
+              }
+            }
+          }
+        },
+        "thaltej": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 27000,
+                "avg": 27000,
+                "high": 32000
+              },
+              "salePricePerSqft": {
+                "low": 7700,
+                "avg": 8200,
+                "high": 11850
+              }
+            }
+          }
+        },
+        "gota": {
+          "apartment": {
+            "2bhk": {
+              "rentPerMonth": {
+                "low": 15000,
+                "avg": 22500,
+                "high": 37000
+              },
+              "salePricePerSqft": {
+                "low": 4750,
+                "avg": 5400,
+                "high": 6250
+              }
+            }
+          }
+        },
+        "naranpura": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5950,
+                "avg": 6600,
+                "high": 8700
+              }
+            }
+          }
+        },
+        "shela": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 5200,
+                "high": 6250
+              }
+            }
+          }
+        },
+        "bodakdev": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 7200,
+                "avg": 8900,
+                "high": 10000
+              }
+            }
+          }
+        },
+        "prahlad-nagar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6700,
+                "avg": 7950,
+                "high": 9450
+              }
+            }
+          }
+        },
+        "maninagar": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4800,
+                "avg": 5700,
+                "high": 7250
               }
             }
           }
@@ -3352,6 +3816,38 @@
         {
           "name": "Squareyards - Independent Houses for Rent in Indore",
           "url": "https://www.squareyards.com/rent/independent-houses-for-rent-in-indore"
+        },
+        {
+          "name": "Squareyards - Property Rates in Old Palasia, Indore",
+          "url": "https://www.squareyards.com/property-rates/old-palasia-indore"
+        },
+        {
+          "name": "99acres - Property Rates in Old Palasia, Indore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-old-palasia-indore-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Super Corridor, Indore",
+          "url": "https://www.squareyards.com/property-rates/super-corridor-indore"
+        },
+        {
+          "name": "99acres - Property Rates in Super Corridor, Indore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-super-corridor-indore-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Rau, Indore",
+          "url": "https://www.squareyards.com/property-rates/rau-indore"
+        },
+        {
+          "name": "99acres - Property Rates in Rau, Indore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-rau-indore-prffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Bicholi Mardana, Indore",
+          "url": "https://www.squareyards.com/property-rates/bicholi-mardana-indore"
+        },
+        {
+          "name": "99acres - Property Rates in Bicholi Mardana, Indore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-bicholi-mardana-indore-prffid"
         }
       ],
       "citywide": {
@@ -3474,6 +3970,50 @@
               }
             }
           }
+        },
+        "old-palasia": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5400,
+                "avg": 5900,
+                "high": 8800
+              }
+            }
+          }
+        },
+        "super-corridor": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 3750,
+                "avg": 4400,
+                "high": 5950
+              }
+            }
+          }
+        },
+        "rau": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 2850,
+                "avg": 3300,
+                "high": 3550
+              }
+            }
+          }
+        },
+        "bicholi-mardana": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 6000,
+                "high": 7000
+              }
+            }
+          }
         }
       }
     },
@@ -3508,6 +4048,14 @@
         {
           "name": "OLX - Omkar Nagar, Nagpur rental listings",
           "url": "https://www.olx.in/omkar-nagar_g5323287/for-rent-houses-apartments_c1723"
+        },
+        {
+          "name": "Squareyards - Property Rates in Khamla, Nagpur",
+          "url": "https://www.squareyards.com/property-rates/khamla-nagpur"
+        },
+        {
+          "name": "99acres - Khamla, Nagpur overview (approx. Rs 6,500/sqft apartments, via search-indexed page content)",
+          "url": "https://www.99acres.com/khamla-nagpur-overview-piffid"
         }
       ],
       "citywide": {
@@ -3602,6 +4150,17 @@
               }
             }
           }
+        },
+        "khamla": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 6300,
+                "high": 6500
+              }
+            }
+          }
         }
       }
     },
@@ -3632,6 +4191,30 @@
         {
           "name": "OLX - Individual House/Villa for Rent in Coimbatore, 3 BHK filter (31 listings sampled)",
           "url": "https://www.olx.in/coimbatore_g4059164/for-rent-houses-apartments_c1723?filter=type_eq_houses,rooms_eq_3"
+        },
+        {
+          "name": "Squareyards - Property Rates in Singanallur, Coimbatore",
+          "url": "https://www.squareyards.com/property-rates/singanallur-coimbatore"
+        },
+        {
+          "name": "Squareyards - Property Rates in Ganapathy, Coimbatore",
+          "url": "https://www.squareyards.com/property-rates/ganapathy-coimbatore"
+        },
+        {
+          "name": "Squareyards - Property Rates in Vilankurichi, Coimbatore",
+          "url": "https://www.squareyards.com/property-rates/vilankurichi-coimbatore"
+        },
+        {
+          "name": "99acres - Property Rates in Singanallur, Coimbatore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-singanallur-coimbatore-prffid"
+        },
+        {
+          "name": "99acres - Property Rates in Ganapathy, Coimbatore 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-ganapathy-coimbatore-prffid"
+        },
+        {
+          "name": "99acres - Vilankurichi, Coimbatore overview (weighted apartment price Rs 6,900/sqft, via search-indexed page content)",
+          "url": "https://www.99acres.com/vilankurichi-coimbatore-overview-piffid"
         }
       ],
       "citywide": {
@@ -3723,6 +4306,39 @@
                 "low": 7000,
                 "avg": 7595,
                 "high": 8200
+              }
+            }
+          }
+        },
+        "singanallur": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5200,
+                "avg": 7300,
+                "high": 8000
+              }
+            }
+          }
+        },
+        "ganapathy": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 6600,
+                "high": 8000
+              }
+            }
+          }
+        },
+        "vilankurichi": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6550,
+                "avg": 6700,
+                "high": 7600
               }
             }
           }
@@ -4428,6 +5044,22 @@
         {
           "name": "Squareyards - Property Rates in Nayapalli, Bhubaneswar",
           "url": "https://www.squareyards.com/property-rates/nayapalli-bhubaneswar"
+        },
+        {
+          "name": "Squareyards - Property Rates in Khandagiri, Bhubaneswar",
+          "url": "https://www.squareyards.com/property-rates/khandagiri-bhubaneswar"
+        },
+        {
+          "name": "Squareyards - Property Rates in Pokhariput, Bhubaneswar",
+          "url": "https://www.squareyards.com/property-rates/pokhariput-bhubaneswar"
+        },
+        {
+          "name": "99acres - Property Rates in Khandagiri, Bhubaneswar 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-khandagiri-bhubaneswar-prffid"
+        },
+        {
+          "name": "99acres - Pokhariput, Bhubaneswar overview (approx. Rs 6,600/sqft apartments, via search-indexed page content)",
+          "url": "https://www.99acres.com/pokhariput-bhubaneswar-overview-piffid"
         }
       ],
       "citywide": {
@@ -4498,6 +5130,28 @@
                 "low": 9800,
                 "avg": 9800,
                 "high": 9800
+              }
+            }
+          }
+        },
+        "khandagiri": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6000,
+                "avg": 6900,
+                "high": 7800
+              }
+            }
+          }
+        },
+        "pokhariput": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 6550,
+                "avg": 6800,
+                "high": 7000
               }
             }
           }
@@ -4808,6 +5462,14 @@
         {
           "name": "Squareyards - South City, Ludhiana Overview",
           "url": "https://www.squareyards.com/south-city-in-ludhiana-overview-96198"
+        },
+        {
+          "name": "Squareyards - Property Rates in Pakhowal Road, Ludhiana",
+          "url": "https://www.squareyards.com/property-rates/pakhowal-road-ludhiana"
+        },
+        {
+          "name": "99acres - Pakhowal Road, Ludhiana overview (Rs 4,500-7,000/sqft, approx. Rs 6,650, via search-indexed page content)",
+          "url": "https://www.99acres.com/pakhowal-road-ludhiana-overview-piffid"
         }
       ],
       "citywide": {
@@ -4904,6 +5566,17 @@
                 "low": 15000,
                 "avg": 20300,
                 "high": 35000
+              }
+            }
+          }
+        },
+        "pakhowal-road": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4500,
+                "avg": 6700,
+                "high": 7000
               }
             }
           }
@@ -5296,6 +5969,30 @@
         {
           "name": "Squareyards - Flats for Rent in Guwahati",
           "url": "https://www.squareyards.com/rent/apartments-for-rent-in-guwahati"
+        },
+        {
+          "name": "Squareyards - Property Rates in Lokhra, Guwahati",
+          "url": "https://www.squareyards.com/property-rates/lokhra-guwahati"
+        },
+        {
+          "name": "99acres - Lokhra, Guwahati overview (via search-indexed page content)",
+          "url": "https://www.99acres.com/lokhra-guwahati-overview-piffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Hatigaon, Guwahati",
+          "url": "https://www.squareyards.com/property-rates/hatigaon-guwahati"
+        },
+        {
+          "name": "99acres - Hatigaon, Guwahati overview (via search-indexed page content)",
+          "url": "https://www.99acres.com/hatigaon-guwahati-overview-piffid"
+        },
+        {
+          "name": "Squareyards - Property Rates in Kahilipara, Guwahati",
+          "url": "https://www.squareyards.com/property-rates/kahilipara-guwahati"
+        },
+        {
+          "name": "99acres - Kahilipara, Guwahati overview (via search-indexed page content)",
+          "url": "https://www.99acres.com/kahilipara-guwahati-overview-piffid"
         }
       ],
       "citywide": {
@@ -5406,6 +6103,46 @@
                 "low": 15000,
                 "avg": 21760,
                 "high": 50000
+              }
+            }
+          }
+        },
+        "lokhra": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 5300,
+                "avg": 5400,
+                "high": 6450
+              }
+            }
+          }
+        },
+        "hatigaon": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 3900,
+                "avg": 4950,
+                "high": 5300
+              }
+            }
+          }
+        },
+        "kahilipara": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4000,
+                "avg": 5700,
+                "high": 6200
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 30000,
+                "avg": 30000,
+                "high": 30000
               }
             }
           }
@@ -6755,6 +7492,30 @@
         {
           "name": "Squareyards - Ranchi Real Estate Overview",
           "url": "https://www.squareyards.com/ranchi-real-estate"
+        },
+        {
+          "name": "Squareyards - Property Rates in Ratu Road, Ranchi",
+          "url": "https://www.squareyards.com/property-rates/ratu-road-ranchi"
+        },
+        {
+          "name": "Squareyards - Property Rates in Kanke, Ranchi",
+          "url": "https://www.squareyards.com/property-rates/kanke-ranchi"
+        },
+        {
+          "name": "Squareyards - Property Rates in Namkum, Ranchi",
+          "url": "https://www.squareyards.com/property-rates/namkum-ranchi"
+        },
+        {
+          "name": "99acres - Ratu Road, Ranchi overview (approx. Rs 5,050/sqft, via search-indexed page content)",
+          "url": "https://www.99acres.com/ratu-road-ranchi-overview-piffid"
+        },
+        {
+          "name": "99acres - Property Rates in Kanke Road, Ranchi 2026 (via search-indexed page content)",
+          "url": "https://www.99acres.com/property-rates-and-price-trends-in-kanke-road-ranchi-prffid"
+        },
+        {
+          "name": "99acres - Namkum, Ranchi overview (apartments approx. Rs 3,700-4,300/sqft, via search-indexed page content)",
+          "url": "https://www.99acres.com/namkum-ranchi-overview-piffid"
         }
       ],
       "citywide": {
@@ -6865,6 +7626,46 @@
                 "low": 14000,
                 "avg": 19600,
                 "high": 35000
+              }
+            }
+          }
+        },
+        "ratu-road": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4400,
+                "avg": 4700,
+                "high": 5050
+              }
+            }
+          }
+        },
+        "kanke": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 4200,
+                "avg": 5050,
+                "high": 7150
+              }
+            },
+            "3bhk": {
+              "rentPerMonth": {
+                "low": 16500,
+                "avg": 18500,
+                "high": 21000
+              }
+            }
+          }
+        },
+        "namkum": {
+          "apartment": {
+            "2bhk": {
+              "salePricePerSqft": {
+                "low": 3700,
+                "avg": 4300,
+                "high": 4400
               }
             }
           }

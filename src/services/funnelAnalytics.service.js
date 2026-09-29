@@ -37,7 +37,7 @@ export async function getStepCompletionRates(daysBack = 7) {
 
   const completionRates = [];
   let prevCount = null;
-  for (const step of [1, 2, 3, 4, 5, 6, 7, 8]) {
+  for (const step of [0, 1, 2, 3, 4, 5, 6, 7, 8]) {
     const count = stepCounts[step] ?? 0;
     const rate = prevCount ? (count / prevCount) * 100 : 100;
     const dropoff = prevCount ? Math.round(((prevCount - count) / prevCount) * 100) : 0;
@@ -111,24 +111,32 @@ export async function getErrorRateByStep(daysBack = 7) {
     { $group: { _id: '$step', errorCount: { $sum: 1 }, errors: { $push: '$errorMessage' } } },
   ];
   const errors = await FunnelAnalytics.aggregate(errorPipeline);
+  const errorsByStep = {};
+  errors.forEach(e => { errorsByStep[e._id] = e; });
 
-  return errors.map(e => ({
-    step: e._id,
-    label: STEP_LABELS[e._id],
-    errorCount: e.errorCount,
-    totalAttempts: totalByStep[e._id] || 0,
-    errorRate: totalByStep[e._id] ? Math.round((e.errorCount / totalByStep[e._id]) * 100) : 0,
-    topErrors: e.errors.slice(0, 3), // Top 3 error messages
-  }));
+  // Every step, including ones with zero errors — a step shouldn't just
+  // disappear from this table because nothing went wrong on it this period.
+  return [0, 1, 2, 3, 4, 5, 6, 7, 8].map(step => {
+    const e = errorsByStep[step];
+    const total = totalByStep[step] || 0;
+    return {
+      step,
+      label: STEP_LABELS[step],
+      errorCount: e?.errorCount ?? 0,
+      totalAttempts: total,
+      errorRate: total && e ? Math.round((e.errorCount / total) * 100) : 0,
+      topErrors: e?.errors.slice(0, 3) ?? [], // Top 3 error messages
+    };
+  });
 }
 
 export async function getDeviceComparison(daysBack = 7) {
   const since = new Date();
   since.setDate(since.getDate() - daysBack);
 
-  // Get completion by device type (users who reached step 8)
+  // Get completion by device type (users who submitted step 8, not just reached it)
   const pipeline = [
-    { $match: { timestamp: { $gte: since }, step: 8, action: 'enter' } },
+    { $match: { timestamp: { $gte: since }, step: 8, action: 'exit' } },
     { $group: { _id: '$deviceType', completions: { $addToSet: '$sessionId' } } },
     { $project: { deviceType: '$_id', completionCount: { $size: '$completions' }, _id: 0 } },
   ];
@@ -137,9 +145,9 @@ export async function getDeviceComparison(daysBack = 7) {
   const completionByDevice = {};
   completions.forEach(c => { completionByDevice[c.deviceType] = c.completionCount; });
 
-  // Get total sessions per device
+  // Get total sessions per device (step 0 = true funnel entry, before step 1)
   const totalPipeline = [
-    { $match: { timestamp: { $gte: since }, action: 'enter', step: 1 } },
+    { $match: { timestamp: { $gte: since }, action: 'enter', step: 0 } },
     { $group: { _id: '$deviceType', sessions: { $addToSet: '$sessionId' } } },
     { $project: { deviceType: '$_id', totalCount: { $size: '$sessions' }, _id: 0 } },
   ];

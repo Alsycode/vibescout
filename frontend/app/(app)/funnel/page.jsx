@@ -670,6 +670,9 @@ export default function FunnelPage() {
 
   const handleContextComplete = useCallback(
     async (listingType) => {
+      const timeSpentMs = stepEntryTimeRef.current ? Date.now() - stepEntryTimeRef.current : null;
+      logAnalyticsEvent(sessionId, 0, 'exit', timeSpentMs);
+
       setActiveLoaderStep('context');
       setTransitioning(true);
       setListingTypeContext(listingType);
@@ -679,7 +682,7 @@ export default function FunnelPage() {
       setActiveLoaderStep(null);
       setAnimKey((k) => k + 1);
     },
-    [setListingTypeContext],
+    [setListingTypeContext, sessionId],
   );
 
   const handleResume = useCallback(() => {

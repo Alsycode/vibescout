@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
 import api from '../../../../lib/adminApi';
 
 const DAYS_OPTIONS = [7, 14, 30, 60];
@@ -31,23 +30,6 @@ export default function ConversionAnalyticsPage() {
   const [error, setError]           = useState(null);
   const [daysBack, setDaysBack]     = useState(30);
   const [listingFilter, setListingFilter] = useState('all');
-  const [backfilling, setBackfilling]     = useState(false);
-  const [backfillResult, setBackfillResult] = useState(null);
-
-  async function runBackfill() {
-    setBackfilling(true);
-    setBackfillResult(null);
-    try {
-      const res   = await api.post('/admin/analytics/backfill');
-      setBackfillResult(res.data);
-      const fresh = await api.get(`/admin/analytics/conversion?daysBack=${daysBack}`);
-      setData(fresh.data);
-    } catch (err) {
-      setBackfillResult({ error: err.message });
-    } finally {
-      setBackfilling(false);
-    }
-  }
 
   useEffect(() => {
     setLoading(true);
@@ -109,42 +91,7 @@ export default function ConversionAnalyticsPage() {
             {f}
           </button>
         ))}
-        <div style={{ marginLeft: 'auto' }}>
-          <button
-            onClick={runBackfill}
-            disabled={backfilling}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '5px',
-              fontSize: '11px', fontWeight: 500, padding: '6px 12px',
-              borderRadius: '7px',
-              border: '1px solid rgba(245,158,11,0.30)',
-              background: 'rgba(245,158,11,0.06)',
-              color: 'rgba(245,158,11,0.80)',
-              cursor: backfilling ? 'not-allowed' : 'pointer',
-              opacity: backfilling ? 0.5 : 1,
-              fontFamily: 'Inter, sans-serif',
-              transition: 'all 120ms ease',
-            }}
-          >
-            <RefreshCw size={11} style={{ animation: backfilling ? 'adminSpin 0.7s linear infinite' : 'none' }} />
-            {backfilling ? 'Backfilling…' : 'Backfill data'}
-          </button>
-        </div>
       </div>
-
-      {/* Backfill result toast */}
-      {backfillResult && (
-        <div style={{
-          marginBottom: '16px', padding: '10px 16px', borderRadius: 'var(--radius-md)', fontSize: '12px', fontWeight: 300,
-          background: backfillResult.error ? 'rgba(230,57,70,0.07)' : 'rgba(52,211,153,0.07)',
-          border:     `1px solid ${backfillResult.error ? 'rgba(230,57,70,0.20)' : 'rgba(52,211,153,0.20)'}`,
-          color:       backfillResult.error ? '#E63946' : '#34D399',
-        }}>
-          {backfillResult.error
-            ? backfillResult.error
-            : `Inserted: ${backfillResult.inserted?.report_generated ?? 0} generated, ${backfillResult.inserted?.report_unlocked ?? 0} unlocked`}
-        </div>
-      )}
 
       {/* Summary stats */}
       {!loading && !error && data && (
